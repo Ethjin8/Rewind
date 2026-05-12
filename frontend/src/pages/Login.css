@@ -1,0 +1,76 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f2f4f8;
+  font-family: Helvetica, sans-serif;
+}
+
+.auth-container {
+  display: flex;
+  width: 750px;
+  min-height: 450px;
+  background: rgb(255, 255, 255);
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(139, 139, 139, 0.15);
+}
+
+.sign-log {
+  width: 50%;
+  padding: 50px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sign-in-card {
+  background: linear-gradient(180deg, #ffb14b, #ff5353);
+}
+
+.log-in-card {
+  background: linear-gradient(180deg, #000000, #4b4b4b);
+  color: rgb(255, 255, 255);
+}
+
+.sign-log h1 {
+  margin-bottom: 20px;
+  font-size: 36px;
+}
+
+.sign-log p {
+  margin-bottom: 30px;
+  color: #943535;
+}
+
+.log-in-card p {
+  color: #ffe09c;
+}
+
+.sign-log input {
+  margin-bottom: 15px;
+  padding: 14px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.log-in-card input {
+    /* for later */
+}
+
+.sign-log button {
+  margin-top: 10px;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: #2563eb;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.sign-log button:hover {
+  background: linear-gradient(135deg, #ff7eb3, #7c5cff);
+}
