@@ -8,10 +8,14 @@ const { authenticateToken } = require('./middleware/auth.js');
 
 const authRouter = require('./routes/auth.js');
 const userRouter = require('./routes/users.js');
+const tmdbRouter = require('./routes/tmdb.js');
 
 
 app.use(authRouter);
 app.use(userRouter);
+app.use(tmdbRouter);
 
 
-app.listen(3000);
+app.listen(process.env.PORT || 3000, () => {
+	console.log(`Server running on port ${process.env.PORT || 3000}`);
+});
