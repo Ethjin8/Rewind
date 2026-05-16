@@ -1,17 +1,21 @@
-const users = [
-  {
-    username: 'Ethan',
-    password: 'hello'
-  },
-  {
-    username: 'Edward',
-    password: 'world'
-  }
-]
+const mysql = require('mysql2');
+
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'Ejscfj@@57821$',
+  database: 'media_backlog'
+})
+
+db.connect();
 
 // Function to get all users from the database
 function getAllUsers() {
-  return users;
+  const sql = 'SELECT * FROM USERS';
+  db.query(sql, (err, result) => {
+    if (err) throw err.message;
+    return result;
+  });
 }
 
 // Function to find user within the database

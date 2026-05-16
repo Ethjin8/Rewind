@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 
+const { authenticateToken } = require('../middleware/auth.js');
 const { getAllUsers, findUser, addUser } = require('../models/users.js');
 
 
