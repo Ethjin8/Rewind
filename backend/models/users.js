@@ -1,36 +1,28 @@
-const mysql = require('mysql2');
+const pool = require('../database.js');
 
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'Ejscfj@@57821$',
-  database: 'media_backlog'
-})
 
-db.connect();
-
-// Function to get all users from the database
-function getAllUsers() {
-  const sql = 'SELECT * FROM USERS';
-  db.query(sql, (err, result) => {
-    if (err) throw err.message;
-    return result;
-  });
+async function getAllUsers() {
+  const [rows] = await pool.query(`SELECT * FROM users`);
+  return rows;
 }
 
-// Function to find user within the database
-function findUser(target) {
-  const user = users.find(user => user.username === target);
-  if (!user) {
-    return null;
-  }
+async function findUser(username) {
+  const [row] = await pool.query(`
+    SELECT * 
+    FROM users
+    WHERE username = ?
+    `, [username])
 
-  return user;
+  return row[0];
 }
 
-// Function to add user in the database
-function addUser(input) {
-  users.push(input);
+async function addUser(username, password) {
+  const [result] = await pool.query(`
+    INSERT INTO users (username, password)
+    VALUES(?, ?)
+  `, [username, password])
+
+  return result;
 }
 
-module.exports = { getAllUsers, findUser, addUser };
+module.exports = { getAllUsers, findUser, addUser }

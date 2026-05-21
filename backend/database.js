@@ -8,6 +8,7 @@ if (!databaseUrl) {
   throw new Error('DATABASE_URL is required');
 }
 
+// Returns a URL object that we can use
 const parsedUrl = new URL(databaseUrl);
 
 const pool = mysql.createPool({
