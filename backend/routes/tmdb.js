@@ -8,6 +8,7 @@ router.get('/api/movies/search', async (req, res) => {
     const { query, page } = req.query;
     if (!query) return res.status(400).json({ error: 'Query required' });
     
+    // Default to first page
     const results = await tmdbService.searchMovies(query, page || 1);
     res.json(results);
   } catch (error) {
@@ -19,6 +20,7 @@ router.get('/api/movies/search', async (req, res) => {
 router.get('/api/movies/popular', async (req, res) => {
   try {
     const { page } = req.query;
+    // Default to first page 
     const results = await tmdbService.getPopularMovies(page || 1);
     res.json(results);
   } catch (error) {
@@ -30,6 +32,7 @@ router.get('/api/movies/popular', async (req, res) => {
 router.get('/api/movies/trending', async (req, res) => {
   try {
     const { timeWindow } = req.query;
+    // Default to first week
     const results = await tmdbService.getTrendingMovies(timeWindow || 'week');
     res.json(results);
   } catch (error) {
