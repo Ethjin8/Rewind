@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const tmdbService = require('../services/tmdbService');
+const pool = require('../database.js');
 
 // Search movies
 router.get('/api/movies/search', async (req, res) => {
@@ -50,6 +51,41 @@ router.get('/api/movies/:id', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Allow user to add movie
+router.post('/api/movies/:id', async (req, res) => {
+  try {
+    const uid = req.body.user_id;
+    const movie_show_id = req.params.id;
+
+    const [result] = await pool.query(`
+      INSERT INTO movies_shows (user_id, movie_show_id)
+      VALUES(?, ?)
+    `, [uid, movie_show_id]);
+
+    res.json(result);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
+// Allow user to delete movie
+router.delete('/api/movies/:id', async (req, res) => {
+  try {
+    const uid = req.body.user_id;
+    const movie_show_id = req.params.id;
+
+    const [result] = await pool.query(`
+      DELETE FROM movies_shows WHERE user_id = ? AND movie_show_id = ?
+    `, [uid, movie_show_id]);
+
+    res.json(result);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
 
 // Get configuration (image URLs)
 router.get('/api/configuration', async (req, res) => {
