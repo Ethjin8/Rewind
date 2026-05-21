@@ -1,7 +1,8 @@
 import { useState } from 'react';
 
 export default function Register() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+ // const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -16,11 +17,11 @@ export default function Register() {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex items-center">
-          <label className="w-36 text-right mr-4">Email</label>
+          <label className="w-36 text-right mr-4">Username</label>
           <input
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
             className="p-2 border"
           />

@@ -7,7 +7,7 @@ export default function Account() {
         <h2 className="text-lg font-medium mb-3">Profile</h2>
         <div className="flex flex-col gap-2 text-sm text-gray-400">
           <p>Username: placeholder</p>
-          <p>Email: placeholder@example.com</p>
+          {/* <p>Email: placeholder@example.com</p> */}
         </div>
       </section>
 
