@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import './Login.css';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -10,7 +11,7 @@ export default function Login() {
   }
 
   return (
-    <div className="flex flex-col items-center mt-16">
+    <div className="auth-page flex-col items-center mt-16">
       <h1>Log In</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -36,7 +37,7 @@ export default function Login() {
           />
         </div>
 
-        <button className="bg-blue-400 text-white p-2 mt-2">Log In</button>
+        <button className="text-white">Log In</button>
       </form>
 
       <p>
