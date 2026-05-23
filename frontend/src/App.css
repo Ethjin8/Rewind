@@ -43,7 +43,7 @@
 .nav-link.active {
   background-color: #B15f21;
   color: #ffffff;
-  transform: scale(1.2);
+  transform: translateY(-2px);
 }
 /* .counter {
   font-size: 16px;
