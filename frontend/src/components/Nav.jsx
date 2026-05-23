@@ -14,15 +14,15 @@ export default function Nav() {
   const { pathname } = useLocation();
 
   return (
-    <nav className="flex flex-wrap gap-2 px-4 py-2 border-b border-gray-200 bg-white">
+    <nav className="nav-bar flex flex-wrap py-2">
       {pages.map(({ label, path }) => (
         <Link
           key={path}
           to={path}
-          className={`px-3 py-1 rounded text-sm ${
+          className={`nav-link ${
             pathname === path
-              ? 'bg-gray-900 text-white'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'active'
+              : ''
           }`}
         >
           {label}

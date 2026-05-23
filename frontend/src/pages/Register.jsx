@@ -80,7 +80,7 @@ export default function Register() {
           <label>Confirm Password</label>
           <input
             id="confirmPassword"
-            placeholder="Confirm your password"
+            placeholder="Re-enter your password"
             name="confirmPassword"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
