@@ -55,17 +55,18 @@
     padding: 0.75rem;
     border-radius: 20px;
     height: 3.5rem;
-    width: 22rem;
+    width: 20rem;
     border: 1px solid #0000003d;
     background-color: #B15f21;
     color: #000000;
     font-weight: 500;
     font-size: 25px;
+    font-weight: 600;
     cursor: pointer;
 }
 
 .auth-page button:hover {
-    box-shadow: 4px 4px 0px #000000;
+    box-shadow: 2px 2px 0px #000000;
     transform: scale(1.01);
 }
 
@@ -76,4 +77,13 @@
 
 .auth-page p {
     margin-top: 1rem;
+}
+
+.link {
+    color: hsl(224, 64%, 54%);
+    font-weight: 500;
+}
+
+.link:hover {
+    font-weight: 600;
 }

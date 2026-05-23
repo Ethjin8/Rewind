@@ -48,7 +48,7 @@ export default function Register() {
 
   return (
     <div className="auth-page flex flex-col items-start mt-16">
-      <h1>Create Account</h1>
+      <h1>CREATE ACCOUNT</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col items-start">
           <label >Username</label>
@@ -89,11 +89,11 @@ export default function Register() {
           />
         </div>
 
-        <button className="bg-blue-400 text-white p-2 mt-2">Create Account</button>
+        <button className="bg-blue-400 text-white p-2 mt-2">Sign Up</button>
       </form>
 
       <p>
-        Already have an account? <a href="/login" className="text-blue-400 underline">Log in</a>
+        Already have an account? <a href="/login" className="link underline">Log in</a>
       </p>
     </div>
   );

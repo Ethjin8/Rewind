@@ -44,7 +44,7 @@ export default function Login() {
       </form>
 
       <p>
-        Don't have an account? <a href="/register" className="text-blue-400 underline">Sign up</a>
+        Don't have an account? <a href="/register" className="link underline">Sign up</a>
       </p>
     </div>
   );
