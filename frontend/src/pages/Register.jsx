@@ -47,14 +47,14 @@ export default function Register() {
 }
 
   return (
-    <div className="auth-page flex flex-col items-center mt-16">
+    <div className="auth-page flex flex-col items-start mt-16">
       <h1>Create Account</h1>
-
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex items-center">
-          <label className="w-36 text-right mr-4">Username</label>
+        <div className="flex flex-col items-start">
+          <label >Username</label>
           <input
             id="username"
+            placeholder="Enter your username"
             name="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -63,10 +63,11 @@ export default function Register() {
           />
         </div>
 
-        <div className="flex items-center">
-          <label className="w-36 text-right mr-4">Password</label>
+        <div className="flex flex-col items-start">
+          <label>Password</label>
           <input
             id="password"
+            placeholder="Enter your password"
             name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -75,10 +76,11 @@ export default function Register() {
           />
         </div>
 
-        <div className="flex items-center">
-          <label className="w-36 text-right mr-4">Confirm Password</label>
+        <div className="flex flex-col items-start">
+          <label>Confirm Password</label>
           <input
             id="confirmPassword"
+            placeholder="Confirm your password"
             name="confirmPassword"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}

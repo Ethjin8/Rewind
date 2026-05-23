@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './Login.css';
+//import './App.css';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -11,14 +12,15 @@ export default function Login() {
   }
 
   return (
-    <div className="auth-page flex-col items-center mt-16">
-      <h1>Log In</h1>
+    <div className="auth-page flex-col items-start mt-16">
+      <h1>LOG IN</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex items-center">
-          <label className="w-36 text-right mr-4">Username</label>
+        <div className="flex flex-col items-start">
+          <label>Username</label>
           <input
             id="username"
+            placeholder="Enter your username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
@@ -26,10 +28,11 @@ export default function Login() {
           />
         </div>
 
-        <div className="flex items-center">
-          <label className="w-36 text-right mr-4">Password</label>
+        <div className="flex flex-col items-start">
+          <label>Password</label>
           <input
             id="password"
+            placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required

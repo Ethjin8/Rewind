@@ -1,10 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Akt:wght@100..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
+
+
 .auth-page {
-    background-color: #793636;
+    background-color: #EDE4C5;
     padding: 2rem;
-    border-radius: 8px;
+    box-shadow: 20px 20px 0px #000000;
+   /* outline: 2px solid #ffffff33; */
+   /* outline-offset: 8px; */
     align-self: center;
     align-items: center;
     display: flex;
+    font-family: "Saira", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;   /* 100 ~ 900 */
+    font-style: normal;
+    letter-spacing: 1px;
+
+}
+
+.auth-page * {
+    color: #000000;
 }
 
 .auth-page form {
@@ -14,45 +29,49 @@
     align-items: center;
 }
 .auth-page h1 {
-    color: #fff;
-    margin-bottom: 5rem;
+    margin-bottom: 2rem;
+    font-family:'Saira', sans-serif;
+    width: 350px;
+    font-weight: 700;
+    text-align: left;
+    font-size: 40px;
+
 }
 
 .auth-page label {
-    color: #fff;
     font-weight: 500;
 }
 
 .auth-page input {
     padding: 0.5rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    width: 300px;
-    margin-right: 2rem;
+    border-radius: 2px;
+    border: 1px solid #0000003d;
+    width: 350px;
+    margin-top: 0.2rem;
 }
 
 .auth-page button {
-    margin-top: 1rem;
+    margin-top: 2rem;
     padding: 0.75rem;
-    border-radius: 30px;
+    border-radius: 20px;
     height: 3.5rem;
-    width: 25rem;
-    border: none;
-    background-color: #5a1e1e;
-    color: #fff;
+    width: 22rem;
+    border: 1px solid #0000003d;
+    background-color: #B15f21;
+    color: #000000;
     font-weight: 500;
-    font-size: 20px;
+    font-size: 25px;
     cursor: pointer;
 }
 
 .auth-page button:hover {
-    background-color: #4a1616;
+    box-shadow: 4px 4px 0px #000000;
+    transform: scale(1.01);
 }
 
 .auth-page input:focus {
     outline: none;
-    border-color: #5a1e1e;
-    box-shadow: 0 0 0 2px rgba(90, 30, 30, 0.2);
+    box-shadow: 0 0 0 0.5px rgba(73, 73, 73, 0.5);
 }
 
 .auth-page p {
