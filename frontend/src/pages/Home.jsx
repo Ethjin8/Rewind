@@ -17,7 +17,7 @@ const backlog = [
     genre: 'Sci-Fi',
     year: 2014,
     addedAt: '2024-04-20',
-    available: true,
+    available: false,
   },
   {
     id: 3,
@@ -81,11 +81,22 @@ const backlog = [
     genre: 'Drama',
     year: 1999,
     addedAt: '2024-07-01',
-    available: true,
+    available: false,
   }
 ];
 
-const trending = ['Dune', 'Everything Everywhere All At Once', 'Parasite'];
+//This is testing variable
+const availableBacklog = backlog.filter((movie) => movie.available);
+
+/*
+const selectedServices = ['Netflix', 'Hulu', 'Prime Video'];
+
+//const availableBacklog = backlogMovies.filter((movie) =>
+  movie.watchProviders?.some((provider) =>
+    selectedServices.includes(provider)
+  )
+);
+*/
 
 export default function Home() {
   const recommended = backlog
@@ -101,7 +112,6 @@ export default function Home() {
               TODAY'S BACKLOG RECOMMENDATION
             </p>
             <h1>{recommended.title}</h1>
-
             <p className="recommended-info">
               {recommended.genre} · {recommended.year} · Saved since{' '}
               {recommended.addedAt}
@@ -109,39 +119,29 @@ export default function Home() {
 
             <div className="hero-buttons">
               <button type="button">DONE</button>
-              <button type="button" className="secondary-button">
-                REMOVE
-              </button>
+              <button type="button">REMOVE
+</button>
             </div>
           </div>
 
           <div className="recommended-card">
-            <div className="poster-placeholder">
-              <span>{recommended.title}</span>
-            </div>
+            <img
+              src={recommended.poster}
+              alt={recommended.title}
+              className="recommended-hero-image"
+            />
           </div>
         </section>
       )}
 
       <section className="home-section">
-        <div className="section-heading">
-          <p>{backlog.length} saved</p>
-        </div>
         <MovieCarousel
           title="MY BACKLOG"
           movies={backlog}
         />
-      </section>
-
-      <section className="home-section">
-        <div className="section-heading">
-          <h2>Trending</h2>
-          <p>Popular now</p>
-        </div>
-
         <MovieCarousel
-          title="Trending"
-          movies={trending}
+          title="Available on my streaming services"
+          movies={availableBacklog}
         />
       </section>
     </main>
