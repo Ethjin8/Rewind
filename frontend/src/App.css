@@ -1,4 +1,50 @@
+.nav-bar * {
+  box-sizing: border-box;
+  font-family: "Saira", sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+}
 
+.nav-bar a {
+  color: #ede4c5;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s, color 0.3s;
+  background-color: #2D4675;
+  font-weight: 600;
+  font-size: 18px;
+  border: 3px solid #000000;
+  width: 180px;
+}
+
+
+.nav-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding: 0.3rem 1rem;
+  padding-top: 0.5rem;
+  background-color: #0a1628;
+  border-bottom: 3px solid #000000;
+}
+
+.nav-link {
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #e5e5e5;
+  text-decoration: none;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+}
+
+.nav-link.active {
+  background-color: #B15f21;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
 /* .counter {
   font-size: 16px;
 

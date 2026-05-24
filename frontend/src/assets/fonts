@@ -1,0 +1,26 @@
+@font-face {
+  font-family: "Satoshi";
+  src: url("../assets/fonts/Satoshi-Regular.woff2") format("woff2");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("../assets/fonts/Satoshi-Bold.woff2") format("woff2");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("../assets/fonts/GeistMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+}
+
+.auth-page {
+  font-family: "Satoshi", sans-serif;
+}
+
+.auth-page input,
+.auth-page button {
+  font-family: "Geist Mono", monospace;
+}
