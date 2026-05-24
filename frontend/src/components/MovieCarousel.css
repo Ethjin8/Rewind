@@ -1,0 +1,149 @@
+.movie-section {
+  margin-bottom: 3rem;
+  text-align: left;
+}
+
+.movie-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.movie-section-header h2 {
+  margin: 0;
+}
+
+.expand-button {
+  background: #ede4c5;
+  border: 3px solid black;
+  padding: 8px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.carousel-shell {
+    display: grid;
+    column-gap: 20px;
+    align-items: center;
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
+}
+
+.movie-carousel-row {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 8px 0px 18px;
+}
+
+.movie-carousel-row::-webkit-scrollbar {
+  display: none;
+}
+
+.movie-carousel-row {
+  scrollbar-width: none;
+}
+
+/*Everymovie-card*/
+.movie-card {
+  flex: 0 0 170px;
+  width: 170px;
+  height: 255px;
+  background: #fff7dd;
+  border: 3px solid black;
+  box-shadow: 6px 6px 0 black;
+  overflow: hidden;
+  padding: 0px
+}
+
+.poster-frame {
+  width: 170px;
+  height: 255px;
+  background: #2d4675;
+
+}
+
+.poster-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.poster-placeholder {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  text-align: center;
+  color: #ede4c5;
+  font-weight: 800;
+}
+
+.movie-info h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  line-height: 1.2;
+  color: black;
+}
+
+.movie-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.movie-tags span {
+  border: 2px solid black;
+  padding: 2px 6px;
+  font-size: 11px;
+  background: white;
+  color: black;
+}
+
+.date-added {
+  font-size: 11px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.remove-button {
+  border: 2px solid black;
+  background: #793636;
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.carousel-arrow {
+  position: static;
+  top: 42%;
+  z-index: 5;
+  width: 42px;
+  height: 64px;
+  border: 3px solid black;
+  background: #ede4c5;
+  color: black;
+  font-size: 42px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.left-arrow {
+  left: 0;
+}
+
+.right-arrow {
+  right: 0;
+}
+
+.movie-grid-expanded {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 170px);
+  gap: 24px;
+  justify-content: start;
+  padding: 8px 0 24px;
+}

@@ -15,6 +15,7 @@
     font-weight: 400;   /* 100 ~ 900 */
     font-style: normal;
     letter-spacing: 1px;
+    transform: scale(0.6);
 
 }
 
