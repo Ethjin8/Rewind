@@ -12,12 +12,14 @@ const { authenticateToken } = require('./middleware/tokens.js');
 
 const authRouter = require('./routes/auth.js');
 const userRouter = require('./routes/users.js');
-const tmdbRouter = require('./routes/tmdb.js');
+const moviesRouter = require('./routes/movies.js');
+const showsRouter = require('./routes/shows.js');
 
 
 app.use(authRouter);
 app.use(userRouter);
-app.use(tmdbRouter);
+app.use(moviesRouter);
+app.use(showsRouter);
 
 
 app.listen(process.env.PORT || 3000, () => {
