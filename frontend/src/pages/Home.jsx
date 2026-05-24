@@ -146,6 +146,7 @@ export default function Home() {
         <MovieCarousel
           title="Available on my streaming services"
           movies={availableBacklog}
+          onMovieClick={setSelectedMovie}
         />
       </section>
       <MovieDetail
