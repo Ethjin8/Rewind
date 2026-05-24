@@ -1,35 +1,74 @@
 import { useState } from 'react';
 
 export default function Register() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+ // const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     //implement
+    //possible code
+    {/*
+    const username = e.target.username.value;
+    const password = e.target.password.value;
+    const confirmPassword = e.target.confirmPassword.value;
+
+    if (password !== confirmPassword) {
+      alert("Passwords don't match!");
+      return;
+    }
+
+    try {
+    
+    const response = await fetch("/api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+      const data = await response.json();
+
+      if (data.error) {
+        alert("Error: " + data.error);
+      } else {
+        alert("Account created successfully!");
+        window.location.href = "/login";
+      }
+    } catch (err) {
+      console.error("Registration failed:", err);
+      alert("An error occurred during registration. Please try again.");
+    }
   }
+  */}
+}
 
   return (
-    <div className="flex flex-col items-center mt-16">
-      <h1>Create Account</h1>
-
+    <div className="auth-page flex flex-col items-start mt-16">
+      <h1>CREATE ACCOUNT</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex items-center">
-          <label className="w-36 text-right mr-4">Email</label>
+        <div className="flex flex-col items-start">
+          <label >Username</label>
           <input
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            id="username"
+            placeholder="Enter your username"
+            name="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
             className="p-2 border"
           />
         </div>
 
-        <div className="flex items-center">
-          <label className="w-36 text-right mr-4">Password</label>
+        <div className="flex flex-col items-start">
+          <label>Password</label>
           <input
             id="password"
+            placeholder="Enter your password"
+            name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -37,10 +76,12 @@ export default function Register() {
           />
         </div>
 
-        <div className="flex items-center">
-          <label className="w-36 text-right mr-4">Confirm Password</label>
+        <div className="flex flex-col items-start">
+          <label>Confirm Password</label>
           <input
             id="confirmPassword"
+            placeholder="Re-enter your password"
+            name="confirmPassword"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
@@ -48,11 +89,11 @@ export default function Register() {
           />
         </div>
 
-        <button className="bg-blue-400 text-white p-2 mt-2">Create Account</button>
+        <button className="bg-blue-400 text-white p-2 mt-2">Sign Up</button>
       </form>
 
       <p>
-        Already have an account? <a href="/login" className="text-blue-400 underline">Log in</a>
+        Already have an account? <a href="/login" className="link underline">Log in</a>
       </p>
     </div>
   );
