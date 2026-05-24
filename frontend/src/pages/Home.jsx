@@ -97,15 +97,12 @@ export default function Home() {
       {recommended && (
         <section className="recommended-hero">
           <div className="recommended-text">
-            <p className="eyebrow">DIG IT UP</p>
-
+            <p className="hero-description">
+              TODAY'S BACKLOG RECOMMENDATION
+            </p>
             <h1>{recommended.title}</h1>
 
-            <p className="hero-description">
-              Your oldest available movie in the backlog.
-            </p>
-
-            <p className="movie-info">
+            <p className="recommended-info">
               {recommended.genre} · {recommended.year} · Saved since{' '}
               {recommended.addedAt}
             </p>
@@ -128,11 +125,10 @@ export default function Home() {
 
       <section className="home-section">
         <div className="section-heading">
-          <h2>My Backlog</h2>
           <p>{backlog.length} saved</p>
         </div>
         <MovieCarousel
-          title="My Backlog"
+          title="MY BACKLOG"
           movies={backlog}
         />
       </section>

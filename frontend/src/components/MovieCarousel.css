@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Akt:wght@100..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
+
 .movie-section {
   margin-bottom: 3rem;
   text-align: left;
@@ -12,10 +14,11 @@
 
 .movie-section-header h2 {
   margin: 0;
+  font-family: 'Saira', sans-serif;
+  font-weight: 900;
 }
-
 .expand-button {
-  background: #ede4c5;
+  background: #000000;
   border: 3px solid black;
   padding: 8px 14px;
   font-weight: 700;
@@ -24,7 +27,7 @@
 
 .carousel-shell {
     display: grid;
-    column-gap: 20px;
+    column-gap: 50px;
     align-items: center;
     grid-template-columns: 48px minmax(0, 1fr) 48px;
 }
@@ -35,10 +38,10 @@
 
 .movie-carousel-row {
   display: flex;
-  gap: 20px;
+  gap: 40px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 8px 0px 18px;
+  padding: 8px 0px 15px 8px;
 }
 
 .movie-carousel-row::-webkit-scrollbar {
@@ -60,8 +63,12 @@
   overflow: hidden;
   padding: 0px;
   position: relative;
+  transition: transform 0.2s ease;
 }
 
+.movie-card:hover{
+    transform:scale(1.05);
+}
 .poster-frame {
   width: 170px;
   height: 255px;
@@ -99,12 +106,8 @@
 
 .movie-tags {
     font-size: 11px;
-}
-
-.date-added {
-  font-size: 11px;
-  color: #ffffff4a;
-  margin-bottom: 8px;
+    font-weight: 200;
+    padding-bottom: 0.5rem;
 }
 
 .remove-button {

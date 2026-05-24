@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Akt:wght@100..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
+
 .home-page {
   min-height: 100vh;
   color: white;
@@ -9,31 +11,30 @@
 
 .recommended-hero {
   min-height: 55vh;
-  background-color: #8b5e3c;
+  background-color: #B15F21;
   border-bottom: 4px solid black;
   padding: 3rem;
   display: grid;
   grid-template-columns: 1.2fr 1fr;
   gap: 2rem;
   align-items: center;
-}
-
-.eyebrow {
-  font-family: monospace;
-  letter-spacing: 0.2em;
-  font-weight: 700;
+  font-weight: 900;
 }
 
 .recommended-text h1 {
-  font-size: 4rem;
+  font-size: 5rem;
+  font-weight: 800;
   line-height: 0.95;
   margin: 0;
   text-transform: uppercase;
+  padding-bottom: 1rem;
 }
 
 .hero-description {
-  font-size: 1.2rem;
+  font-size: 2rem;
+  line-height:1.2;
   margin-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .recommended-card {
