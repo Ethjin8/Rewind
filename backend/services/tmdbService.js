@@ -57,4 +57,10 @@ module.exports = {
   getPopularMovies,
   getTrendingMovies,
   getConfiguration,
+  discoverMoviesByGenre,
+  searchShows,
+  getPopularShows,
+  getTrendingShows,
+  getShowDetails,
+  discoverShowsByGenre,
 };

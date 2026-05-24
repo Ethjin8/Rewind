@@ -1,7 +1,11 @@
 require('dotenv').config()
 
 const express = require('express');
+// cors for middleware
+const cors = require('cors');
 const app = express();
+// use cors
+app.use(cors());
 app.use(express.json());
 
 const { authenticateToken } = require('./middleware/tokens.js');
@@ -9,6 +13,7 @@ const { authenticateToken } = require('./middleware/tokens.js');
 const authRouter = require('./routes/auth.js');
 const userRouter = require('./routes/users.js');
 const tmdbRouter = require('./routes/tmdb.js');
+const igdbRouter = require('./routes/igdb.js');
 
 
 app.use(authRouter);
