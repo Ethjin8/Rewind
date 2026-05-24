@@ -20,7 +20,7 @@ router.post('/users', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Add the user to our database
-    addUser(userName, hashedPassword);
+    await addUser(userName, hashedPassword);
     res.status(201).json("Created a new user!");
   } catch(err) {
     res.json({ error: err.message });

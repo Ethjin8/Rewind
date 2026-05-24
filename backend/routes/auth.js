@@ -12,7 +12,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 
 // Function to help us validate the JWT
-const { authenticateToken, generateAccessToken } = require('../middleware/tokens.js');
+const { authenticateToken, generateAccessToken, generateRefreshToken } = require('../middleware/tokens.js');
 
 // Function to help us get users
 const { findUser } = require('../models/users.js');
