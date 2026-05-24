@@ -51,6 +51,32 @@ async function getConfiguration() {
   return fetchTMDB('/configuration');
 }
 
+// Discovers movies by genre using TMDB's /discover/movie endpoint.
+async function discoverMoviesByGenre(genreId, page = 1) {
+  return fetchTMDB('/discover/movie', { with_genres: genreId, page });
+}
+
+// TV show functions
+async function searchShows(query, page = 1) {
+  return fetchTMDB('/search/tv', { query, page });
+}
+
+async function getPopularShows(page = 1) {
+  return fetchTMDB('/tv/popular', { page });
+}
+
+async function getTrendingShows(timeWindow = 'week') {
+  return fetchTMDB(`/trending/tv/${timeWindow}`);
+}
+
+async function getShowDetails(showId) {
+  return fetchTMDB(`/tv/${showId}`, { append_to_response: 'watch/providers' });
+}
+
+async function discoverShowsByGenre(genreId, page = 1) {
+  return fetchTMDB('/discover/tv', { with_genres: genreId, page });
+}
+
 module.exports = {
   searchMovies,
   getMovieDetails,
