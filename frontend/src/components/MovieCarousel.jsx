@@ -1,8 +1,8 @@
-// src/components/MovieCarousel.jsx
 import { useRef, useState } from 'react';
+import PosterCard from './PosterCard';
 import './MovieCarousel.css';
 
-export default function MovieCarousel({ title, movies, onRemove, onMovieClick }) {
+export default function MovieCarousel({ title, movies, onRemove }) {
   const rowRef = useRef(null);
   const [expanded, setExpanded] = useState(false);
 
@@ -40,34 +40,20 @@ export default function MovieCarousel({ title, movies, onRemove, onMovieClick })
           className={expanded ? 'movie-grid-expanded' : 'movie-carousel-row'}
         >
           {movies.map((movie) => (
-            <article key={movie.id} className="movie-card" onClick={() => onMovieClick?.(movie)}>
-              <div className="poster-frame">
-                {movie.posterUrl ? (
-                  <img src={movie.posterUrl} alt={movie.title} />
-                ) : (
-                  <div className="poster-placeholder">
-                    {movie.title}
-                  </div>
-                )}
-              </div>
-
-              <div className="movie-info">
-                <h3>{movie.title}</h3>
-                <div className="movie-tags">
-                  {movie.year && <span>{movie.year} / </span>}
-                  {movie.genre && <span>{movie.genre}</span>}
-                </div>
-
-                {onRemove && (
-                  <button
-                    className="remove-button"
-                    onClick={() => onRemove(movie.id)}
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            </article>
+            <div
+              key={movie.id}
+              className={expanded ? '' : 'flex-none w-[170px]'}
+            >
+              <PosterCard
+                movie={movie}
+                dateAdded={movie.addedAt ? new Date(movie.addedAt).getTime() : undefined}
+                actions={
+                  onRemove
+                    ? [{ text: 'Remove', onClick: () => onRemove(movie.id) }]
+                    : []
+                }
+              />
+            </div>
           ))}
         </div>
 

@@ -65,8 +65,13 @@
 }
 
 .auth-page button:hover {
-    box-shadow: 2px 2px 0px #000000;
-    transform: scale(1.01);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #000000;
+}
+
+.auth-page button:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
 }
 
 .auth-page input:focus {
