@@ -25,6 +25,7 @@
   padding-top: 0.5rem;
   background-color: #0a1628;
   border-bottom: 3px solid #000000;
+  position: sticky;
 }
 
 .nav-link {

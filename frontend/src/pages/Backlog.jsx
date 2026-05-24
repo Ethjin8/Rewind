@@ -1,12 +1,14 @@
 import { useState } from 'react';
+import PosterCard from '../components/PosterCard';
 
 const MEDIA_TYPES = ['Movie', 'TV Show', 'Book', 'Game'];
 
-const initialItems = [  
-  { id: 1, title: 'placeholder 1', type: 'Movie',   genre: 'Sci-Fi',  addedAt: '2024-01-10' },
-  { id: 2, title: 'placeholder 2', type: 'TV Show', genre: 'Drama',   addedAt: '2024-02-03' },
-  { id: 3, title: 'placeholder 3', type: 'Game',    genre: 'RPG',     addedAt: '2024-03-15' },
-  { id: 4, title: 'what kind of awesome is this?', type: 'Book',    genre: 'Sci-Fi',  addedAt: '2024-04-22' },
+const initialItems = [
+  { id: 1, title: 'placeholder 1', type: 'Movie',   genre: 'Sci-Fi',  addedAt: 1 },
+  //added at is unix time
+  { id: 2, title: 'placeholder 2', type: 'TV Show', genre: 'Drama',   addedAt: 1019331 },
+  { id: 3, title: 'placeholder 3', type: 'Game',    genre: 'RPG',     addedAt: 17100010 },
+  { id: 4, title: 'what kind of awesome is this?', type: 'Book', genre: 'Sci-Fi', addedAt: 193813519 },
 ];
 
 const emptyForm = { title: '', type: 'Movie', genre: '' };
@@ -15,6 +17,11 @@ export default function Backlog() {
   const [items, setItems] = useState(initialItems);
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
+  const [sortOrder, setSortOrder] = useState('latest');
+
+  const sortedItems = [...items].sort((a, b) =>
+    sortOrder === 'latest' ? b.addedAt - a.addedAt : a.addedAt - b.addedAt
+  );
 
   function handleAdd(e) {
     e.preventDefault();
@@ -23,7 +30,7 @@ export default function Backlog() {
       title: form.title,
       type: form.type,
       genre: form.genre,
-      addedAt: new Date().toISOString().slice(0, 10),
+      addedAt: Date.now(),
     };
     setItems([...items, newItem]);
     setForm(emptyForm);
@@ -37,10 +44,18 @@ export default function Backlog() {
   return (
     <div className="p-6">
       <div className="flex items-center mb-6">
-        <h1 className="text-2xl">My Backlog</h1>
+        <h1 className="text-2xl">DEPRECATED </h1>
+        <select
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+          className="border border-gray-300 rounded px-2 py-1 text-sm"
+        >
+          <option value="latest">Latest Added</option>
+          <option value="oldest">First Added</option>
+        </select>
         <button
           onClick={() => setShowForm((v) => !v)}
-          className="px-4 py-2 bg-gray-900 text-white rounded text-sm"
+          className="px-4 py-2 bg-black text-white text-sm font-bold border-2 border-black shadow-[4px_4px_0_#555] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
         >
           {showForm ? 'Cancel' : '+ Add'}
         </button>
@@ -88,36 +103,45 @@ export default function Backlog() {
 
           <button
             type="submit"
-            className="px-4 py-1.5 bg-blue-400 text-white rounded text-sm"
+            className="px-4 py-1.5 bg-black text-white text-sm font-bold border-2 border-black shadow-[4px_4px_0_#555] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
           >
             Add
           </button>
         </form>
       )}
 
-      <div className="grid grid-cols-3 gap-4">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="border border-gray-200 rounded p-4 flex flex-col gap-2"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <span className="font-medium text-neutral-300">{item.title}</span>
-              <button
-                onClick={() => handleDelete(item.id)}
-                className="rounded-xl text-gray-400 hover:text-red-500 text-sm shrink-0"
-              >
-                Remove
-              </button>
-            </div>
-            <div className="flex gap-2 text-xs text-gray-500">
-              <span className="border border-gray-200 rounded px-2">{item.type}</span>
-              {item.genre && (
-                <span className="border border-gray-200 rounded px-2">{item.genre}</span>
-              )}
-            </div>
-            <span className="text-xs text-gray-400">Date Added: {item.addedAt}</span>
+      {sortedItems.length > 0 && (
+        <div className="w-2/3 mx-auto mb-6 flex gap-6">
+          <img
+            src="/testposter.webp"
+            alt={sortedItems[0].title}
+            className="w-48 object-cover shrink-0"
+          />
+          <div className="flex flex-col justify-end gap-2 text-left">
+            <p className="text-2xl">{sortedItems[0].title}</p>
+            <p className="text-sm text-gray-400">
+              Added {new Date(sortedItems[0].addedAt).toLocaleDateString()}
+            </p>
+            <button
+              onClick={() => handleDelete(sortedItems[0].id)}
+              className="w-fit px-4 py-1 bg-black text-white text-sm font-bold border-2 border-black shadow-[4px_4px_0_#555] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
+            >
+              Remove
+            </button>
           </div>
+        </div>
+      )}
+
+      <div className="w-2/3 mx-auto grid grid-cols-4 gap-3">
+        {sortedItems.map((item) => (
+          <PosterCard
+            key={item.id}
+            movieId={item.id}
+            title={item.title}
+            image="/testposter.webp"
+            dateAdded={item.addedAt}
+            actions={[{ text: 'Remove', onClick: () => handleDelete(item.id) }]}
+          />
         ))}
       </div>
     </div>
