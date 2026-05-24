@@ -53,12 +53,10 @@ export default function MovieCarousel({ title, movies, onRemove }) {
 
               <div className="movie-info">
                 <h3>{movie.title}</h3>
-
                 <div className="movie-tags">
-                  {movie.type && <span>{movie.type}</span>}
+                  {movie.year && <span>{movie.year} / </span>}
                   {movie.genre && <span>{movie.genre}</span>}
                 </div>
-
                 {movie.addedAt && (
                   <p className="date-added">Added: {movie.addedAt}</p>
                 )}

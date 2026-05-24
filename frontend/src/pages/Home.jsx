@@ -135,19 +135,6 @@ export default function Home() {
           title="My Backlog"
           movies={backlog}
         />
-        <div className="movie-grid">
-          {backlog.map((movie) => (
-            <div key={movie.id} className="movie-card">
-              <h3>{movie.title}</h3>
-              <p>
-                {movie.genre} · {movie.year}
-              </p>
-              <span className={movie.available ? 'available' : 'unavailable'}>
-                {movie.available ? 'Available' : 'Unavailable'}
-              </span>
-            </div>
-          ))}
-        </div>
       </section>
 
       <section className="home-section">

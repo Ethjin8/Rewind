@@ -29,6 +29,10 @@
     grid-template-columns: 48px minmax(0, 1fr) 48px;
 }
 
+.carousel-shell.expanded {
+    display: block;
+}
+
 .movie-carousel-row {
   display: flex;
   gap: 20px;
@@ -50,11 +54,12 @@
   flex: 0 0 170px;
   width: 170px;
   height: 255px;
-  background: #fff7dd;
-  border: 3px solid black;
+  border: 1px solid #ffffff;
+  outline: 3px  solid #000000;
   box-shadow: 6px 6px 0 black;
   overflow: hidden;
-  padding: 0px
+  padding: 0px;
+  position: relative;
 }
 
 .poster-frame {
@@ -80,32 +85,25 @@
   color: #ede4c5;
   font-weight: 800;
 }
+.movie-info {
+  line-height: 1.2;
+  color: rgb(255, 255, 255);
+  position: absolute;
+  bottom: 0;
+  padding-left: 0.6rem;
+}
 
 .movie-info h3 {
-  margin: 0 0 8px;
-  font-size: 15px;
-  line-height: 1.2;
-  color: black;
+    font-size: 15px;
 }
 
 .movie-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 8px;
-}
-
-.movie-tags span {
-  border: 2px solid black;
-  padding: 2px 6px;
-  font-size: 11px;
-  background: white;
-  color: black;
+    font-size: 11px;
 }
 
 .date-added {
   font-size: 11px;
-  color: #333;
+  color: #ffffff4a;
   margin-bottom: 8px;
 }
 
@@ -130,14 +128,6 @@
   font-size: 42px;
   font-weight: 900;
   cursor: pointer;
-}
-
-.left-arrow {
-  left: 0;
-}
-
-.right-arrow {
-  right: 0;
 }
 
 .movie-grid-expanded {
