@@ -13,7 +13,6 @@ const { authenticateToken } = require('./middleware/tokens.js');
 const authRouter = require('./routes/auth.js');
 const userRouter = require('./routes/users.js');
 const tmdbRouter = require('./routes/tmdb.js');
-const igdbRouter = require('./routes/igdb.js');
 
 
 app.use(authRouter);
