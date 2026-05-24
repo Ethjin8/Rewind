@@ -3,8 +3,10 @@ const router = express.Router();
 const tmdbService = require('../services/tmdbService');
 const pool = require('../database.js');
 
+const { authenticateToken } = require('../middleware/tokens.js');
+
 // Search movies
-router.get('/api/movies/search', async (req, res) => {
+router.get('/api/movies/search', authenticateToken, async (req, res) => {
   try {
     const { query, page } = req.query;
     if (!query) return res.status(400).json({ error: 'Query required' });
@@ -18,7 +20,7 @@ router.get('/api/movies/search', async (req, res) => {
 });
 
 // Get popular movies
-router.get('/api/movies/popular', async (req, res) => {
+router.get('/api/movies/popular', authenticateToken, async (req, res) => {
   try {
     const { page } = req.query;
     // Default to first page 
@@ -30,7 +32,7 @@ router.get('/api/movies/popular', async (req, res) => {
 });
 
 // Get trending movies
-router.get('/api/movies/trending', async (req, res) => {
+router.get('/api/movies/trending', authenticateToken, async (req, res) => {
   try {
     const { timeWindow } = req.query;
     // Default to first week
@@ -42,7 +44,7 @@ router.get('/api/movies/trending', async (req, res) => {
 });
 
 // Get movie details
-router.get('/api/movies/:id', async (req, res) => {
+router.get('/api/movies/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const details = await tmdbService.getMovieDetails(id);
@@ -53,9 +55,9 @@ router.get('/api/movies/:id', async (req, res) => {
 });
 
 // Allow user to add movie
-router.post('/api/movies/:id', async (req, res) => {
+router.post('/api/movies/:id', authenticateToken, async (req, res) => {
   try {
-    const uid = req.body.user_id;
+    const uid = req.user.id;
     const movie_show_id = req.params.id;
 
     const [result] = await pool.query(`
@@ -71,9 +73,9 @@ router.post('/api/movies/:id', async (req, res) => {
 })
 
 // Allow user to delete movie
-router.delete('/api/movies/:id', async (req, res) => {
+router.delete('/api/movies/:id', authenticateToken, async (req, res) => {
   try {
-    const uid = req.body.user_id;
+    const uid = req.user.id;
     const movie_show_id = req.params.id;
 
     const [result] = await pool.query(`
@@ -87,8 +89,24 @@ router.delete('/api/movies/:id', async (req, res) => {
   }
 })
 
+// Get watch status of a movie
+router.get('/api/movies/:id/status', authenticateToken, async (req, res) => {
+  try {
+    const uid = req.user.id;
+    const movie_show_id = req.params.id;
+
+    const [result] = await pool.query(`
+      SELECT status FROM movies_shows WHERE user_id = ? AND movie_show_id = ?
+    `, [uid, movie_show_id]);
+
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
 // Get configuration (image URLs)
-router.get('/api/configuration', async (req, res) => {
+router.get('/api/configuration', authenticateToken, async (req, res) => {
   try {
     const config = await tmdbService.getConfiguration();
     res.json(config);

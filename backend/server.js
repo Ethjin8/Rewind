@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
-const { authenticateToken } = require('./middleware/auth.js');
+const { authenticateToken } = require('./middleware/tokens.js');
 
 const authRouter = require('./routes/auth.js');
 const userRouter = require('./routes/users.js');
