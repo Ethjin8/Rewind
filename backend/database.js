@@ -11,6 +11,7 @@ if (!databaseUrl) {
 // Returns a URL object that we can use
 const parsedUrl = new URL(databaseUrl);
 
+// A bunch of pre-opened connections to the MySQL database that the app uses
 const pool = mysql.createPool({
   host: parsedUrl.hostname,
   port: Number(parsedUrl.port || 3306),

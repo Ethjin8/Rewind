@@ -23,9 +23,17 @@ async function searchMovies(query, page = 1) {
 
 // Returns detailed information for one movie, including watch providers and keywords.
 async function getMovieDetails(movieId) {
-  return fetchTMDB(`/movie/${movieId}`, { 
+  const data = await fetchTMDB(`/movie/${movieId}`, {
     append_to_response: 'watch/providers,keywords'
   });
+
+  if (data['watch/providers']?.results) {
+    data['watch/providers'].results = {
+      US: data['watch/providers'].results.US
+    };
+  }
+
+  return data;
 }
 
 // Returns TMDB's list of popular movies.
