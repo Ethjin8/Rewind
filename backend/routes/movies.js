@@ -129,51 +129,5 @@ router.get('/api/movies/:id/status', authenticateToken, async (req, res) => {
   }
 })
 
-// Add show to backlog
-router.post('/api/shows/:id', authenticateToken, async (req, res) => {
-  try {
-    const uid = req.user.id;
-    const movie_show_id = req.params.id;
-
-    const [result] = await pool.query(`
-      INSERT INTO movies_shows (user_id, movie_show_id, type)
-      VALUES(?, ?, 'show')
-    `, [uid, movie_show_id]);
-
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Get user's backlog sorted by date_added (default is desc, but you can switch to asc)
-router.get('/api/backlog/sorted', authenticateToken, async (req, res) => {
-  try {
-
-    const uid = req.user.id;
-    const { order } = req.query;
-    const direction = order === 'asc' ? 'ASC' : 'DESC';
-    const [rows] = await pool.query(
-      `SELECT * FROM movies_shows WHERE user_id = ? ORDER BY date_added ${direction}`,
-      [uid]
-    );
-    res.json(rows);
-
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Get image URLs
-router.get('/api/configuration', authenticateToken, async (req, res) => {
-  try {
-
-    const config = await tmdbService.getConfiguration();
-    res.json(config);
-
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 module.exports = router;
