@@ -44,7 +44,7 @@ export default function Backlog() {
   return (
     <div className="p-6">
       <div className="flex items-center mb-6">
-        <h1 className="text-2xl">My Backlog</h1>
+        <h1 className="text-2xl">DEPRECATED </h1>
         <select
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value)}
@@ -55,7 +55,7 @@ export default function Backlog() {
         </select>
         <button
           onClick={() => setShowForm((v) => !v)}
-          className="px-4 py-2 bg-gray-900 text-white rounded text-sm"
+          className="px-4 py-2 bg-black text-white text-sm font-bold border-2 border-black shadow-[4px_4px_0_#555] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
         >
           {showForm ? 'Cancel' : '+ Add'}
         </button>
@@ -103,7 +103,7 @@ export default function Backlog() {
 
           <button
             type="submit"
-            className="px-4 py-1.5 bg-blue-400 text-white rounded text-sm"
+            className="px-4 py-1.5 bg-black text-white text-sm font-bold border-2 border-black shadow-[4px_4px_0_#555] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
           >
             Add
           </button>
@@ -124,7 +124,7 @@ export default function Backlog() {
             </p>
             <button
               onClick={() => handleDelete(sortedItems[0].id)}
-              className="w-fit px-4 py-1 bg-gray-900 text-white text-sm"
+              className="w-fit px-4 py-1 bg-black text-white text-sm font-bold border-2 border-black shadow-[4px_4px_0_#555] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
             >
               Remove
             </button>
@@ -136,11 +136,11 @@ export default function Backlog() {
         {sortedItems.map((item) => (
           <PosterCard
             key={item.id}
+            movieId={item.id}
             title={item.title}
             image="/testposter.webp"
             dateAdded={item.addedAt}
-            buttonText="Remove"
-            onButtonClick={() => handleDelete(item.id)}
+            actions={[{ text: 'Remove', onClick: () => handleDelete(item.id) }]}
           />
         ))}
       </div>
