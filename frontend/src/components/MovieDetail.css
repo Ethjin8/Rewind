@@ -1,0 +1,123 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  z-index: 2000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: backdropFadeIn 180ms ease-out;
+  padding: 2rem;
+}
+
+.movie-detail-modal {
+  position: relative;
+  width: min(850px, 92vw);
+  min-height: 430px;
+  background-color: #273445;
+  color: #0a1628;
+  border: 4px solid black;
+  padding: 2rem;
+  animation: modalPopIn 220ms ease-out;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.movie-detail-modal .movie-poster {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+
+  border: 4px solid black;
+  box-shadow: 3px 3px 0 black;
+  background-color: #1c1c1c;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+
+  background-color: #8b5e3c;
+  color: #fffdf5;
+
+  border: 3px solid black;
+  box-shadow: 4px 4px 0 black;
+
+  padding: 0.45rem 0.75rem;
+
+  font-weight: 900;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.modal-close-button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 black;
+}
+
+.modal-close-button:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+.movie-title {
+  margin: 0 0 1rem;
+
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 0.9;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.movie-description {
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.movie-description p:first-child {
+
+  background-color: #a7aaae;
+  color: #fffdf5;
+  font-weight: 800;
+}
+
+.movie-description p:last-child {
+  display: inline-block;
+
+  background-color: #8b5e3c;
+  color: #fffdf5;
+
+  border: 3px solid black;
+
+  padding: 0.6rem 0.8rem;
+  margin-top: 1rem;
+
+  font-weight: 900;
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

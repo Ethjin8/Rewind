@@ -1,6 +1,8 @@
 import './Home.css';
+import { useState } from 'react';
 
 import MovieCarousel from '../components/MovieCarousel';
+import MovieDetail from '../components/MovieDetail';
 
 const backlog = [
   {
@@ -10,6 +12,7 @@ const backlog = [
     year: 1982,
     addedAt: '2024-01-10',
     available: true,
+    synopsis: "A research team in Antarctica is hunted by a shape-shifting alien that assumes the appearance of its victims."
   },
   {
     id: 2,
@@ -18,6 +21,7 @@ const backlog = [
     year: 2014,
     addedAt: '2024-04-20',
     available: false,
+    synopsis: "In a dystopian future where Earth has become near-uninhabitable, a team of astronauts embark on a mission to find a new home for humanity."
   },
   {
     id: 3,
@@ -87,7 +91,6 @@ const backlog = [
 
 //This is testing variable
 const availableBacklog = backlog.filter((movie) => movie.available);
-
 /*
 const selectedServices = ['Netflix', 'Hulu', 'Prime Video'];
 
@@ -99,6 +102,7 @@ const selectedServices = ['Netflix', 'Hulu', 'Prime Video'];
 */
 
 export default function Home() {
+  const [selectedMovie, setSelectedMovie] = useState(null); //Tester
   const recommended = backlog
     .filter((movie) => movie.available)
     .sort((a, b) => new Date(a.addedAt) - new Date(b.addedAt))[0];
@@ -119,8 +123,7 @@ export default function Home() {
 
             <div className="hero-buttons">
               <button type="button">DONE</button>
-              <button type="button">REMOVE
-</button>
+              <button type="button">REMOVE</button>
             </div>
           </div>
 
@@ -138,12 +141,17 @@ export default function Home() {
         <MovieCarousel
           title="MY BACKLOG"
           movies={backlog}
+          onMovieClick={setSelectedMovie}
         />
         <MovieCarousel
           title="Available on my streaming services"
           movies={availableBacklog}
         />
       </section>
+      <MovieDetail
+        movie={selectedMovie}
+        onClose={() => setSelectedMovie(null)}
+      />
     </main>
   );
 }

@@ -2,7 +2,7 @@
 import { useRef, useState } from 'react';
 import './MovieCarousel.css';
 
-export default function MovieCarousel({ title, movies, onRemove }) {
+export default function MovieCarousel({ title, movies, onRemove, onMovieClick }) {
   const rowRef = useRef(null);
   const [expanded, setExpanded] = useState(false);
 
@@ -40,7 +40,7 @@ export default function MovieCarousel({ title, movies, onRemove }) {
           className={expanded ? 'movie-grid-expanded' : 'movie-carousel-row'}
         >
           {movies.map((movie) => (
-            <article key={movie.id} className="movie-card">
+            <article key={movie.id} className="movie-card" onClick={() => onMovieClick?.(movie)}>
               <div className="poster-frame">
                 {movie.posterUrl ? (
                   <img src={movie.posterUrl} alt={movie.title} />
