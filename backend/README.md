@@ -13,4 +13,4 @@ Install MySQL on your computer with the following commands:
 
 Run `mysql --version` to check that the client is installed.
 
-The schema.sql file contains the necessary commands to set up your local database in MySQL. The primary database will be called `media_backlog`, with two tables: `users` and `movies_shows`. To run it, simply type `mysql -u root -p < schema.sql`.
+The schema.sql file contains the necessary commands to set up your local database in MySQL. The primary database will be called `backlog_db`, with two tables: `users` and `movies_shows`. To run it, simply type `mysql -u root -p < schema.sql`.
