@@ -205,6 +205,28 @@
   box-shadow: none;
 }
 
+.modal-details-link {
+  display: inline-block;
+  border: 2px solid #ede4c5;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+  padding: 0.65rem 1rem;
+  background: #ede4c5;
+  color: black;
+  font-weight: 900;
+  text-decoration: none;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.modal-details-link:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
+}
+
+.modal-details-link:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
 @keyframes backdropFadeIn {
   from {
     opacity: 0;

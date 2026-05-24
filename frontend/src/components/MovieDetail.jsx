@@ -1,9 +1,7 @@
-import './MovieCarousel.css';
+import { Link } from 'react-router-dom';
 import './MovieDetail.css';
 
-import './MovieDetail.css';
-
-export default function MovieDetail({ movie, onClose }) {
+export default function MovieDetail({ movie, onClose, actions = [] }) {
   if (!movie) return null;
 
   return (
@@ -21,10 +19,10 @@ export default function MovieDetail({ movie, onClose }) {
         </button>
 
         <div className="modal-poster-wrap">
-          {movie.posterUrl ? (
+          {movie.poster_path ? (
             <img
               className="movie-poster"
-              src={movie.posterUrl}
+              src={movie.poster_path}
               alt={movie.title}
             />
           ) : (
@@ -40,25 +38,35 @@ export default function MovieDetail({ movie, onClose }) {
           <h2 className="movie-title">{movie.title}</h2>
 
           <div className="movie-chip-row">
-            {movie.year && <span>{movie.year}</span>}
-            {movie.genre && <span>{movie.genre}</span>}
-            {movie.rating && <span>{movie.rating}</span>}
-            {movie.length && <span>{movie.length}</span>}
+            {movie.release_date  && <span>{movie.release_date}</span>}
+            {movie.genres?.length > 0 && <span>{movie.genres.map(g => g.name).join(', ')}</span>}
+            {movie.vote_average  != null && <span>{movie.vote_average}</span>}
+            {movie.runtime       != null && <span>{movie.runtime}</span>}
           </div>
 
           <p className="movie-synopsis">
-            {movie.synopsis || 'Synopsis will be populated from the API.'}
-          </p>
-
-          <p className="movie-availability">
-            {movie.available
-              ? 'Available on your streaming services'
-              : 'Not available on your streaming services'}
+            {movie.overview || 'No synopsis available.'}
           </p>
 
           <div className="modal-actions">
-            <button type="button">+ BACKLOG</button>
-            <button type="button">✓ WATCHED</button>
+            {actions.length > 0
+              ? actions.map(({ text, onClick }) => (
+                  <button key={text} type="button" onClick={() => { onClick(); onClose(); }}>
+                    {text}
+                  </button>
+                ))
+              : (
+                <>
+                  <button type="button">+ BACKLOG</button>
+                  <button type="button">✓ WATCHED</button>
+                </>
+              )
+            }
+            {movie.id && (
+              <Link to={`/movie/${movie.id}`} className="modal-details-link">
+                View Full Details →
+              </Link>
+            )}
           </div>
         </div>
       </div>

@@ -20,11 +20,24 @@
   color:#ffffff;
 }
 .expand-button {
-  background: #000000;
+  background: #ede4c5;
+  color: black;
   border: 3px solid black;
+  box-shadow: 4px 4px 0 black;
   padding: 8px 14px;
   font-weight: 700;
+  font-family: 'Saira', sans-serif;
   cursor: pointer;
+}
+
+.expand-button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 black;
+}
+
+.expand-button:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
 }
 
 .carousel-shell {
@@ -114,12 +127,25 @@
 }
 
 .remove-button {
-  border: 2px solid black;
-  background: #793636;
-  color: white;
+  border: 2px solid #ede4c5;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+  background: transparent;
+  color: #ede4c5;
   font-size: 12px;
+  font-family: 'Saira', sans-serif;
+  font-weight: 700;
   padding: 4px 8px;
   cursor: pointer;
+}
+
+.remove-button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+}
+
+.remove-button:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
 }
 
 .carousel-arrow {
@@ -129,11 +155,22 @@
   width: 42px;
   height: 64px;
   border: 3px solid black;
+  box-shadow: 4px 4px 0 black;
   background: #ede4c5;
   color: black;
   font-size: 42px;
   font-weight: 900;
   cursor: pointer;
+}
+
+.carousel-arrow:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 black;
+}
+
+.carousel-arrow:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
 }
 
 .movie-grid-expanded {

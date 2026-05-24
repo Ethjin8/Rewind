@@ -76,3 +76,42 @@
   padding: 2rem;
   font-weight: 700;
 }
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  justify-content: center;
+}
+
+.hero-buttons button {
+  padding: 0.75rem 1.75rem;
+  font-weight: 900;
+  font-size: 1rem;
+  font-family: 'Saira', sans-serif;
+  letter-spacing: 0.05em;
+  border: 3px solid black;
+  box-shadow: 4px 4px 0 black;
+}
+
+/* DONE — cream fill so it reads against the brown hero background */
+.hero-buttons button:first-child {
+  background: #ede4c5;
+  color: black;
+}
+
+/* REMOVE — outline only */
+.hero-buttons button:last-child {
+  background: transparent;
+  color: black;
+}
+
+.hero-buttons button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 black;
+}
+
+.hero-buttons button:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}

@@ -1,41 +1,66 @@
 import { useState } from 'react';
 import PosterCard from '../components/PosterCard';
 
-const MEDIA_TYPES = ['Movie', 'TV Show', 'Book', 'Game'];
-
+// Placeholder data — replace with real API responses from the backend.
+// Shape mirrors a TMDB movie object. addedAt is app-specific (Unix ms timestamp).
 const initialItems = [
-  { id: 1, title: 'placeholder 1', type: 'Movie',   genre: 'Sci-Fi',  addedAt: 1 },
-  //added at is unix time
-  { id: 2, title: 'placeholder 2', type: 'TV Show', genre: 'Drama',   addedAt: 1019331 },
-  { id: 3, title: 'placeholder 3', type: 'Game',    genre: 'RPG',     addedAt: 17100010 },
-  { id: 4, title: 'what kind of awesome is this?', type: 'Book', genre: 'Sci-Fi', addedAt: 193813519 },
+  {
+    id: 1,
+    title: 'placeholder 1',
+    genres: [{ id: 878, name: 'Science Fiction' }],
+    release_date: null,
+    overview: null,
+    poster_path: null,
+    vote_average: null,
+    runtime: null,
+    'watch/providers': { results: {} },
+    addedAt: 1,
+  },
+  {
+    id: 2,
+    title: 'placeholder 2',
+    genres: [{ id: 18, name: 'Drama' }],
+    release_date: null,
+    overview: null,
+    poster_path: null,
+    vote_average: null,
+    runtime: null,
+    'watch/providers': { results: {} },
+    addedAt: 1019331,
+  },
+  {
+    id: 3,
+    title: 'placeholder 3',
+    genres: [{ id: 12, name: 'Adventure' }],
+    release_date: null,
+    overview: null,
+    poster_path: null,
+    vote_average: null,
+    runtime: null,
+    'watch/providers': { results: {} },
+    addedAt: 17100010,
+  },
+  {
+    id: 4,
+    title: 'what kind of awesome is this?',
+    genres: [{ id: 878, name: 'Science Fiction' }],
+    release_date: null,
+    overview: null,
+    poster_path: null,
+    vote_average: null,
+    runtime: null,
+    'watch/providers': { results: {} },
+    addedAt: 193813519,
+  },
 ];
-
-const emptyForm = { title: '', type: 'Movie', genre: '' };
 
 export default function Backlog() {
   const [items, setItems] = useState(initialItems);
-  const [form, setForm] = useState(emptyForm);
-  const [showForm, setShowForm] = useState(false);
   const [sortOrder, setSortOrder] = useState('latest');
 
   const sortedItems = [...items].sort((a, b) =>
     sortOrder === 'latest' ? b.addedAt - a.addedAt : a.addedAt - b.addedAt
   );
-
-  function handleAdd(e) {
-    e.preventDefault();
-    const newItem = {
-      id: Date.now(),
-      title: form.title,
-      type: form.type,
-      genre: form.genre,
-      addedAt: Date.now(),
-    };
-    setItems([...items, newItem]);
-    setForm(emptyForm);
-    setShowForm(false);
-  }
 
   function handleDelete(id) {
     setItems(items.filter((item) => item.id !== id));
@@ -53,62 +78,7 @@ export default function Backlog() {
           <option value="latest">Latest Added</option>
           <option value="oldest">First Added</option>
         </select>
-        <button
-          onClick={() => setShowForm((v) => !v)}
-          className="px-4 py-2 bg-black text-white text-sm font-bold border-2 border-black shadow-[4px_4px_0_#555] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
-        >
-          {showForm ? 'Cancel' : '+ Add'}
-        </button>
       </div>
-
-      {showForm && (
-        <form
-          onSubmit={handleAdd}
-          className="mb-6 flex gap-3 items-end border border-gray-200 rounded p-4"
-        >
-          <div className="flex flex-col gap-1">
-            <label className="text-xs text-gray-500">Title</label>
-            <input
-              className="border border-gray-300 rounded px-2 py-1 text-sm"
-              placeholder="Title"
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              required
-            />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-xs text-gray-500">Type</label>
-            <select
-              className="border border-gray-300 rounded px-2 py-1 text-sm"
-              value={form.type}
-              onChange={(e) => setForm({ ...form, type: e.target.value })}
-            >
-              {MEDIA_TYPES.map((t) => (
-                <option key={t}>{t}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-xs text-gray-500">Genre</label>
-            <input
-              className="border border-gray-300 rounded px-2 py-1 text-sm"
-              placeholder="Genre"
-              value={form.genre}
-              onChange={(e) => setForm({ ...form, genre: e.target.value })}
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="px-4 py-1.5 bg-black text-white text-sm font-bold border-2 border-black shadow-[4px_4px_0_#555] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
-          >
-            Add
-          </button>
-        </form>
-      )}
 
       {sortedItems.length > 0 && (
         <div className="w-2/3 mx-auto mb-6 flex gap-6">
@@ -124,7 +94,7 @@ export default function Backlog() {
             </p>
             <button
               onClick={() => handleDelete(sortedItems[0].id)}
-              className="w-fit px-4 py-1 bg-black text-white text-sm font-bold border-2 border-black shadow-[4px_4px_0_#555] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
+              className="w-fit px-4 py-1 bg-black text-white text-sm font-bold border-2 border-black shadow-[4px_4px_0_#555] hover:shadow-[6px_6px_0_#555] hover:-translate-x-0.5 hover:-translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
             >
               Remove
             </button>
@@ -133,14 +103,12 @@ export default function Backlog() {
       )}
 
       <div className="w-2/3 mx-auto grid grid-cols-4 gap-3">
-        {sortedItems.map((item) => (
+        {sortedItems.map((movie) => (
           <PosterCard
-            key={item.id}
-            movieId={item.id}
-            title={item.title}
-            image="/testposter.webp"
-            dateAdded={item.addedAt}
-            actions={[{ text: 'Remove', onClick: () => handleDelete(item.id) }]}
+            key={movie.id}
+            movie={movie}
+            dateAdded={movie.addedAt}
+            actions={[{ text: 'Remove', onClick: () => handleDelete(movie.id) }]}
           />
         ))}
       </div>

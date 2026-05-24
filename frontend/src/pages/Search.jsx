@@ -1,19 +1,20 @@
 import { useState } from 'react';
 import PosterCard from '../components/PosterCard';
 
-// Placeholder results — replaced by real API response
+// Placeholder results — replaced by real API response.
+// Shape mirrors a TMDB movie object.
 const PLACEHOLDER_RESULTS = [
-  { id: 101, title: 'Result 1' },
-  { id: 102, title: 'Result 2' },
-  { id: 103, title: 'Result 3' },
-  { id: 104, title: 'Result 4' },
-  { id: 105, title: 'Result 5' },
-  { id: 106, title: 'Result 6' },
+  { id: 101, title: 'Result 1', poster_path: null, genres: [], release_date: null, overview: null, vote_average: null, runtime: null, 'watch/providers': { results: {} } },
+  { id: 102, title: 'Result 2', poster_path: null, genres: [], release_date: null, overview: null, vote_average: null, runtime: null, 'watch/providers': { results: {} } },
+  { id: 103, title: 'Result 3', poster_path: null, genres: [], release_date: null, overview: null, vote_average: null, runtime: null, 'watch/providers': { results: {} } },
+  { id: 104, title: 'Result 4', poster_path: null, genres: [], release_date: null, overview: null, vote_average: null, runtime: null, 'watch/providers': { results: {} } },
+  { id: 105, title: 'Result 5', poster_path: null, genres: [], release_date: null, overview: null, vote_average: null, runtime: null, 'watch/providers': { results: {} } },
+  { id: 106, title: 'Result 6', poster_path: null, genres: [], release_date: null, overview: null, vote_average: null, runtime: null, 'watch/providers': { results: {} } },
 ];
 
 export default function Search() {
   const [title, setTitle]       = useState('');
-  const [genre, setGenre]         = useState('');
+  const [genre, setGenre]       = useState('');
   const [results, setResults]   = useState([]);
   const [searched, setSearched] = useState(false);
 
@@ -55,9 +56,10 @@ export default function Search() {
               className="flex-1 px-4 py-3 bg-[#1e2a38] text-white border-2 border-[#ede4c5] placeholder:text-gray-500 outline-none"
             />
           </div>
+
           <button
             type="submit"
-            className="self-start px-8 py-3 bg-[#ede4c5] text-black font-bold border-2 border-[#ede4c5] shadow-[4px_4px_0_black] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
+            className="self-start px-8 py-3 bg-[#ede4c5] text-black font-bold border-2 border-[#ede4c5] shadow-[4px_4px_0_black] hover:shadow-[6px_6px_0_black] hover:-translate-x-0.5 hover:-translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
           >
             Search
           </button>
@@ -67,22 +69,16 @@ export default function Search() {
         {/* Results */}
         {searched && (
           results.length > 0 ? (
-            <div>
-              <p className="text-[#ede4c5] text-sm font-bold mb-4 text-left">
-                {results.length} result{results.length !== 1 ? 's' : ''}
-              </p>
-              <div className="grid grid-cols-5 gap-6">
-                {results.map((item) => (
-                  <PosterCard
-                    key={item.id}
-                    movieId={item.id}
-                    title={item.title}
-                    actions={[
-                      { text: '+ Backlog', onClick: () => console.log('Add to backlog:', item.id) },
-                    ]}
-                  />
-                ))}
-              </div>
+            <div className="grid grid-cols-5 gap-6">
+              {results.map((movie) => (
+                <PosterCard
+                  key={movie.id}
+                  movie={movie}
+                  actions={[
+                    { text: '+ Backlog', onClick: () => console.log('Add to backlog:', movie.id) },
+                  ]}
+                />
+              ))}
             </div>
           ) : (
             <p className="text-gray-400 text-sm text-left">No results found.</p>
