@@ -6,7 +6,7 @@ const pool = require('../database.js');
 const { authenticateToken } = require('../middleware/tokens.js');
 
 // Search TV shows
-router.get('/api/shows/search', authenticateToken, async (req, res) => {
+router.get('/shows/search', authenticateToken, async (req, res) => {
   try {
 
     const { query, page } = req.query;
@@ -20,7 +20,7 @@ router.get('/api/shows/search', authenticateToken, async (req, res) => {
 });
 
 // Get popular shows
-router.get('/api/shows/popular', authenticateToken, async (req, res) => {
+router.get('/shows/popular', authenticateToken, async (req, res) => {
   try {
 
     const { page } = req.query;
@@ -33,7 +33,7 @@ router.get('/api/shows/popular', authenticateToken, async (req, res) => {
 });
 
 // Get trending shows
-router.get('/api/shows/trending', authenticateToken, async (req, res) => {
+router.get('/shows/trending', authenticateToken, async (req, res) => {
   try {
 
     const { timeWindow } = req.query;
@@ -46,7 +46,7 @@ router.get('/api/shows/trending', authenticateToken, async (req, res) => {
 });
 
 // Discover shows by genre
-router.get('/api/shows/discover', authenticateToken, async (req, res) => {
+router.get('/shows/discover', authenticateToken, async (req, res) => {
   try {
 
     const { genre_id, page } = req.query;
@@ -60,7 +60,7 @@ router.get('/api/shows/discover', authenticateToken, async (req, res) => {
 });
 
 // Get show details
-router.get('/api/shows/:id', authenticateToken, async (req, res) => {
+router.get('/shows/:id', authenticateToken, async (req, res) => {
   try {
 
     const { id } = req.params;
@@ -76,7 +76,7 @@ router.get('/api/shows/:id', authenticateToken, async (req, res) => {
 
 
 // Add show to backlog
-router.post('/api/shows/:id', authenticateToken, async (req, res) => {
+router.post('/shows/:id', authenticateToken, async (req, res) => {
   try {
     const uid = req.user.id;
     const movie_show_id = req.params.id;
@@ -93,7 +93,7 @@ router.post('/api/shows/:id', authenticateToken, async (req, res) => {
 })
 
 // Delete show from backlog
-router.delete('/api/shows/:id', authenticateToken, async (req, res) => {
+router.delete('/shows/:id', authenticateToken, async (req, res) => {
   try {
     const uid = req.user.id;
     const movie_show_id = req.params.id;
@@ -109,7 +109,7 @@ router.delete('/api/shows/:id', authenticateToken, async (req, res) => {
 });
 
 // Get watch status of a show
-router.get('/api/shows/:id/status', authenticateToken, async (req, res) => {
+router.get('/shows/:id/status', authenticateToken, async (req, res) => {
   try {
     const uid = req.user.id;
     const movie_show_id = req.params.id;
