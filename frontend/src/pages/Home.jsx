@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './Home.css';
 import MovieCarousel from '../components/MovieCarousel';
 
@@ -138,13 +139,27 @@ const backlog = [
   },
 ];
 
-const availableBacklog = backlog.filter(
-  (movie) => Object.keys(movie['watch/providers']?.results ?? {}).length > 0
-);
+const INITIAL_BACKLOG = backlog;
 
 export default function Home() {
+  const [backlogItems, setBacklogItems] = useState(INITIAL_BACKLOG);
+
+  const availableBacklog = backlogItems.filter(
+    (movie) => Object.keys(movie['watch/providers']?.results ?? {}).length > 0
+  );
+
   const recommended = availableBacklog
     .sort((a, b) => new Date(a.addedAt) - new Date(b.addedAt))[0];
+
+  // Placeholder — will call the backend
+  function handleWatched(id) {
+    setBacklogItems((prev) => prev.filter((m) => m.id !== id));
+  }
+
+  // Placeholder — will call the backend
+  function handleRemove(id) {
+    setBacklogItems((prev) => prev.filter((m) => m.id !== id));
+  }
 
   return (
     <main className="home-page">
@@ -179,11 +194,19 @@ export default function Home() {
       <section className="home-section">
         <MovieCarousel
           title="MY BACKLOG"
-          movies={backlog}
+          movies={backlogItems}
+          getActions={(movie) => [
+            { text: 'Watched', onClick: () => handleWatched(movie.id) },
+            { text: 'Remove',  onClick: () => handleRemove(movie.id)  },
+          ]}
         />
         <MovieCarousel
           title="Available on my streaming services"
           movies={availableBacklog}
+          getActions={(movie) => [
+            { text: 'Watched', onClick: () => handleWatched(movie.id) },
+            { text: 'Remove',  onClick: () => handleRemove(movie.id)  },
+          ]}
         />
       </section>
     </main>
