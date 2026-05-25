@@ -41,7 +41,8 @@ export default function Search() {
       }
 
       const data = await response.json();
-      setResults((data.results || []).map(mapMovie).filter(Boolean));
+      const mapped = (data.results || []).map(mapMovie).filter(Boolean);
+      setResults(searchMovies(mapped, '', genre));
       setSearched(true);
     } catch (searchError) {
       setResults([]);
