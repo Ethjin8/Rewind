@@ -6,7 +6,7 @@ const pool = require('../database.js');
 const { authenticateToken } = require('../middleware/tokens.js');
 
 // Get user's backlog sorted by date_added (default is desc, but you can switch to asc)
-router.get('/api/backlog/sorted', authenticateToken, async (req, res) => {
+router.get('/backlog/sorted', authenticateToken, async (req, res) => {
   try {
 
     const uid = req.user.id;
@@ -24,7 +24,7 @@ router.get('/api/backlog/sorted', authenticateToken, async (req, res) => {
 });
 
 // Get image URLs
-router.get('/api/configuration', authenticateToken, async (req, res) => {
+router.get('/configuration', authenticateToken, async (req, res) => {
   try {
 
     const config = await tmdbService.getConfiguration();

@@ -6,7 +6,7 @@ const pool = require('../database.js');
 const { authenticateToken } = require('../middleware/tokens.js');
 
 // Search movies
-router.get('/api/movies/search', authenticateToken, async (req, res) => {
+router.get('/movies/search', async (req, res) => {
   try {
 
     const { query, page } = req.query;
@@ -22,7 +22,7 @@ router.get('/api/movies/search', authenticateToken, async (req, res) => {
 });
 
 // Get popular movies
-router.get('/api/movies/popular', authenticateToken, async (req, res) => {
+router.get('/movies/popular', authenticateToken, async (req, res) => {
   try {
 
     const { page } = req.query;
@@ -37,7 +37,7 @@ router.get('/api/movies/popular', authenticateToken, async (req, res) => {
 });
 
 // Get trending movies
-router.get('/api/movies/trending', authenticateToken, async (req, res) => {
+router.get('/movies/trending', authenticateToken, async (req, res) => {
   try {
 
     const { timeWindow } = req.query;
@@ -52,7 +52,7 @@ router.get('/api/movies/trending', authenticateToken, async (req, res) => {
 });
 
 // Discover movies by genre via TMDB (for the Discover page)
-router.get('/api/movies/discover', authenticateToken, async (req, res) => {
+router.get('/movies/discover', authenticateToken, async (req, res) => {
   try {
 
     const { genre_id, page } = req.query;
@@ -66,7 +66,7 @@ router.get('/api/movies/discover', authenticateToken, async (req, res) => {
 });
 
 // Get movie details
-router.get('/api/movies/:id', authenticateToken, async (req, res) => {
+router.get('/movies/:id', async (req, res) => {
   try {
 
     const { id } = req.params;
@@ -81,7 +81,7 @@ router.get('/api/movies/:id', authenticateToken, async (req, res) => {
 // --------- Backlog ----------- //
 
 // Add movie to backlog
-router.post('/api/movies/:id', authenticateToken, async (req, res) => {
+router.post('/movies/:id', authenticateToken, async (req, res) => {
   try {
     const uid = req.user.id;
     const movie_show_id = req.params.id;
@@ -98,7 +98,7 @@ router.post('/api/movies/:id', authenticateToken, async (req, res) => {
 })
 
 // Delete movie from backlog
-router.delete('/api/movies/:id', authenticateToken, async (req, res) => {
+router.delete('/movies/:id', authenticateToken, async (req, res) => {
   try {
     const uid = req.user.id;
     const movie_show_id = req.params.id;
@@ -114,7 +114,7 @@ router.delete('/api/movies/:id', authenticateToken, async (req, res) => {
 })
 
 // Get watch status of a movie
-router.get('/api/movies/:id/status', authenticateToken, async (req, res) => {
+router.get('/movies/:id/status', authenticateToken, async (req, res) => {
   try {
     const uid = req.user.id;
     const movie_show_id = req.params.id;

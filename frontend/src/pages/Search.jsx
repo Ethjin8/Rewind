@@ -1,28 +1,54 @@
 import { useState } from 'react';
 import PosterCard from '../components/PosterCard';
+import mapMovie from '../lib/movieMapper';
 
-// Placeholder results — replaced by real API response.
-// Shape mirrors a TMDB movie object.
-const PLACEHOLDER_RESULTS = [
-  { id: 101, title: 'Result 1', poster_path: null, genres: [], release_date: null, overview: null, vote_average: null, runtime: null, 'watch/providers': { results: {} } },
-  { id: 102, title: 'Result 2', poster_path: null, genres: [], release_date: null, overview: null, vote_average: null, runtime: null, 'watch/providers': { results: {} } },
-  { id: 103, title: 'Result 3', poster_path: null, genres: [], release_date: null, overview: null, vote_average: null, runtime: null, 'watch/providers': { results: {} } },
-  { id: 104, title: 'Result 4', poster_path: null, genres: [], release_date: null, overview: null, vote_average: null, runtime: null, 'watch/providers': { results: {} } },
-  { id: 105, title: 'Result 5', poster_path: null, genres: [], release_date: null, overview: null, vote_average: null, runtime: null, 'watch/providers': { results: {} } },
-  { id: 106, title: 'Result 6', poster_path: null, genres: [], release_date: null, overview: null, vote_average: null, runtime: null, 'watch/providers': { results: {} } },
-];
+function searchMovies(movies, titleQuery, genreQuery) {
+  let results = movies;
+  if (titleQuery.trim()) {
+    const q = titleQuery.trim().toLowerCase();
+    results = results.filter((m) => m.title?.toLowerCase().includes(q));
+  }
+  if (genreQuery.trim()) {
+    const q = genreQuery.trim().toLowerCase();
+    results = results.filter((m) =>
+      m.genres?.some((g) => g.name.toLowerCase().includes(q))
+    );
+  }
+  return results;
+}
 
 export default function Search() {
   const [title, setTitle]       = useState('');
-  const [genre, setGenre]       = useState('');
+  const [genre, setGenre]         = useState('');
   const [results, setResults]   = useState([]);
   const [searched, setSearched] = useState(false);
+  const [error, setError] = useState('');
 
-  function handleSearch(e) {
+  async function handleSearch(e) {
     e.preventDefault();
-    // TODO: replace with real API call using title, genre
-    setResults(PLACEHOLDER_RESULTS);
-    setSearched(true);
+    setError('');
+
+    if (!title.trim()) {
+      setResults([]);
+      setSearched(true);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/movies/search?query=${encodeURIComponent(title.trim())}`);
+      if (!response.ok) {
+        throw new Error(`Search failed (${response.status})`);
+      }
+
+      const data = await response.json();
+      const mapped = (data.results || []).map(mapMovie).filter(Boolean);
+      setResults(searchMovies(mapped, '', genre));
+      setSearched(true);
+    } catch (searchError) {
+      setResults([]);
+      setSearched(true);
+      setError(searchError.message);
+    }
   }
 
   return (
@@ -52,7 +78,7 @@ export default function Search() {
             <input
               value={genre}
               onChange={(e) => setGenre(e.target.value)}
-              placeholder="action, adventure... "
+              placeholder="action, horror..."
               className="flex-1 px-4 py-3 bg-[#1e2a38] text-white border-2 border-[#ede4c5] placeholder:text-gray-500 outline-none"
             />
           </div>
@@ -68,17 +94,24 @@ export default function Search() {
 
         {/* Results */}
         {searched && (
-          results.length > 0 ? (
-            <div className="grid grid-cols-5 gap-6">
-              {results.map((movie) => (
-                <PosterCard
-                  key={movie.id}
-                  movie={movie}
-                  actions={[
-                    { text: '+ Backlog', onClick: () => console.log('Add to backlog:', movie.id) },
-                  ]}
-                />
-              ))}
+          error ? (
+            <p className="text-red-300 text-sm text-left">{error}</p>
+          ) : results.length > 0 ? (
+            <div>
+              <p className="text-[#ede4c5] text-sm font-bold mb-4 text-left">
+                {results.length} result{results.length !== 1 ? 's' : ''}
+              </p>
+              <div className="grid grid-cols-5 gap-6">
+                {results.map((item) => (
+                  <PosterCard
+                    key={item.id}
+                    movie={item.raw}
+                    actions={[
+                      { text: '+ Backlog', onClick: () => console.log('Add to backlog:', item.id) },
+                    ]}
+                  />
+                ))}
+              </div>
             </div>
           ) : (
             <p className="text-gray-400 text-sm text-left">No results found.</p>

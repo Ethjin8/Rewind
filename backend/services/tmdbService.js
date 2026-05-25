@@ -24,13 +24,24 @@ async function searchMovies(query, page = 1) {
 // Returns detailed information for one movie, including watch providers and keywords.
 async function getMovieDetails(movieId) {
   const data = await fetchTMDB(`/movie/${movieId}`, {
-    append_to_response: 'watch/providers,keywords'
+    append_to_response: 'watch/providers,keywords,credits,release_dates'
   });
 
   if (data['watch/providers']?.results) {
     data['watch/providers'].results = {
       US: data['watch/providers'].results.US
     };
+  }
+
+  // finding US movie ratings
+  const releases = data.release_dates?.results || [];
+  const usRelease = releases.find((r) => r.iso_3166_1 === 'US');
+  if (usRelease && Array.isArray(usRelease.release_dates) && usRelease.release_dates.length > 0) {
+    // pick the first non-empty certification
+    const cert = usRelease.release_dates.find((d) => d.certification && d.certification.trim());
+    data.certification = cert ? cert.certification : '';
+  } else {
+    data.certification = '';
   }
 
   return data;

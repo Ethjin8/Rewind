@@ -1,31 +1,58 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import mapMovie from '../lib/movieMapper';
 
-// Placeholder — replace with a real fetch to /api/movies/:id which returns a TMDB movie object.
 function useFetchMovie(id) {
-  return {
-    loading: false,
-    movie: {
-      id,
-      title: 'Movie Title',
-      release_date: '2024-01-01',
-      runtime: 135,
-      genres: [{ id: 878, name: 'Science Fiction' }],
-      overview: 'Synopsis will be populated from the API.',
-      poster_path: '/testposter.webp',
-      vote_average: null,
-      imdb_id: null,
-      'watch/providers': { results: {} },
-    },
-  };
+  const [movie, setMovie] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadMovie() {
+      try {
+        setLoading(true);
+        setError('');
+
+        const response = await fetch(`/api/movies/${id}`);
+        if (!response.ok) {
+          throw new Error(`Failed to load movie (${response.status})`);
+        }
+
+        const data = await response.json();
+        if (cancelled) return;
+
+        const normalized = mapMovie(data);
+        setMovie(normalized);
+      } catch (fetchError) {
+        if (!cancelled) {
+          setError(fetchError.message);
+          setMovie(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    if (id) {
+      loadMovie();
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  return { loading, movie, error };
 }
 
-// Placeholder
 function handleAddToBacklog(id) {
   console.log('Add to backlog:', id);
 }
 
-// Placeholder
 function handleAddToWatched(id) {
   console.log('Add to watched:', id);
 }
@@ -35,10 +62,12 @@ const TABS = ['Details', 'Cast', 'IMDB'];
 export default function MovieDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { loading, movie } = useFetchMovie(id);
+  const { loading, movie, error } = useFetchMovie(id);
   const [activeTab, setActiveTab] = useState('Details');
 
   if (loading) return <p className="p-6 text-white">Loading...</p>;
+  // error handling
+  if (error) return <p className="p-6 text-white">{error}</p>;
   if (!movie)  return <p className="p-6 text-white">Movie not found.</p>;
 
   return (
@@ -57,12 +86,16 @@ export default function MovieDetailsPage() {
         <div className="flex gap-8 mb-0">
 
           {/* Poster */}
-          {movie.poster_path && (
+          {movie.posterUrl ? (
             <img
-              src={movie.poster_path}
+              src={movie.posterUrl}
               alt={movie.title}
               className="w-52 shrink-0 object-cover border-2 border-white shadow-[12px_12px_0_rgba(0,0,0,0.5)]"
             />
+          ) : (
+            <div className="w-52 aspect-[2/3] shrink-0 object-cover border-2 border-white shadow-[12px_12px_0_rgba(0,0,0,0.5)] bg-black/30 flex items-center justify-center px-4 text-center text-sm text-[#ede4c5]">
+              No poster available
+            </div>
           )}
 
           {/* Info */}
@@ -74,20 +107,20 @@ export default function MovieDetailsPage() {
             {/* Detail chips */}
             <div className="flex flex-wrap gap-2">
               {[
-                movie.release_date,
-                movie.genres?.map(g => g.name).join(', '),
-                movie.vote_average,
-                movie.runtime,
-              ]
-                .filter((val) => val != null && val !== '')
-                .map((val) => (
+                { label: 'year', value: movie.year },
+                { label: 'cert', value: movie.certification || movie.rating || (movie.adult ? '18+' : '') },
+                { label: 'length', value: movie.length },
+                { label: 'genre', value: movie.genre },
+              ].map((item, idx) => (
+                item.value ? (
                   <span
-                    key={val}
+                    key={`${item.label}-${idx}`}
                     className="border-2 border-[#ede4c5] px-3 py-0.5 text-sm font-bold text-[#ede4c5] shadow-[3px_3px_0_rgba(0,0,0,0.4)]"
                   >
-                    {val}
+                    {item.value}
                   </span>
-                ))}
+                ) : null
+              ))}
             </div>
 
             <p className="text-sm leading-relaxed text-gray-300 max-w-md">
@@ -133,23 +166,42 @@ export default function MovieDetailsPage() {
           {/* Tab content */}
           <div className="border-2 border-t-0 border-[#ede4c5] p-6 bg-[#1e2a38] shadow-[6px_6px_0_rgba(0,0,0,0.4)]">
             {activeTab === 'Details' && (
-              <p className="text-sm text-gray-400">Details</p>
+              <div className="text-sm text-gray-300 space-y-3">
+                <p><strong>Status:</strong> {movie.status || 'Unknown'}</p>
+                <p><strong>Runtime:</strong> {movie.length}</p>
+                <p><strong>Genres:</strong> {movie.genre}</p>
+                <p><strong>Rating:</strong> {movie.certification || (movie.vote_average ? `${movie.vote_average} / 10` : 'N/A')}</p>
+                {movie.homepage && (
+                  <p><a href={movie.homepage} target="_blank" rel="noreferrer" className="underline">Official site</a></p>
+                )}
+                <p className="text-sm text-gray-400">{movie.synopsis}</p>
+              </div>
             )}
+
             {activeTab === 'Cast' && (
-              // Cast comes from a separate TMDB credits endpoint (/movie/:id/credits)
-              <p className="text-sm text-gray-400">Cast information</p>
+              <div className="text-sm text-gray-300">
+                {movie.credits?.cast?.length > 0 ? (
+                  <ul className="list-disc pl-5">
+                    {movie.credits.cast.slice(0, 12).map((c) => (
+                      <li key={c.id || c.cast_id} className="py-1">
+                        <strong>{c.name}</strong> as {c.character}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-400">No cast information available.</p>
+                )}
+              </div>
             )}
+
             {activeTab === 'IMDB' && (
-              movie.imdb_id
-                ? <a
-                    href={`https://www.imdb.com/title/${movie.imdb_id}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sm text-[#ede4c5] underline"
-                  >
-                    https://www.imdb.com/title/{movie.imdb_id}
-                  </a>
-                : <p className="text-sm text-gray-400">No IMDB link available.</p>
+              <div className="text-sm text-gray-300">
+                {movie.imdbUrl ? (
+                  <a href={movie.imdbUrl} target="_blank" rel="noreferrer" className="underline">Open on IMDB</a>
+                ) : (
+                  <p className="text-gray-400">No IMDB link available.</p>
+                )}
+              </div>
             )}
           </div>
         </div>
