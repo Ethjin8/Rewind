@@ -2,6 +2,21 @@ import { useState } from 'react';
 import PosterCard from '../components/PosterCard';
 import mapMovie from '../lib/movieMapper';
 
+function searchMovies(movies, titleQuery, genreQuery) {
+  let results = movies;
+  if (titleQuery.trim()) {
+    const q = titleQuery.trim().toLowerCase();
+    results = results.filter((m) => m.title?.toLowerCase().includes(q));
+  }
+  if (genreQuery.trim()) {
+    const q = genreQuery.trim().toLowerCase();
+    results = results.filter((m) =>
+      m.genres?.some((g) => g.name.toLowerCase().includes(q))
+    );
+  }
+  return results;
+}
+
 export default function Search() {
   const [title, setTitle]       = useState('');
   const [genre, setGenre]         = useState('');
@@ -62,13 +77,14 @@ export default function Search() {
             <input
               value={genre}
               onChange={(e) => setGenre(e.target.value)}
-              placeholder="action, adventure... "
+              placeholder="action, horror..."
               className="flex-1 px-4 py-3 bg-[#1e2a38] text-white border-2 border-[#ede4c5] placeholder:text-gray-500 outline-none"
             />
           </div>
+
           <button
             type="submit"
-            className="self-start px-8 py-3 bg-[#ede4c5] text-black font-bold border-2 border-[#ede4c5] shadow-[4px_4px_0_black] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
+            className="self-start px-8 py-3 bg-[#ede4c5] text-black font-bold border-2 border-[#ede4c5] shadow-[4px_4px_0_black] hover:shadow-[6px_6px_0_black] hover:-translate-x-0.5 hover:-translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
           >
             Search
           </button>

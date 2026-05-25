@@ -9,7 +9,7 @@ import WatchHistory from './pages/WatchHistory';
 import Account     from './pages/Account';
 import Login       from './pages/Login';
 import Register    from './pages/Register';
-import MovieDetail from './pages/MovieDetail';
+import MovieDetailsPage from './pages/MovieDetailsPage';
 
 export default function App() {
   return (
@@ -23,7 +23,7 @@ export default function App() {
         <Route path="/account"    element={<Account />} />
         <Route path="/login"      element={<Login />} />
         <Route path="/register"   element={<Register />} />
-        <Route path="/movie/:id"  element={<MovieDetail />} />
+        <Route path="/movie/:id"  element={<MovieDetailsPage />} />
       </Routes>
     </BrowserRouter>
   );

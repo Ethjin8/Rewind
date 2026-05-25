@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import PosterCard from '../components/PosterCard';
 
+// Placeholder data — replace with real API responses from the backend.
+// Shape mirrors a TMDB movie object. watchedAt is app-specific (Unix ms timestamp).
 const initialItems = [
-  { id: 1, title: 'placeholder 1', type: 'Movie',   genre: 'Sci-Fi',  watchedAt: 1704844800000 },
-  { id: 2, title: 'placeholder 2', type: 'TV Show', genre: 'Drama',   watchedAt: 1706918400000 },
-  { id: 3, title: 'placeholder 3', type: 'Game',    genre: 'RPG',     watchedAt: 1710460800000 },
-  { id: 4, title: 'placeholder 4', type: 'Book',    genre: 'Sci-Fi',  watchedAt: 1713744000000 },
-  { id: 5, title: 'placeholder 5', type: 'Movie',   genre: 'Horror',  watchedAt: 1716326400000 },
-  { id: 6, title: 'placeholder 6', type: 'TV Show', genre: 'Comedy',  watchedAt: 1719004800000 },
-  { id: 7, title: 'placeholder 7', type: 'Game',    genre: 'Action',  watchedAt: 1721683200000 },
-  { id: 8, title: 'placeholder 8', type: 'Book',    genre: 'Fantasy', watchedAt: 1724352000000 },
+  { id: 1, title: 'placeholder 1', genres: [{ id: 878, name: 'Science Fiction' }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1704844800000 },
+  { id: 2, title: 'placeholder 2', genres: [{ id: 18,  name: 'Drama'           }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1706918400000 },
+  { id: 3, title: 'placeholder 3', genres: [{ id: 12,  name: 'Adventure'       }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1710460800000 },
+  { id: 4, title: 'placeholder 4', genres: [{ id: 878, name: 'Science Fiction' }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1713744000000 },
+  { id: 5, title: 'placeholder 5', genres: [{ id: 27,  name: 'Horror'          }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1716326400000 },
+  { id: 6, title: 'placeholder 6', genres: [{ id: 35,  name: 'Comedy'          }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1719004800000 },
+  { id: 7, title: 'placeholder 7', genres: [{ id: 28,  name: 'Action'          }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1721683200000 },
+  { id: 8, title: 'placeholder 8', genres: [{ id: 14,  name: 'Fantasy'         }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1724352000000 },
 ];
 
 // Groups an already-sorted array into [{ label, items }] by month or year.
@@ -98,9 +100,7 @@ export default function WatchHistory() {
               {groupItems.map((item) => (
                 <PosterCard
                   key={item.id}
-                  movieId={item.id}
-                  title={item.title}
-                  image="/testposter.webp"
+                  movie={item}
                   dateAdded={item.watchedAt}
                   actions={[
                     { text: 'Move to Backlog', onClick: () => handleMoveToBacklog(item.id) },

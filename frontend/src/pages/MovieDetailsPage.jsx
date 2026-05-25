@@ -59,7 +59,7 @@ function handleAddToWatched(id) {
 
 const TABS = ['Details', 'Cast', 'IMDB'];
 
-export default function MovieDetail() {
+export default function MovieDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { loading, movie, error } = useFetchMovie(id);
@@ -77,7 +77,7 @@ export default function MovieDetail() {
         {/* Back button */}
         <button
           onClick={() => navigate(-1)}
-          className="mb-6 flex items-center gap-2 font-bold border-2 border-[#ede4c5] px-3 py-1 text-[#ede4c5] shadow-[4px_4px_0_#ede4c5] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all bg-transparent"
+          className="mb-6 flex items-center gap-2 font-bold border-2 border-[#ede4c5] px-3 py-1 text-[#ede4c5] shadow-[4px_4px_0_#ede4c5] hover:shadow-[6px_6px_0_#ede4c5] hover:-translate-x-0.5 hover:-translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all bg-transparent"
         >
           ← Back
         </button>
@@ -124,20 +124,20 @@ export default function MovieDetail() {
             </div>
 
             <p className="text-sm leading-relaxed text-gray-300 max-w-md">
-              {movie.synopsis}
+              {movie.overview}
             </p>
 
             {/* Action buttons */}
             <div className="flex gap-3 mt-auto">
               <button
                 onClick={() => handleAddToBacklog(movie.id)}
-                className="px-5 py-2 bg-[#ede4c5] text-black font-bold border-2 border-[#ede4c5] shadow-[4px_4px_0_rgba(0,0,0,0.5)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
+                className="px-5 py-2 bg-[#ede4c5] text-black font-bold border-2 border-[#ede4c5] shadow-[4px_4px_0_rgba(0,0,0,0.5)] hover:shadow-[6px_6px_0_rgba(0,0,0,0.5)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
               >
                 + Backlog
               </button>
               <button
                 onClick={() => handleAddToWatched(movie.id)}
-                className="px-5 py-2 bg-transparent text-[#ede4c5] font-bold border-2 border-[#ede4c5] shadow-[4px_4px_0_rgba(0,0,0,0.5)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 active:bg-[#ede4c5] active:text-black transition-all"
+                className="px-5 py-2 bg-transparent text-[#ede4c5] font-bold border-2 border-[#ede4c5] shadow-[4px_4px_0_rgba(0,0,0,0.5)] hover:shadow-[6px_6px_0_rgba(0,0,0,0.5)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1 active:bg-[#ede4c5] active:text-black transition-all"
               >
                 ✓ Watched
               </button>
@@ -152,7 +152,7 @@ export default function MovieDetail() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-2 font-bold border-2 border-b-0 text-sm transition-colors -mb-[2px]
+                className={`px-6 py-2 font-bold border-2 border-b-0 text-sm -mb-[2px] transition-all hover:-translate-y-0.5 active:translate-y-0.5
                   ${activeTab === tab
                     ? 'bg-[#ede4c5] text-black border-[#ede4c5]'
                     : 'bg-transparent text-[#ede4c5] border-[#ede4c5] hover:bg-white/10'

@@ -2,12 +2,9 @@ import { Link, useLocation } from 'react-router-dom';
 
 const pages = [
   { label: 'Home',         path: '/' },
-  { label: 'Search',       path: '/search' },
-  { label: 'Backlog',      path: '/backlog' },
+  { label: 'Explore',      path: '/search' },
   { label: 'Watch History',path: '/history' },
   { label: 'Account',      path: '/account' },
-  { label: 'Login',        path: '/login' },
-  { label: 'Register',     path: '/register' },
 ];
 
 export default function Nav() {
