@@ -105,9 +105,7 @@ export default function Search() {
                 {results.map((item) => (
                   <PosterCard
                     key={item.id}
-                    movieId={item.id}
-                    title={item.title}
-                    image={item.posterUrl || undefined}
+                    movie={item.raw}
                     actions={[
                       { text: '+ Backlog', onClick: () => console.log('Add to backlog:', item.id) },
                     ]}
