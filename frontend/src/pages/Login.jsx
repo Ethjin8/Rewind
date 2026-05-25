@@ -12,40 +12,44 @@ export default function Login() {
   }
 
   return (
-    <div className="auth-page flex-col items-start mt-16">
-      <h1>LOG IN</h1>
+    <div className="login-split">
+      <section className="auth-page flex flex-col items-start mt-16">
+        <h1>LOG IN</h1>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col items-start">
+            <label>Username</label>
+            <input
+              id="username"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="p-2 border"
+            />
+          </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex flex-col items-start">
-          <label>Username</label>
-          <input
-            id="username"
-            placeholder="Enter your username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            className="p-2 border"
-          />
-        </div>
+          <div className="flex flex-col items-start">
+            <label>Password</label>
+            <input
+              id="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="p-2 border"
+            />
+          </div>
 
-        <div className="flex flex-col items-start">
-          <label>Password</label>
-          <input
-            id="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="p-2 border"
-          />
-        </div>
+          <button className="text-white">Log In</button>
+        </form>
 
-        <button className="text-white">Log In</button>
-      </form>
-
-      <p>
-        Don't have an account? <a href="/register" className="link underline">Sign up</a>
-      </p>
+        <p>
+          Don't have an account? <a href="/register" className="link underline">Sign up</a>
+        </p>
+      </section>
+      <section className="auth-image">
+          <img src="/login-image.png" alt="Login"/>
+      </section>
     </div>
   );
 }
