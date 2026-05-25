@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Akt:wght@100..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
 
+.left-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
 .login-split {
     display: grid;
@@ -20,10 +26,6 @@
     background-color: #EDE4C5;
     padding: 2rem;
     box-shadow: 20px 20px 0px #000000;
-    align-self: center;
-    align-items: center;
-    justify-self: center;
-    display: flex;
     font-family: "Saira", sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;   /* 100 ~ 900 */
@@ -120,10 +122,17 @@
     align-items: center;
     justify-content: center;
     gap: 2rem;
+    font-family: 'Saira', sans-serif;
+    text-transform: uppercase;
+
 }
 
+.auth-null p {
+    font-size: 20px;
+    font-weight: 400;
+    color: #EDE4C5;
+}
 .auth-null h1 {
-    font-family:'Saira', sans-serif;
     width: 350px;
     font-weight: 700;
     font-size: 85px;
@@ -150,4 +159,18 @@
     background-color: #EDE4C5;
     color: #000000;
     border: 2px solid #000000;
+}
+
+.back-button {
+    padding: 0.75rem;
+    height: 3.5rem;
+    width: 20rem;
+    border: 2px solid #ffffff;
+    background-color: #0A1628;
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 25px;
+    font-weight: 600;
+    box-shadow: 4px 4px 0 #000000;
+    text-transform: uppercase;
 }

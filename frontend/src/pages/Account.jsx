@@ -6,6 +6,7 @@ export default function Account() {
 
   return (
     <div className="login-split">
+      <section className="left-side">
         {!view && (
           <>
             <div className="auth-null"> 
@@ -20,6 +21,12 @@ export default function Account() {
           </>
         )}
 
+      {view && (
+        <button onClick={() => setView(null)} className="back-button flex-col items-center mt-4">
+          Back
+        </button>
+      )}
+
       {view === 'login' && (
         <LoginView onSwitch={() => setView('register')} />
       )}
@@ -27,11 +34,7 @@ export default function Account() {
       {view === 'register' && (
         <RegisterView onSwitch={() => setView('login')} />
        )}
-
-      {view && (
-        <button onClick={() => setView(null)} className="auth-page absolute top-4 right-4 text-sm underline">Back</button>
-      )}
-
+      </section>
       <section className="auth-image">
           <img src="/login-image.png" alt="Login"/>
       </section>
