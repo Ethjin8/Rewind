@@ -6,14 +6,16 @@ export default function Account() {
 
   return (
     <div className="login-split">
-      <section className={`auth-page ${view ? 'auth-page-active' : ''}`}>
         {!view && (
           <>
+            <div className="auth-null"> 
             <h1>REWIND</h1>
+            <p>Keep track of your backlong</p>
 
             <div className='auth-options'>
               <button onClick={() => setView('login')} className="bg-blue-400 text-white p-2">Log In</button>
               <button onClick={() => setView('register')} className="bg-green-400 text-white p-2">Sign Up</button>
+            </div>
             </div>
           </>
         )}
@@ -27,9 +29,8 @@ export default function Account() {
        )}
 
       {view && (
-        <button onClick={() => setView(null)} className="absolute top-4 right-4 text-sm underline">Back</button>
+        <button onClick={() => setView(null)} className="auth-page absolute top-4 right-4 text-sm underline">Back</button>
       )}
-      </section>
 
       <section className="auth-image">
           <img src="/login-image.png" alt="Login"/>
