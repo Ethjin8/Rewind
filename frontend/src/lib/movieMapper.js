@@ -1,0 +1,34 @@
+// Normalize a TMDB movie object into the minimal shape the frontend uses.
+export function mapMovie(raw) {
+  if (!raw) return null;
+
+  const posterUrl = raw.poster_path ? `https://image.tmdb.org/t/p/w500${raw.poster_path}` : null;
+  const backdropUrl = raw.backdrop_path ? `https://image.tmdb.org/t/p/w1280${raw.backdrop_path}` : null;
+  const year = raw.release_date ? raw.release_date.slice(0, 4) : null;
+  const length = raw.runtime ? `${Math.floor(raw.runtime / 60)}h ${raw.runtime % 60}m` : null;
+  const genre = raw.genres ? raw.genres.map((g) => g.name).join(', ') : null;
+  const imdbUrl = raw.imdb_id ? `https://www.imdb.com/title/${raw.imdb_id}` : null;
+  const certification = raw.certification || '';
+
+  return {
+    id: raw.id,
+    title: raw.title || raw.name,
+    year,
+    length,
+    genre,
+    synopsis: raw.overview || '',
+    posterUrl,
+    backdropUrl,
+    imdbUrl,
+    credits: raw.credits || null,
+    watchProviders: raw['watch/providers'] || null,
+    vote_average: raw.vote_average || null,
+    status: raw.status || null,
+    homepage: raw.homepage || null,
+    certification,
+    adult: !!raw.adult,
+    raw,
+  };
+}
+
+export default mapMovie;
