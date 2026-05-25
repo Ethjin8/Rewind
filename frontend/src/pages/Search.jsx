@@ -1,27 +1,38 @@
 import { useState } from 'react';
 import PosterCard from '../components/PosterCard';
-
-// Placeholder results — replaced by real API response
-const PLACEHOLDER_RESULTS = [
-  { id: 101, title: 'Result 1' },
-  { id: 102, title: 'Result 2' },
-  { id: 103, title: 'Result 3' },
-  { id: 104, title: 'Result 4' },
-  { id: 105, title: 'Result 5' },
-  { id: 106, title: 'Result 6' },
-];
+import mapMovie from '../lib/movieMapper';
 
 export default function Search() {
   const [title, setTitle]       = useState('');
   const [genre, setGenre]         = useState('');
   const [results, setResults]   = useState([]);
   const [searched, setSearched] = useState(false);
+  const [error, setError] = useState('');
 
-  function handleSearch(e) {
+  async function handleSearch(e) {
     e.preventDefault();
-    // TODO: replace with real API call using title, genre
-    setResults(PLACEHOLDER_RESULTS);
-    setSearched(true);
+    setError('');
+
+    if (!title.trim()) {
+      setResults([]);
+      setSearched(true);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/movies/search?query=${encodeURIComponent(title.trim())}`);
+      if (!response.ok) {
+        throw new Error(`Search failed (${response.status})`);
+      }
+
+      const data = await response.json();
+      setResults((data.results || []).map(mapMovie).filter(Boolean));
+      setSearched(true);
+    } catch (searchError) {
+      setResults([]);
+      setSearched(true);
+      setError(searchError.message);
+    }
   }
 
   return (
@@ -66,7 +77,9 @@ export default function Search() {
 
         {/* Results */}
         {searched && (
-          results.length > 0 ? (
+          error ? (
+            <p className="text-red-300 text-sm text-left">{error}</p>
+          ) : results.length > 0 ? (
             <div>
               <p className="text-[#ede4c5] text-sm font-bold mb-4 text-left">
                 {results.length} result{results.length !== 1 ? 's' : ''}
@@ -77,6 +90,7 @@ export default function Search() {
                     key={item.id}
                     movieId={item.id}
                     title={item.title}
+                    image={item.posterUrl || undefined}
                     actions={[
                       { text: '+ Backlog', onClick: () => console.log('Add to backlog:', item.id) },
                     ]}
