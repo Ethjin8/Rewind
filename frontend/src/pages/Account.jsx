@@ -11,7 +11,7 @@ export default function Account() {
           <>
             <div className="auth-null"> 
             <h1>REWIND</h1>
-            <p>Keep track of your backlong</p>
+            <p>Keep track of your backlog</p>
 
             <div className='auth-options'>
               <button onClick={() => setView('login')} className="bg-blue-400 text-white p-2">Log In</button>
