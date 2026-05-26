@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Auth.css';
+import loginImage from '../assets/login-image.png';
 
 export default function Landing() {
   const [view, setView] = useState(null); // 'login' | 'register'
@@ -8,12 +9,13 @@ export default function Landing() {
 
   return (
     <div className="login-split">
-      <section className="left-side">
+      <section className="left-side auth-expander">
         {!view && (
           <>
             <div className="auth-null"> 
             <h1>REWIND</h1>
-            <p>Press play on the past</p>
+            <p>_____</p>
+            <p>Press Play on the Past</p>
 
             <div className='auth-options'>
               <button onClick={() => setView('login')} className="bg-blue-400 text-white p-2">Log In</button>
@@ -41,7 +43,7 @@ export default function Landing() {
        )}
       </section>
       <section className="auth-image">
-          <img src="/login-image.png" alt="Login"/>
+          <img src={loginImage} alt="Login"/>
       </section>
     </div>
   );
