@@ -18,6 +18,14 @@
   align-items: stretch;
   font-weight: 900;
 }
+
+.recommended-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+
 .recommended-text h1 {
   font-size: 5rem;
   font-weight: 800;

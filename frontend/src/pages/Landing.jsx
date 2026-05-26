@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import './Auth.css';
+import loginImage from '../assets/login-image.png';
 
 export default function Landing() {
   const [view, setView] = useState(null); // 'login' | 'register'
 
   return (
     <div className="login-split">
-      <section className="left-side">
+      <section className="left-side auth-expander">
         {!view && (
           <>
             <div className="auth-null"> 
             <h1>REWIND</h1>
+            <p>_____</p>
             <p>Keep track of your backlog</p>
 
             <div className='auth-options'>
@@ -36,7 +38,7 @@ export default function Landing() {
        )}
       </section>
       <section className="auth-image">
-          <img src="/login-image.png" alt="Login"/>
+          <img src={loginImage} alt="Login"/>
       </section>
     </div>
   );
