@@ -7,6 +7,7 @@ import Home        from './pages/Home';
 import Search      from './pages/Search';
 import WatchHistory from './pages/WatchHistory';
 import MovieDetailsPage from './pages/MovieDetailsPage';
+import Profile     from './pages/Profile';
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -20,6 +21,7 @@ function AppContent() {
         <Route path="/search"     element={<Search />} />
         <Route path="/history"    element={<WatchHistory />} />
         <Route path="/movie/:id"  element={<MovieDetailsPage />} />
+        <Route path="/profile"   element={<Profile />} />
       </Routes>
     </>
   );
