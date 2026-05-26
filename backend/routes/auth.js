@@ -44,7 +44,7 @@ router.post('/login', async (req, res) => {
       res.json({ accessToken: accessToken, refreshToken: refreshToken });
     }
     else {
-      res.send("Not allowed")
+      res.status(401).send("Incorrect password")
     }
   } catch (err) {
     res.status(500).send({ error: err.message });

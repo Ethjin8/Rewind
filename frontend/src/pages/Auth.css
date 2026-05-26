@@ -182,19 +182,56 @@
     text-transform: uppercase;
 }
 
-.auth-null,
-.auth-page {
-  animation: authFadeIn 0.25s ease;
+.success-message {
+    font-family: 'Saira', sans-serif;
+    font-weight: 600;
+    color: #2e7d32;
+    background-color: #e8f5e9;
+    border: 2px solid #2e7d32;
+    box-shadow: 3px 3px 0 #000000;
+    padding: 0.6rem 1.2rem;
+    width: 350px;
+    text-align: center;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    animation: fadeOut 4s forwards;
 }
 
-@keyframes authFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
+.error-message {
+    font-family: 'Saira', sans-serif;
+    font-weight: 600;
+    color: #c62828;
+    background-color: #ffebee;
+    border: 2px solid #c62828;
+    box-shadow: 3px 3px 0 #000000;
+    padding: 0.6rem 1.2rem;
+    width: 350px;
+    text-align: center;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    animation: fadeOut 4s forwards;
+}
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.toast-message {
+    position: fixed;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: auto;
+    margin-bottom: 0;
+    animation: toastFade 4s forwards;
+}
+
+@keyframes toastFade {
+    0%   { opacity: 1; }
+    75%  { opacity: 1; }
+    100% { opacity: 0; pointer-events: none; }
+}
+
+@keyframes fadeOut {
+    0%   { opacity: 1; max-height: 100px; margin-bottom: 1rem; padding: 0.6rem 1.2rem; }
+    70%  { opacity: 1; max-height: 100px; margin-bottom: 1rem; padding: 0.6rem 1.2rem; }
+    90%  { opacity: 0; max-height: 100px; margin-bottom: 1rem; padding: 0.6rem 1.2rem; }
+    100% { opacity: 0; max-height: 0; margin-bottom: 0; padding: 0; border-width: 0; }
 }
