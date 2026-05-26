@@ -13,7 +13,7 @@ export default function Landing() {
             <div className="auth-null"> 
             <h1>REWIND</h1>
             <p>_____</p>
-            <p>Keep track of your backlog</p>
+            <p>Press Play on the Past</p>
 
             <div className='auth-options'>
               <button onClick={() => setView('login')} className="bg-blue-400 text-white p-2">Log In</button>
