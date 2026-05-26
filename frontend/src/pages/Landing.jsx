@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import './Login.css';
+import './Auth.css';
 
-export default function Account() {
+export default function Landing() {
   const [view, setView] = useState(null); // 'login' | 'register'
 
   return (
@@ -11,7 +11,7 @@ export default function Account() {
           <>
             <div className="auth-null"> 
             <h1>REWIND</h1>
-            <p>Keep track of your backlong</p>
+            <p>Press play on the past</p>
 
             <div className='auth-options'>
               <button onClick={() => setView('login')} className="bg-blue-400 text-white p-2">Log In</button>
@@ -83,7 +83,7 @@ function LoginView({ onSwitch }) {
         </form>
 
         <p>
-          Don't have an account? <a href="/register" className="link underline">Sign up</a>
+          Don't have an account? <a href="/register" onClick={(e) => { e.preventDefault(); onSwitch(); }} className="link underline">Sign up</a>
         </p>
       </section>
   );
