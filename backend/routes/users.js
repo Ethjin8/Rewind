@@ -46,6 +46,21 @@ router.get('/streaming', authenticateToken, async (req, res) => {
   }
 })
 
+router.delete('/streaming', authenticateToken, async (req, res) => {
+  try {
+    const uid = req.user.id;
+    const streamingService = req.body.streaming;
+
+    const [result] = await pool.query(`
+      DELETE FROM streaming_services WHERE user_id = ? AND streaming_service = ?
+    `, [uid, streamingService]);
+
+    res.json(result);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+})
+
 // Endpoint to add streaming services to user profile
 router.post('/streaming', authenticateToken, async (req, res) => {
   try {
