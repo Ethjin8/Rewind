@@ -97,7 +97,7 @@ export default function WatchHistory() {
             </div>
 
             {/* Cards for this month */}
-            <div className="grid grid-cols-5 gap-6 p-4">
+            <div className="watch-history-grid">
               {groupItems.map((item) => (
                 <PosterCard
                   key={item.id}

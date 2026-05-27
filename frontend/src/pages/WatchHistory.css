@@ -4,3 +4,9 @@
     color: #EDE4C5;
 }
 
+.watch-history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 170px);
+  gap: 50px;
+  justify-content: start;   
+}
