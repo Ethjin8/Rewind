@@ -23,6 +23,27 @@ router.get('/backlog/sorted', authenticateToken, async (req, res) => {
   }
 });
 
+router.patch('/backlog/status/:id', authenticateToken, async (req, res) => {
+  try {
+    const movie_show_id = req.params.id;
+    const uid = req.user.id;
+    const newStatus = req.body.status;
+
+    const [result] = await pool.query(
+      `UPDATE movies_shows SET status = ? WHERE movie_show_id = ? AND user_id = ?`,
+      [newStatus, movie_show_id, uid]);
+    
+    if (result.affectedRows === 0) {
+      res.status(404).json({ error: "Movie not found in backlog" });
+      return;
+    }
+    
+    res.status(200).json({ message: "Status updated "});
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Get image URLs
 router.get('/configuration', authenticateToken, async (req, res) => {
   try {

@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import './Home.css';
+import '../pages/Auth.css';
 import MovieCarousel from '../components/MovieCarousel';
 
 // Placeholder data — replace with real API responses from the backend.
@@ -142,6 +144,8 @@ const backlog = [
 const INITIAL_BACKLOG = backlog;
 
 export default function Home() {
+  const location = useLocation();
+  const loginMsg = location.state?.message;
   const [backlogItems, setBacklogItems] = useState(INITIAL_BACKLOG);
 
   const availableBacklog = backlogItems.filter(
@@ -163,6 +167,7 @@ export default function Home() {
 
   return (
     <main className="home-page">
+      {loginMsg && <p className="toast-message success-message">{loginMsg}</p>}
       {recommended && (
         <section className="recommended-hero">
           <div className="recommended-text">
