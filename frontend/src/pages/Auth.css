@@ -1,10 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Akt:wght@100..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Akt:wght@100..900&family=Bebas+Neue&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Raleway:ital,wght@0,100..900;1,100..900&family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
 
 .left-side {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    background: linear-gradient(180deg, #2D4675,#0A1628);
 }
 
 .login-split {
@@ -137,15 +139,16 @@
     font-size: 20px;
     font-weight: 400;
     color: #EDE4C5;
+    
 }
 .auth-null h1 {
     width: 350px;
     font-weight: 700;
-    font-size: 85px;
+    font-size: 120px;
     color:#ede4c5;
-    transform: scaleY(1.6);
     letter-spacing: 0.25rem;
     text-shadow: 0px 0px 100px #000000;
+    font-family: "Bebas Neue", cursive;
 }
 
 .auth-options button {
@@ -153,7 +156,7 @@
     height: 3.5rem;
     width: 20rem;
     border: 2px solid #ffffff;
-    background-color: #0A1628;
+    background: #0A1628;
     color: #ffffff;
     font-weight: 500;
     font-size: 25px;
