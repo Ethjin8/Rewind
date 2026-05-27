@@ -23,7 +23,10 @@ router.post('/users', async (req, res) => {
     await addUser(userName, hashedPassword);
     res.status(201).json("Created a new user!");
   } catch(err) {
-    res.json({ error: err.message });
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.status(409).json({ error: 'Username already taken.' });
+    }
+    res.status(500).json({ error: err.message });
   }
 })
 
