@@ -64,6 +64,7 @@ export default function MovieDetailsPage() {
   const navigate = useNavigate();
   const { loading, movie, error } = useFetchMovie(id);
   const [activeTab, setActiveTab] = useState('Details');
+  const [watchStatus, setWatchStatus] = useState('not_started');
 
   if (loading) return <p className="p-6 text-white">Loading...</p>;
   // error handling
