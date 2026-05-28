@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import PosterCard from '../components/PosterCard';
 import mapMovie from '../lib/movieMapper';
+import { authFetch } from '../lib/authFetch';
 
 function searchMovies(movies, titleQuery, genreQuery) {
   let results = movies;
@@ -51,6 +52,7 @@ export default function Search() {
     }
   }
 
+  async function handleAddToBacklog(id) {
   return (
     <div className="min-h-screen bg-[#273445] font-['Saira'] px-6 py-10">
       <div className="max-w-4xl mx-auto">
@@ -101,7 +103,6 @@ export default function Search() {
               <p className="text-[#ede4c5] text-sm font-bold mb-4 text-left">
                 {results.length} result{results.length !== 1 ? 's' : ''}
               </p>
-              <div className="grid grid-cols-5 gap-6">
                 {results.map((item) => (
                   <PosterCard
                     key={item.id}
@@ -122,3 +123,4 @@ export default function Search() {
     </div>
   );
 }
+
