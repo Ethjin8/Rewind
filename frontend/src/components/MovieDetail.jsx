@@ -1,4 +1,3 @@
-// E: Movie Detail - Backlog/status toggles and backend wiring
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { authFetch } from '../lib/authFetch';
