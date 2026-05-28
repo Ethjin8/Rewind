@@ -119,8 +119,12 @@ export default function MovieDetail({ movie, onClose, actions = [] }) {
                 ))
               : (
                 <>
-                  <button type="button">+ BACKLOG</button>
-                  <button type="button">✓ WATCHED</button>
+                  <button type="button" data-testid="modal-backlog-toggle" onClick={() => toggleBacklog()} aria-pressed={inBacklog}>
+                    {inBacklog ? 'In Backlog' : '+ BACKLOG'}
+                  </button>
+                  <button type="button" data-testid="modal-watch-toggle" onClick={() => toggleWatched()} aria-pressed={watchStatus === 'completed'}>
+                    {watchStatus === 'completed' ? 'Finished' : '✓ WATCHED'}
+                  </button>
                 </>
               )
             }
