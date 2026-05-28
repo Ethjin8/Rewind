@@ -53,6 +53,18 @@ export default function Search() {
   }
 
   async function handleAddToBacklog(id) {
+    // optimistic UI: mark as added immediately
+    setResults((prev) => prev.map((r) => (r.id === id ? { ...r, inBacklog: true } : r)));
+    try {
+      const res = await authFetch(`/api/movies/${id}`, { method: 'POST' });
+      if (!res.ok) throw new Error('Failed to add to backlog');
+    } catch (err) {
+      // rollback
+      setResults((prev) => prev.map((r) => (r.id === id ? { ...r, inBacklog: false } : r)));
+      alert(err.message || 'Failed to add to backlog');
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#273445] font-['Saira'] px-6 py-10">
       <div className="max-w-4xl mx-auto">
@@ -103,16 +115,21 @@ export default function Search() {
               <p className="text-[#ede4c5] text-sm font-bold mb-4 text-left">
                 {results.length} result{results.length !== 1 ? 's' : ''}
               </p>
-                {results.map((item) => (
-                  <PosterCard
-                    key={item.id}
-                    movie={item.raw}
-                    actions={[
-                      { text: '+ Backlog', onClick: () => console.log('Add to backlog:', item.id) },
-                    ]}
-                  />
-                ))}
-              </div>
+                      <div className="grid grid-cols-5 gap-6">
+                        {results.map((item) => (
+                          <PosterCard
+                            key={item.id}
+                            movie={item.raw}
+                            actions={[
+                              {
+                                text: item.inBacklog ? 'Added' : '+ Backlog',
+                                added: !!item.inBacklog,
+                                onClick: () => !item.inBacklog && handleAddToBacklog(item.id),
+                              },
+                            ]}
+                          />
+                        ))}
+                      </div>
             </div>
           ) : (
             <p className="text-gray-400 text-sm text-left">No results found.</p>
@@ -124,3 +141,16 @@ export default function Search() {
   );
 }
 
+async function handleAddToBacklog(id) {
+  try {
+    const res = await authFetch(`/api/movies/${id}`, { method: 'POST' });
+    if (!res.ok) throw new Error('Failed to add to backlog');
+    // Optimistically update search results in-memory so the button state reflects backlog membership
+    // Find the global results state by querying the DOM via window.__searchResults (not ideal) — instead,
+    // trigger a small event so callers can update if needed. For now, display a small confirmation.
+    // TODO: wire this to component state for visual feedback.
+    alert('Added to backlog');
+  } catch (err) {
+    alert(err.message || 'Failed to add to backlog');
+  }
+}
