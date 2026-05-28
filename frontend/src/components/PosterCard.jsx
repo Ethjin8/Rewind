@@ -31,6 +31,7 @@ export default function PosterCard({ movie, dateAdded, actions = [] }) {
           </div>
         )}
 
+        {/* Slide-up panel: clicking title/meta opens modal; action buttons stay isolated */}
         <div
           className="absolute inset-x-0 bottom-0 bg-black translate-y-[calc(100%-2.5rem)] group-hover:translate-y-0 transition-transform duration-300"
         >
@@ -46,14 +47,22 @@ export default function PosterCard({ movie, dateAdded, actions = [] }) {
           )}
 
           <div className="flex flex-col gap-1 px-2 pt-1 pb-2">
-              <button
-                key={text}
-                onClick={(e) => { e.preventDefault(); onClick(); }}
-                className="bg-transparent w-full py-1 text-sm text-[#ede4c5] font-bold border-2 border-[#ede4c5] shadow-[3px_3px_0_#ede4c5] hover:shadow-[5px_5px_0_#ede4c5] hover:-translate-x-[2px] hover:-translate-y-[2px] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all"
-              >
-                {text}
-              </button>
-            ))}
+            {actions.map(({ text, onClick, added }) => {
+              const btnText = added ? 'Added' : text;
+              const className = added
+                ? 'bg-white text-black w-full py-1 text-sm font-bold border-2 border-white shadow-[3px_3px_0_black] transition-all'
+                : 'bg-transparent w-full py-1 text-sm text-[#ede4c5] font-bold border-2 border-[#ede4c5] shadow-[3px_3px_0_#ede4c5] hover:shadow-[5px_5px_0_#ede4c5] hover:-translate-x-[2px] hover:-translate-y-[2px] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all';
+
+              return (
+                <button
+                  key={btnText}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (!added && onClick) onClick(); }}
+                  className={className}
+                >
+                  {btnText}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
