@@ -21,6 +21,15 @@ CREATE TABLE `movies_shows` (
   CONSTRAINT `movies_shows_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 );
 
+CREATE TABLE `streaming_services` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `streaming_service` varchar(100),
+  UNIQUE (`user_id`, `streaming_service`),
+  PRIMARY KEY (`id`),
+  CONSTRAINT `streaming_services_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+);
+
 CREATE TABLE `refresh_tokens` (
   id INT NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,

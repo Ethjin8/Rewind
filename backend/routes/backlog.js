@@ -18,8 +18,8 @@ router.get('/backlog/sorted', authenticateToken, async (req, res) => {
     );
     res.json(rows);
 
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -39,8 +39,8 @@ router.patch('/backlog/status/:id', authenticateToken, async (req, res) => {
     }
     
     res.status(200).json({ message: "Status updated "});
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -51,8 +51,8 @@ router.get('/configuration', authenticateToken, async (req, res) => {
     const config = await tmdbService.getConfiguration();
     res.json(config);
 
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

@@ -16,8 +16,8 @@ router.get('/movies/search', async (req, res) => {
     const results = await tmdbService.searchMovies(query, page || 1);
     res.json(results);
 
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -31,8 +31,8 @@ router.get('/movies/popular', authenticateToken, async (req, res) => {
     res.json(results);
 
     
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -46,8 +46,8 @@ router.get('/movies/trending', authenticateToken, async (req, res) => {
     res.json(results);
 
 
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -60,8 +60,8 @@ router.get('/movies/discover', authenticateToken, async (req, res) => {
     const results = await tmdbService.discoverMoviesByGenre(genre_id, page || 1);
     res.json(results);
 
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -73,8 +73,8 @@ router.get('/movies/:id', async (req, res) => {
     const details = await tmdbService.getMovieDetails(id);
     res.json(details);
 
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -92,8 +92,8 @@ router.post('/movies/:id', authenticateToken, async (req, res) => {
     `, [uid, movie_show_id]);
 
     res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 })
 
@@ -108,8 +108,8 @@ router.delete('/movies/:id', authenticateToken, async (req, res) => {
     `, [uid, movie_show_id]);
 
     res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 })
 
@@ -124,8 +124,8 @@ router.get('/movies/:id/status', authenticateToken, async (req, res) => {
     `, [uid, movie_show_id]);
 
     res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 })
 
