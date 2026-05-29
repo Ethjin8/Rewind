@@ -1,6 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import mapMovie from '../lib/movieMapper';
+import { authFetch } from '../lib/authFetch';
+
+const STATUS_LABELS = {
+  not_started: 'Not started',
+  completed: 'Finished',
+};
+
+function normalizeStatus(status) {
+  return status === 'completed' ? 'completed' : 'not_started';
+}
+
+function getStatusLabel(status) {
+  return STATUS_LABELS[normalizeStatus(status)];
+}
 
 function useFetchMovie(id) {
   const [movie, setMovie] = useState(null);
@@ -15,7 +29,7 @@ function useFetchMovie(id) {
         setLoading(true);
         setError('');
 
-        const response = await fetch(`/api/movies/${id}`);
+        const response = await authFetch(`/api/movies/${id}`);
         if (!response.ok) {
           throw new Error(`Failed to load movie (${response.status})`);
         }
@@ -49,13 +63,7 @@ function useFetchMovie(id) {
   return { loading, movie, error };
 }
 
-function handleAddToBacklog(id) {
-  console.log('Add to backlog:', id);
-}
 
-function handleAddToWatched(id) {
-  console.log('Add to watched:', id);
-}
 
 const TABS = ['Details', 'Cast', 'IMDB'];
 
@@ -64,6 +72,77 @@ export default function MovieDetailsPage() {
   const navigate = useNavigate();
   const { loading, movie, error } = useFetchMovie(id);
   const [activeTab, setActiveTab] = useState('Details');
+  const [watchStatus, setWatchStatus] = useState('not_started');
+
+  const [inBacklog, setInBacklog] = useState(false);
+
+  useEffect(() => {
+    if (movie) {
+      setWatchStatus(normalizeStatus(movie.status));
+    }
+  }, [movie]);
+
+  // Load per-user backlog/status for this movie (if authenticated)
+  useEffect(() => {
+    let cancelled = false;
+    async function loadUserStatus() {
+      try {
+        const res = await authFetch(`/api/movies/${id}/status`);
+        if (!res.ok) return;
+        const rows = await res.json();
+        if (cancelled) return;
+        if (rows && rows[0]) {
+          setInBacklog(true);
+          setWatchStatus(normalizeStatus(rows[0].status));
+        } else {
+          setInBacklog(false);
+        }
+      } catch (err) {
+        // ignore silently
+      }
+    }
+
+    if (id) loadUserStatus();
+    return () => { cancelled = true; };
+  }, [id]);
+
+  const isFinished = watchStatus === 'completed';
+
+  async function handleToggleStatus() {
+    if (!movie) return;
+    const next = watchStatus === 'completed' ? 'not_started' : 'completed';
+    setWatchStatus(next); // optimistic
+    try {
+      const res = await authFetch(`/api/backlog/status/${movie.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: next }),
+      });
+      if (!res.ok) throw new Error('Failed to update status');
+    } catch (err) {
+      // rollback
+      setWatchStatus((s) => (s === 'completed' ? 'not_started' : 'completed'));
+      alert(err.message || 'Status update failed');
+    }
+  }
+
+  async function handleToggleBacklog() {
+    if (!movie) return;
+    const next = !inBacklog;
+    setInBacklog(next); // optimistic
+    try {
+      if (next) {
+        const res = await authFetch(`/api/movies/${movie.id}`, { method: 'POST' });
+        if (!res.ok) throw new Error('Failed to add to backlog');
+      } else {
+        const res = await authFetch(`/api/movies/${movie.id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Failed to remove from backlog');
+      }
+    } catch (err) {
+      setInBacklog(!next); // rollback
+      alert(err.message || 'Backlog update failed');
+    }
+  }
 
   if (loading) return <p className="p-6 text-white">Loading...</p>;
   // error handling
@@ -130,16 +209,26 @@ export default function MovieDetailsPage() {
             {/* Action buttons */}
             <div className="flex gap-3 mt-auto">
               <button
-                onClick={() => handleAddToBacklog(movie.id)}
-                className="px-5 py-2 bg-[#ede4c5] text-black font-bold border-2 border-[#ede4c5] shadow-[4px_4px_0_rgba(0,0,0,0.5)] hover:shadow-[6px_6px_0_rgba(0,0,0,0.5)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
+                type="button"
+                onClick={handleToggleBacklog}
+                aria-pressed={inBacklog}
+                data-testid="add-to-backlog"
+                className={`px-5 py-2 font-bold border-2 shadow-[4px_4px_0_rgba(0,0,0,0.5)] transition-all ${inBacklog ? 'bg-[#ede4c5] text-black border-[#ede4c5]' : 'bg-transparent text-[#ede4c5] border-[#ede4c5]'}`}
               >
-                + Backlog
+                {inBacklog ? 'In Backlog' : '+ Backlog'}
               </button>
               <button
-                onClick={() => handleAddToWatched(movie.id)}
-                className="px-5 py-2 bg-transparent text-[#ede4c5] font-bold border-2 border-[#ede4c5] shadow-[4px_4px_0_rgba(0,0,0,0.5)] hover:shadow-[6px_6px_0_rgba(0,0,0,0.5)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1 active:bg-[#ede4c5] active:text-black transition-all"
+                type="button"
+                onClick={handleToggleStatus}
+                data-testid="status-toggle"
+                aria-pressed={isFinished}
+                className={`px-5 py-2 font-bold border-2 shadow-[4px_4px_0_rgba(0,0,0,0.5)] transition-all ${
+                  isFinished
+                    ? 'bg-[#ede4c5] text-black border-[#ede4c5]'
+                    : 'bg-transparent text-[#ede4c5] border-[#ede4c5]'
+                }`}
               >
-                ✓ Watched
+                {isFinished ? 'Finished' : 'Not started'}
               </button>
             </div>
           </div>
@@ -167,7 +256,10 @@ export default function MovieDetailsPage() {
           <div className="border-2 border-t-0 border-[#ede4c5] p-6 bg-[#1e2a38] shadow-[6px_6px_0_rgba(0,0,0,0.4)]">
             {activeTab === 'Details' && (
               <div className="text-sm text-gray-300 space-y-3">
-                <p><strong>Status:</strong> {movie.status || 'Unknown'}</p>
+                <p>
+                  <strong>Status:</strong> {getStatusLabel(watchStatus)}
+                  <span className="ml-2 text-xs uppercase tracking-[0.2em] text-[#ede4c5]/70">local only</span>
+                </p>
                 <p><strong>Runtime:</strong> {movie.length}</p>
                 <p><strong>Genres:</strong> {movie.genre}</p>
                 <p><strong>Rating:</strong> {movie.certification || (movie.vote_average ? `${movie.vote_average} / 10` : 'N/A')}</p>

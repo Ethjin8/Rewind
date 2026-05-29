@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import PosterCard from '../components/PosterCard';
 import mapMovie from '../lib/movieMapper';
+import { authFetch } from '../lib/authFetch';
 
 function searchMovies(movies, titleQuery, genreQuery) {
   let results = movies;
@@ -35,7 +36,7 @@ export default function Search() {
     }
 
     try {
-      const response = await fetch(`/api/movies/search?query=${encodeURIComponent(title.trim())}`);
+      const response = await authFetch(`/api/movies/search?query=${encodeURIComponent(title.trim())}`);
       if (!response.ok) {
         throw new Error(`Search failed (${response.status})`);
       }
@@ -48,6 +49,19 @@ export default function Search() {
       setResults([]);
       setSearched(true);
       setError(searchError.message);
+    }
+  }
+
+  async function handleAddToBacklog(id) {
+    // optimistic UI: mark as added immediately
+    setResults((prev) => prev.map((r) => (r.id === id ? { ...r, inBacklog: true } : r)));
+    try {
+      const res = await authFetch(`/api/movies/${id}`, { method: 'POST' });
+      if (!res.ok) throw new Error('Failed to add to backlog');
+    } catch (err) {
+      // rollback
+      setResults((prev) => prev.map((r) => (r.id === id ? { ...r, inBacklog: false } : r)));
+      alert(err.message || 'Failed to add to backlog');
     }
   }
 
@@ -107,7 +121,11 @@ export default function Search() {
                     key={item.id}
                     movie={item.raw}
                     actions={[
-                      { text: '+ Backlog', onClick: () => console.log('Add to backlog:', item.id) },
+                      {
+                        text: item.inBacklog ? 'Added' : '+ Backlog',
+                        added: !!item.inBacklog,
+                        onClick: () => !item.inBacklog && handleAddToBacklog(item.id),
+                      },
                     ]}
                   />
                 ))}

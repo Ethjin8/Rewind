@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const express = require('express');
-// cors for middleware
+// CORS for middleware---not necessary right now because we have Vite as proxy
 const cors = require('cors');
 const app = express();
 // use cors
@@ -14,6 +14,7 @@ const authRouter = require('./routes/auth.js');
 const userRouter = require('./routes/users.js');
 const moviesRouter = require('./routes/movies.js');
 const showsRouter = require('./routes/shows.js');
+const streamingRouter = require('./routes/streaming.js');
 const backlogRouter = require('./routes/backlog.js');
 
 
@@ -21,6 +22,7 @@ app.use(authRouter);
 app.use(userRouter);
 app.use(moviesRouter);
 app.use(showsRouter);
+app.use(streamingRouter);
 app.use(backlogRouter);
 
 

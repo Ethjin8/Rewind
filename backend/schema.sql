@@ -14,11 +14,20 @@ CREATE TABLE `movies_shows` (
   `movie_show_id` int NOT NULL,
   `type` ENUM('movie', 'show') NOT NULL DEFAULT 'movie',
   `date_added` datetime DEFAULT CURRENT_TIMESTAMP,
-  `status` ENUM('not_started', 'watching', 'completed') DEFAULT 'not_started',
+  `status` ENUM('not_started', 'completed') DEFAULT 'not_started',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   UNIQUE (`user_id`, `movie_show_id`, `type`),
   CONSTRAINT `movies_shows_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+);
+
+CREATE TABLE `streaming_services` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `streaming_service` varchar(100),
+  UNIQUE (`user_id`, `streaming_service`),
+  PRIMARY KEY (`id`),
+  CONSTRAINT `streaming_services_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 );
 
 CREATE TABLE `refresh_tokens` (
