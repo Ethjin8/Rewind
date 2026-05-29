@@ -21,6 +21,10 @@ function formatDate(dateValue) {
   return date.toLocaleDateString();
 }
 
+function getStatusActionText(status) {
+  return status === 'completed' ? 'Not Watched' : 'Watched';
+}
+
 export default function Home() {
   const location = useLocation();
   const loginMsg = location.state?.message;
@@ -165,9 +169,12 @@ export default function Home() {
 
               <div className="hero-buttons">
                 <button type="button" onClick={() => handleWatched(recommended.id)}>
-                  {recommended.status === 'completed' ? 'UNDO' : 'WATCHED'}
+                  {getStatusActionText(recommended.status)}
                 </button>
                 <button type="button" onClick={() => handleRemove(recommended.id)}>REMOVE</button>
+                <Link to={`/movie/${recommended.id}`} className="hero-details-button">
+                  VIEW DETAILS
+                </Link>
               </div>
             </div>
 
@@ -194,7 +201,7 @@ export default function Home() {
           movies={backlogItems.filter((m) => !m.removed)}
           emptyMessage="Your backlog is empty. Use Explore to add movies or shows."
           getActions={(movie) => [
-            { text: movie.status === 'completed' ? 'Undo Watched' : 'Watched', onClick: () => handleWatched(movie.id) },
+            { text: getStatusActionText(movie.status), onClick: () => handleWatched(movie.id) },
             { text: movie.removed ? 'Restore' : 'Remove',  onClick: () => handleRemove(movie.id)  },
           ]}
         />
@@ -203,7 +210,7 @@ export default function Home() {
           movies={availableBacklog}
           emptyMessage="No streaming matches yet. Add backlog items and streaming services to see available titles here."
           getActions={(movie) => [
-            { text: movie.status === 'completed' ? 'Undo Watched' : 'Watched', onClick: () => handleWatched(movie.id) },
+            { text: getStatusActionText(movie.status), onClick: () => handleWatched(movie.id) },
             { text: movie.removed ? 'Restore' : 'Remove',  onClick: () => handleRemove(movie.id)  },
           ]}
         />
