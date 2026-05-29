@@ -7,13 +7,14 @@
 }
 
 .movie-details-message {
-  min-height: 100vh;
-  margin: 0;
-  background: #273445;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   color: #ede4c5;
   font-family: 'Saira', sans-serif;
-  font-weight: 900;
-  padding: 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
 }
 
 .movie-details-wrap {
