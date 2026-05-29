@@ -24,7 +24,7 @@ function filterMovies(movies, nameQuery, genreQuery) {
   return result;
 }
 
-export default function MovieCarousel({ title, movies, getActions }) {
+export default function MovieCarousel({ title, movies, getActions, emptyMessage }) {
   const rowRef = useRef(null);
   const [expanded, setExpanded]     = useState(false);
   const [sortOrder, setSortOrder]   = useState('latest');
@@ -36,6 +36,12 @@ export default function MovieCarousel({ title, movies, getActions }) {
   }
 
   const visibleMovies = filterMovies(sortMovies(movies, sortOrder), nameQuery, genreQuery);
+  const hasFilters = Boolean(nameQuery.trim() || genreQuery.trim());
+  const isEmpty = visibleMovies.length === 0;
+  const fallbackMessage = emptyMessage || 'No titles here yet.';
+  const emptyStateMessage = movies.length === 0
+    ? fallbackMessage
+    : 'No titles match those filters.';
 
   const controlClass =
     'bg-transparent text-[#ede4c5] border-[3px] border-black box-border font-bold font-[Saira] text-sm px-[14px] py-[8px] outline-none';
@@ -83,8 +89,8 @@ export default function MovieCarousel({ title, movies, getActions }) {
         </div>
       </div>
 
-      <div className={`carousel-shell ${expanded ? 'expanded' : ''}`}>
-        {!expanded && (
+      <div className={`carousel-shell ${expanded ? 'expanded' : ''} ${isEmpty ? 'empty' : ''}`}>
+        {!expanded && !isEmpty && (
           <button className="carousel-arrow left-arrow" onClick={() => scrollCarousel(-1)}>‹</button>
         )}
 
@@ -92,18 +98,25 @@ export default function MovieCarousel({ title, movies, getActions }) {
           ref={rowRef}
           className={expanded ? 'movie-grid-expanded' : 'movie-carousel-row'}
         >
-          {visibleMovies.map((movie) => (
-            <div key={movie.id} className={expanded ? '' : 'flex-none w-[170px]'}>
-              <PosterCard
-                movie={movie}
-                dateAdded={movie.addedAt ? new Date(movie.addedAt).getTime() : undefined}
-                actions={getActions ? getActions(movie) : []}
-              />
+          {isEmpty ? (
+            <div className="carousel-empty-state">
+              <p>{emptyStateMessage}</p>
+              {hasFilters && <span>Try a different title or genre.</span>}
             </div>
-          ))}
+          ) : (
+            visibleMovies.map((movie) => (
+              <div key={movie.id} className={expanded ? '' : 'flex-none w-[170px]'}>
+                <PosterCard
+                  movie={movie}
+                  dateAdded={movie.addedAt ? new Date(movie.addedAt).getTime() : undefined}
+                  actions={getActions ? getActions(movie) : []}
+                />
+              </div>
+            ))
+          )}
         </div>
 
-        {!expanded && (
+        {!expanded && !isEmpty && (
           <button className="carousel-arrow right-arrow" onClick={() => scrollCarousel(1)}>›</button>
         )}
       </div>

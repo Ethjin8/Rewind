@@ -39,14 +39,18 @@
 }
 
 .carousel-shell {
-    display: grid;
-    column-gap: 50px;
-    align-items: center;
-    grid-template-columns: 48px minmax(0, 1fr) 48px;
+  display: grid;
+  column-gap: 50px;
+  align-items: center;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
 }
 
 .carousel-shell.expanded {
-    display: block;
+  display: block;
+}
+
+.carousel-shell.empty {
+  display: block;
 }
 
 .movie-carousel-row {
@@ -63,6 +67,36 @@
 
 .movie-carousel-row {
   scrollbar-width: none;
+}
+
+.carousel-empty-state {
+  width: 100%;
+  min-height: 150px;
+  background: #1e2a38;
+  color: #ede4c5;
+  border: 3px solid black;
+  box-shadow: 6px 6px 0 black;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 1.25rem 1.5rem;
+  box-sizing: border-box;
+}
+
+.carousel-empty-state p {
+  margin: 0;
+  color: #ede4c5;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.carousel-empty-state span {
+  color: rgba(237, 228, 197, 0.78);
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 /*Everymovie-card*/

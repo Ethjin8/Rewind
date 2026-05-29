@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import mapMovie from '../lib/movieMapper';
 import { authFetch } from '../lib/authFetch';
+import './MovieDetailsPage.css';
 
 const STATUS_LABELS = {
-  not_started: 'Not started',
-  completed: 'Finished',
+  not_started: 'Not Watched',
+  completed: 'Watched',
 };
 
 function normalizeStatus(status) {
@@ -65,7 +66,7 @@ function useFetchMovie(id) {
 
 
 
-const TABS = ['Details', 'Cast', 'IMDB'];
+const TABS = ['Details', 'Cast', 'Links'];
 
 export default function MovieDetailsPage() {
   const { id } = useParams();
@@ -75,12 +76,6 @@ export default function MovieDetailsPage() {
   const [watchStatus, setWatchStatus] = useState('not_started');
 
   const [inBacklog, setInBacklog] = useState(false);
-
-  useEffect(() => {
-    if (movie) {
-      setWatchStatus(normalizeStatus(movie.status));
-    }
-  }, [movie]);
 
   // Load per-user backlog/status for this movie (if authenticated)
   useEffect(() => {
@@ -97,7 +92,7 @@ export default function MovieDetailsPage() {
         } else {
           setInBacklog(false);
         }
-      } catch (err) {
+      } catch {
         // ignore silently
       }
     }
@@ -111,17 +106,31 @@ export default function MovieDetailsPage() {
   async function handleToggleStatus() {
     if (!movie) return;
     const next = watchStatus === 'completed' ? 'not_started' : 'completed';
-    setWatchStatus(next); // optimistic
+    const previousStatus = watchStatus;
+    const wasInBacklog = inBacklog;
+    setWatchStatus(next);
+    setInBacklog(true);
     try {
-      const res = await authFetch(`/api/backlog/status/${movie.id}`, {
+      let res = await authFetch(`/api/backlog/status/${movie.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: next }),
       });
+
+      if (res.status === 404) {
+        const addRes = await authFetch(`/api/movies/${movie.id}`, { method: 'POST' });
+        if (!addRes.ok) throw new Error('Failed to add to backlog');
+        res = await authFetch(`/api/backlog/status/${movie.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: next }),
+        });
+      }
+
       if (!res.ok) throw new Error('Failed to update status');
     } catch (err) {
-      // rollback
-      setWatchStatus((s) => (s === 'completed' ? 'not_started' : 'completed'));
+      setWatchStatus(previousStatus);
+      setInBacklog(wasInBacklog);
       alert(err.message || 'Status update failed');
     }
   }
@@ -144,160 +153,150 @@ export default function MovieDetailsPage() {
     }
   }
 
-  if (loading) return <p className="p-6 text-white">Loading...</p>;
-  // error handling
-  if (error) return <p className="p-6 text-white">{error}</p>;
-  if (!movie)  return <p className="p-6 text-white">Movie not found.</p>;
+  if (loading) return <p className="movie-details-message">Loading...</p>;
+  if (error) return <p className="movie-details-message">{error}</p>;
+  if (!movie) return <p className="movie-details-message">Movie not found.</p>;
 
   return (
-    <div className="min-h-screen bg-[#273445] font-['Saira']">
-      <div className="max-w-4xl mx-auto px-6 py-8">
-
-        {/* Back button */}
+    <div className="movie-details-page">
+      <div className="movie-details-wrap">
         <button
           onClick={() => navigate(-1)}
-          className="mb-6 flex items-center gap-2 font-bold border-2 border-[#ede4c5] px-3 py-1 text-[#ede4c5] shadow-[4px_4px_0_#ede4c5] hover:shadow-[6px_6px_0_#ede4c5] hover:-translate-x-0.5 hover:-translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all bg-transparent"
+          className="details-back-button"
         >
           ← Back
         </button>
 
-        {/* Top section: poster + info */}
-        <div className="flex gap-8 mb-0">
-
-          {/* Poster */}
-          {movie.posterUrl ? (
-            <img
-              src={movie.posterUrl}
-              alt={movie.title}
-              className="w-52 shrink-0 object-cover border-2 border-white shadow-[12px_12px_0_rgba(0,0,0,0.5)]"
-            />
-          ) : (
-            <div className="w-52 aspect-[2/3] shrink-0 object-cover border-2 border-white shadow-[12px_12px_0_rgba(0,0,0,0.5)] bg-black/30 flex items-center justify-center px-4 text-center text-sm text-[#ede4c5]">
-              No poster available
-            </div>
-          )}
-
-          {/* Info */}
-          <div className="flex flex-col gap-4 text-left pt-2">
-            <h1 className="text-5xl font-black uppercase leading-none text-white">
-              {movie.title}
-            </h1>
-
-            {/* Detail chips */}
-            <div className="flex flex-wrap gap-2">
-              {[
-                { label: 'year', value: movie.year },
-                { label: 'cert', value: movie.certification || movie.rating || (movie.adult ? '18+' : '') },
-                { label: 'length', value: movie.length },
-                { label: 'genre', value: movie.genre },
-              ].map((item, idx) => (
-                item.value ? (
-                  <span
-                    key={`${item.label}-${idx}`}
-                    className="border-2 border-[#ede4c5] px-3 py-0.5 text-sm font-bold text-[#ede4c5] shadow-[3px_3px_0_rgba(0,0,0,0.4)]"
-                  >
-                    {item.value}
-                  </span>
-                ) : null
-              ))}
+        <section className="movie-details-shell">
+          <div className="movie-details-hero">
+            <div className="details-poster-frame">
+              {movie.posterUrl ? (
+                <img
+                  src={movie.posterUrl}
+                  alt={movie.title}
+                  className="details-poster"
+                />
+              ) : (
+                <div className="details-poster-placeholder">
+                  No poster available
+                </div>
+              )}
             </div>
 
-            <p className="text-sm leading-relaxed text-gray-300 max-w-md">
-              {movie.overview}
-            </p>
+            <div className="details-hero-copy">
+              <p className="details-eyebrow">Movie Overview</p>
+              <h1>{movie.title}</h1>
 
-            {/* Action buttons */}
-            <div className="flex gap-3 mt-auto">
-              <button
-                type="button"
-                onClick={handleToggleBacklog}
-                aria-pressed={inBacklog}
-                data-testid="add-to-backlog"
-                className={`px-5 py-2 font-bold border-2 shadow-[4px_4px_0_rgba(0,0,0,0.5)] transition-all ${inBacklog ? 'bg-[#ede4c5] text-black border-[#ede4c5]' : 'bg-transparent text-[#ede4c5] border-[#ede4c5]'}`}
-              >
-                {inBacklog ? 'In Backlog' : '+ Backlog'}
-              </button>
-              <button
-                type="button"
-                onClick={handleToggleStatus}
-                data-testid="status-toggle"
-                aria-pressed={isFinished}
-                className={`px-5 py-2 font-bold border-2 shadow-[4px_4px_0_rgba(0,0,0,0.5)] transition-all ${
-                  isFinished
-                    ? 'bg-[#ede4c5] text-black border-[#ede4c5]'
-                    : 'bg-transparent text-[#ede4c5] border-[#ede4c5]'
-                }`}
-              >
-                {isFinished ? 'Finished' : 'Not started'}
-              </button>
+              <div className="details-chip-row">
+                {[
+                  { label: 'year', value: movie.year },
+                  { label: 'cert', value: movie.certification || movie.rating || (movie.adult ? '18+' : '') },
+                  { label: 'length', value: movie.length },
+                  { label: 'genre', value: movie.genre },
+                ].map((item, idx) => (
+                  item.value ? (
+                    <span key={`${item.label}-${idx}`}>
+                      {item.value}
+                    </span>
+                  ) : null
+                ))}
+              </div>
+
+              <p className="details-overview">
+                {movie.synopsis || 'No synopsis available.'}
+              </p>
+
+              <div className="details-actions">
+                <button
+                  type="button"
+                  onClick={handleToggleBacklog}
+                  aria-pressed={inBacklog}
+                  data-testid="add-to-backlog"
+                  className={inBacklog ? 'details-action active' : 'details-action'}
+                >
+                  {inBacklog ? '- In Backlog' : '+ Backlog'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleToggleStatus}
+                  data-testid="status-toggle"
+                  aria-pressed={isFinished}
+                  className={isFinished ? 'details-action active' : 'details-action'}
+                >
+                  {isFinished ? 'Not Watched' : 'Watched'}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Tabs */}
-        <div className="mt-10">
-          <div className="flex border-b-2 border-[#ede4c5]">
+          <div className="details-tabs">
             {TABS.map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-2 font-bold border-2 border-b-0 text-sm -mb-[2px] transition-all hover:-translate-y-0.5 active:translate-y-0.5
-                  ${activeTab === tab
-                    ? 'bg-[#ede4c5] text-black border-[#ede4c5]'
-                    : 'bg-transparent text-[#ede4c5] border-[#ede4c5] hover:bg-white/10'
-                  }`}
+                className={activeTab === tab ? 'active' : ''}
               >
                 {tab}
               </button>
             ))}
           </div>
 
-          {/* Tab content */}
-          <div className="border-2 border-t-0 border-[#ede4c5] p-6 bg-[#1e2a38] shadow-[6px_6px_0_rgba(0,0,0,0.4)]">
+          <div className="details-tab-panel">
             {activeTab === 'Details' && (
-              <div className="text-sm text-gray-300 space-y-3">
-                <p>
-                  <strong>Status:</strong> {getStatusLabel(watchStatus)}
-                  <span className="ml-2 text-xs uppercase tracking-[0.2em] text-[#ede4c5]/70">local only</span>
-                </p>
-                <p><strong>Runtime:</strong> {movie.length}</p>
-                <p><strong>Genres:</strong> {movie.genre}</p>
-                <p><strong>Rating:</strong> {movie.certification || (movie.vote_average ? `${movie.vote_average} / 10` : 'N/A')}</p>
-                {movie.homepage && (
-                  <p><a href={movie.homepage} target="_blank" rel="noreferrer" className="underline">Official site</a></p>
-                )}
-                <p className="text-sm text-gray-400">{movie.synopsis}</p>
+              <div className="details-facts">
+                <dl>
+                  <div>
+                    <dt>Status</dt>
+                    <dd>{getStatusLabel(watchStatus)}</dd>
+                  </div>
+                  <div>
+                    <dt>Runtime</dt>
+                    <dd>{movie.length || 'N/A'}</dd>
+                  </div>
+                  <div>
+                    <dt>Genres</dt>
+                    <dd>{movie.genre || 'N/A'}</dd>
+                  </div>
+                  <div>
+                    <dt>Rating</dt>
+                    <dd>{movie.certification || (movie.vote_average ? `${movie.vote_average} / 10` : 'N/A')}</dd>
+                  </div>
+                </dl>
+                <p className="details-synopsis">{movie.synopsis || 'No synopsis available.'}</p>
               </div>
             )}
 
             {activeTab === 'Cast' && (
-              <div className="text-sm text-gray-300">
+              <div className="details-cast">
                 {movie.credits?.cast?.length > 0 ? (
-                  <ul className="list-disc pl-5">
+                  <ul>
                     {movie.credits.cast.slice(0, 12).map((c) => (
-                      <li key={c.id || c.cast_id} className="py-1">
+                      <li key={c.id || c.cast_id}>
                         <strong>{c.name}</strong> as {c.character}
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-gray-400">No cast information available.</p>
+                  <p>No cast information available.</p>
                 )}
               </div>
             )}
 
-            {activeTab === 'IMDB' && (
-              <div className="text-sm text-gray-300">
-                {movie.imdbUrl ? (
-                  <a href={movie.imdbUrl} target="_blank" rel="noreferrer" className="underline">Open on IMDB</a>
-                ) : (
-                  <p className="text-gray-400">No IMDB link available.</p>
+            {activeTab === 'Links' && (
+              <div className="details-links">
+                {movie.imdbUrl && (
+                  <a href={movie.imdbUrl} target="_blank" rel="noreferrer">IMDb</a>
+                )}
+                {movie.homepage && (
+                  <a href={movie.homepage} target="_blank" rel="noreferrer">Official site</a>
+                )}
+                {!movie.imdbUrl && !movie.homepage && (
+                  <p>No links available.</p>
                 )}
               </div>
             )}
           </div>
-        </div>
-
+        </section>
       </div>
     </div>
   );
