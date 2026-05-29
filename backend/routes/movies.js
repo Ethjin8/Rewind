@@ -6,7 +6,7 @@ const pool = require('../database.js');
 const { authenticateToken } = require('../middleware/tokens.js');
 
 // Search movies
-router.get('/movies/search', async (req, res) => {
+router.get('/movies/search', authenticateToken, async (req, res) => {
   try {
 
     const { query, page } = req.query;
@@ -66,7 +66,7 @@ router.get('/movies/discover', authenticateToken, async (req, res) => {
 });
 
 // Get movie details
-router.get('/movies/:id', async (req, res) => {
+router.get('/movies/:id', authenticateToken, async (req, res) => {
   try {
 
     const { id } = req.params;
