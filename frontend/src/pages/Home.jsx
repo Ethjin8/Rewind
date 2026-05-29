@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Home.css';
 import '../pages/Auth.css';
 import MovieCarousel from '../components/MovieCarousel';

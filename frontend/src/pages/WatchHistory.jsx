@@ -71,10 +71,6 @@ export default function WatchHistory() {
           <h1>Watch History</h1>
         </div>
         <div className="history-controls">
-    <div className="watch-history p-6">
-      <div className="w-2/3 mx-auto flex justify-between items-center mb-6">
-        <h1>Watch History</h1>
-        <div className="flex flex-col gap-2">
           <select
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value)}
@@ -115,6 +111,7 @@ export default function WatchHistory() {
                 />
               ))}
             </div>
+          </div>
           </div>
         ))}
       </section>
