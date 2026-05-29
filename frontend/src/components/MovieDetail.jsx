@@ -1,6 +1,4 @@
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { authFetch } from '../lib/authFetch';
 import './MovieDetail.css';
 
 function getPosterSrc(path) {
@@ -9,60 +7,6 @@ function getPosterSrc(path) {
 }
 
 export default function MovieDetail({ movie, onClose, actions = [] }) {
-  const [inBacklog, setInBacklog] = useState(false);
-  const [watchStatus, setWatchStatus] = useState('not_started');
-
-  useEffect(() => {
-    if (movie) {
-      setInBacklog(!!movie.inBacklog);
-      setWatchStatus(movie.status || 'not_started');
-    }
-  }, [movie]);
-
-  async function toggleBacklog() {
-    if (!movie) return;
-    const next = !inBacklog;
-    setInBacklog(next);
-    try {
-      if (next) {
-        const res = await authFetch(`/api/movies/${movie.id}`, { method: 'POST' });
-        if (!res.ok) throw new Error('Failed to add to backlog');
-      } else {
-        const res = await authFetch(`/api/movies/${movie.id}`, { method: 'DELETE' });
-        if (!res.ok) throw new Error('Failed to remove from backlog');
-      }
-    } catch (err) {
-      setInBacklog(!next);
-      alert(err.message || 'Backlog update failed');
-    }
-  }
-
-  async function toggleWatched() {
-    if (!movie) return;
-    const next = watchStatus === 'completed' ? 'not_started' : 'completed';
-    setWatchStatus(next);
-    try {
-      let res = await authFetch(`/api/backlog/status/${movie.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: next }),
-      });
-      if (res.status === 404) {
-        const addRes = await authFetch(`/api/movies/${movie.id}`, { method: 'POST' });
-        if (!addRes.ok) throw new Error('Failed to add to backlog');
-        res = await authFetch(`/api/backlog/status/${movie.id}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: next }),
-        });
-      }
-      if (!res.ok) throw new Error('Failed to update status');
-    } catch (err) {
-      setWatchStatus((s) => (s === 'completed' ? 'not_started' : 'completed'));
-      alert(err.message || 'Status update failed');
-    }
-  }
-
   if (!movie) return null;
 
   return (
@@ -110,23 +54,11 @@ export default function MovieDetail({ movie, onClose, actions = [] }) {
           </p>
 
           <div className="modal-actions">
-            {actions.length > 0
-              ? actions.map(({ text, onClick }) => (
-                  <button key={text} type="button" onClick={() => { onClick(); onClose(); }}>
-                    {text}
-                  </button>
-                ))
-              : (
-                <>
-                  <button type="button" data-testid="modal-backlog-toggle" onClick={() => toggleBacklog()} aria-pressed={inBacklog}>
-                    {inBacklog ? 'In Backlog' : '+ BACKLOG'}
-                  </button>
-                  <button type="button" data-testid="modal-watch-toggle" onClick={() => toggleWatched()} aria-pressed={watchStatus === 'completed'}>
-                    {watchStatus === 'completed' ? 'Finished' : '✓ WATCHED'}
-                  </button>
-                </>
-              )
-            }
+            {actions.map(({ text, onClick }) => (
+              <button key={text} type="button" onClick={onClick}>
+                {text}
+              </button>
+            ))}
             {movie.id && (
               <Link to={`/movie/${movie.id}`} className="modal-details-link">
                 View Full Details →
