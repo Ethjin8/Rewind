@@ -57,21 +57,24 @@ export default function Home() {
   const recommended = availableBacklog
     .sort((a, b) => new Date(a.addedAt) - new Date(b.addedAt))[0];
 
+  function endpointFor(item) {
+    const kind = item?.type === 'show' ? 'shows' : 'movies';
+    return `/api/${kind}/${item?.id}`;
+  }
+
   // Toggle watched state and persist
   async function handleWatched(id) {
     setBacklogItems((prev) => prev.map((m) => (m.id === id ? { ...m, status: m.status === 'completed' ? 'not_started' : 'completed' } : m)));
     const movie = backlogItems.find((m) => m.id === id);
     const nextStatus = movie?.status === 'completed' ? 'not_started' : 'completed';
     try {
-      // Try to PATCH status first
       let res = await authFetch(`/api/backlog/status/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: nextStatus }),
       });
       if (res.status === 404) {
-        // Not in backlog yet — add then patch
-        const addRes = await authFetch(`/api/movies/${id}`, { method: 'POST' });
+        const addRes = await authFetch(endpointFor(movie), { method: 'POST' });
         if (!addRes.ok) throw new Error('Failed to add to backlog');
         res = await authFetch(`/api/backlog/status/${id}`, {
           method: 'PATCH',
@@ -81,7 +84,6 @@ export default function Home() {
       }
       if (!res.ok) throw new Error('Failed to update watched status');
     } catch (err) {
-      // rollback local change
       setBacklogItems((prev) => prev.map((m) => (m.id === id ? { ...m, status: m.status === 'completed' ? 'not_started' : 'completed' } : m)));
       alert(err.message || 'Failed to update watched status');
     }
@@ -94,14 +96,13 @@ export default function Home() {
     const willRemove = !(movie?.removed);
     try {
       if (willRemove) {
-        const res = await authFetch(`/api/movies/${id}`, { method: 'DELETE' });
+        const res = await authFetch(endpointFor(movie), { method: 'DELETE' });
         if (!res.ok) throw new Error('Failed to remove from backlog');
       } else {
-        const res = await authFetch(`/api/movies/${id}`, { method: 'POST' });
+        const res = await authFetch(endpointFor(movie), { method: 'POST' });
         if (!res.ok) throw new Error('Failed to restore to backlog');
       }
     } catch (err) {
-      // rollback
       setBacklogItems((prev) => prev.map((m) => (m.id === id ? { ...m, removed: movie?.removed } : m)));
       alert(err.message || 'Failed to update backlog removal');
     }
@@ -121,7 +122,7 @@ export default function Home() {
             <h1>{recommended.title}</h1>
               <p className="recommended-info">
                 {recommended.genres?.[0]?.name} · {recommended.release_date || recommended.releaseDate || ''} · Saved since{' '}
-                {new Date(recommended.date_added || recommended.addedAt || recommended.addedAt).toLocaleDateString()}
+                {new Date(recommended.date_added || recommended.addedAt).toLocaleDateString()}
               </p>
 
               <p className="recommended-synopsis">
@@ -129,8 +130,10 @@ export default function Home() {
               </p>
 
               <div className="hero-buttons">
-                <button type="button">DONE</button>
-                <button type="button">REMOVE</button>
+                <button type="button" onClick={() => handleWatched(recommended.id)}>
+                  {recommended.status === 'completed' ? 'UNDO' : 'DONE'}
+                </button>
+                <button type="button" onClick={() => handleRemove(recommended.id)}>REMOVE</button>
               </div>
           </div>
 
