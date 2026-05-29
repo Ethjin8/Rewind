@@ -84,6 +84,7 @@ export default function Home() {
 
   // Toggle watched state and persist
   async function handleWatched(id) {
+    if (!window.confirm('Mark as watched? This will move it to your watch history.')) return;
     setBacklogItems((prev) => prev.map((m) => (m.id === id ? { ...m, status: m.status === 'completed' ? 'not_started' : 'completed' } : m)));
     const movie = backlogItems.find((m) => m.id === id);
     const nextStatus = movie?.status === 'completed' ? 'not_started' : 'completed';
@@ -109,8 +110,8 @@ export default function Home() {
     }
   }
 
-  // Toggle removed state and persist
   async function handleRemove(id) {
+    if (!window.confirm('Remove this from your backlog?')) return;
     setBacklogItems((prev) => prev.map((m) => (m.id === id ? { ...m, removed: !m.removed } : m)));
     const movie = backlogItems.find((m) => m.id === id);
     const willRemove = !(movie?.removed);
@@ -128,10 +129,17 @@ export default function Home() {
     }
   }
 
+  if (loading) {
+    return (
+      <main className="home-page">
+        <p className="home-loading">Loading…</p>
+      </main>
+    );
+  }
+
   return (
     <main className="home-page">
       {loginMsg && <p className="toast-message success-message">{loginMsg}</p>}
-      {loading && <p className="toast-message">Loading backlog…</p>}
       {error && <p className="toast-message error-message">{error}</p>}
       {!loading && !error && !recommended && (
         <section className="recommended-hero empty-hero">
@@ -153,6 +161,20 @@ export default function Home() {
       {recommended && (
         <section className="recommended-hero">
           <div className="recommended-hero-inner">
+            <div className="recommended-card">
+              {getPosterSrc(recommended.poster_path) ? (
+                <img
+                  src={getPosterSrc(recommended.poster_path)}
+                  alt={recommended.title}
+                  className="recommended-hero-image"
+                />
+              ) : (
+                <div className="recommended-poster-placeholder">
+                  {recommended.title}
+                </div>
+              )}
+            </div>
+
             <div className="recommended-text">
               <p className="hero-label">
                 TODAY'S BACKLOG RECOMMENDATION
@@ -184,20 +206,6 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-
-            <div className="recommended-card">
-              {getPosterSrc(recommended.poster_path) ? (
-                <img
-                  src={getPosterSrc(recommended.poster_path)}
-                  alt={recommended.title}
-                  className="recommended-hero-image"
-                />
-              ) : (
-                <div className="recommended-poster-placeholder">
-                  {recommended.title}
-                </div>
-              )}
-            </div>
           </div>
         </section>
       )}
@@ -205,7 +213,7 @@ export default function Home() {
       <section className="home-section">
         <MovieCarousel
           title="MY BACKLOG"
-          movies={backlogItems.filter((m) => !m.removed)}
+          movies={backlogItems.filter((m) => !m.removed && m.status !== 'completed')}
           emptyMessage="Your backlog is empty. Use Explore to add movies or shows."
           getActions={(movie) => [
             { text: getStatusActionText(movie.status), onClick: () => handleWatched(movie.id) },
