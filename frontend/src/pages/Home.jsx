@@ -191,7 +191,7 @@ export default function Home() {
                   Mark as Watched
                 </button>
                 <button type="button" onClick={() => handleRemove(recommended.id)}>REMOVE</button>
-                <Link to={`/movie/${recommended.id}`} className="hero-details-button">
+                <Link to={`/${recommended.type === 'show' ? 'show' : 'movie'}/${recommended.id}`} className="hero-details-button">
                   VIEW DETAILS
                 </Link>
               </div>
