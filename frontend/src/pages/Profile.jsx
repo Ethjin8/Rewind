@@ -1,16 +1,18 @@
+import "./Profile.css";
+
 export default function Profile() {
   return (
     <div className="p-6">
       <h1>Profile</h1>
-      <button
-        className="account-avatar-btn"
-      >
+      <div className="profile-avatar-wrap">
         <img
           src="/profile-blank.png"
           alt=""
-          className="account-avatar"
+          className="profile-avatar-large"
         />
-      </button>
+      </div>
+      <p className="mt-4">Username: johndoe</p>
+      <p>Email: johndoe@example.com</p>
     </div>
   );
 }
