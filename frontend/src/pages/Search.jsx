@@ -52,14 +52,20 @@ export default function Search() {
   useEffect(() => {
     async function fetchTrending() {
       try {
-        const [moviesRes, showsRes] = await Promise.all([
+        const [moviesRes, showsRes, backlogRes] = await Promise.all([
           authFetch('/api/movies/trending'),
           authFetch('/api/shows/trending'),
+          authFetch('/api/backlog/sorted'),
         ]);
         if (!moviesRes.ok || !showsRes.ok) throw new Error('Failed to load trending');
         const [moviesData, showsData] = await Promise.all([moviesRes.json(), showsRes.json()]);
-        setTrendingMovies((moviesData.results || []).map(mapMovie).filter(Boolean));
-        setTrendingShows((showsData.results || []).map(mapMovie).filter(Boolean));
+        const backlogIds = new Set(
+          (backlogRes.ok ? await backlogRes.json() : []).map((b) => String(b.movie_show_id))
+        );
+        const withBacklog = (items) =>
+          (items || []).map(mapMovie).filter(Boolean).map((m) => ({ ...m, inBacklog: backlogIds.has(String(m.id)) }));
+        setTrendingMovies(withBacklog(moviesData.results));
+        setTrendingShows(withBacklog(showsData.results));
       } catch (err) {
         setTrendingError(err.message);
       } finally {
@@ -235,6 +241,7 @@ function TrendingRail({ title, items, onAddToBacklog }) {
             <PosterCard
               key={item.id}
               movie={{ ...item.raw, title: item.title }}
+              inBacklog={!!item.inBacklog}
               actions={[
                 {
                   text: '+ Backlog',
