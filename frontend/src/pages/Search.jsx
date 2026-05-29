@@ -48,6 +48,7 @@ export default function Search() {
   const [trendingShows, setTrendingShows] = useState([]);
   const [trendingLoading, setTrendingLoading] = useState(true);
   const [trendingError, setTrendingError] = useState('');
+  const [backlogIds, setBacklogIds] = useState(new Set());
 
   useEffect(() => {
     async function fetchTrending() {
@@ -59,11 +60,12 @@ export default function Search() {
         ]);
         if (!moviesRes.ok || !showsRes.ok) throw new Error('Failed to load trending');
         const [moviesData, showsData] = await Promise.all([moviesRes.json(), showsRes.json()]);
-        const backlogIds = new Set(
+        const ids = new Set(
           (backlogRes.ok ? await backlogRes.json() : []).map((b) => String(b.movie_show_id))
         );
+        setBacklogIds(ids);
         const withBacklog = (items) =>
-          (items || []).map(mapMovie).filter(Boolean).map((m) => ({ ...m, inBacklog: backlogIds.has(String(m.id)) }));
+          (items || []).map(mapMovie).filter(Boolean).map((m) => ({ ...m, inBacklog: ids.has(String(m.id)) }));
         setTrendingMovies(withBacklog(moviesData.results));
         setTrendingShows(withBacklog(showsData.results));
       } catch (err) {
@@ -92,7 +94,8 @@ export default function Search() {
       }
 
       const data = await response.json();
-      const mapped = (data.results || []).map(mapMovie).filter(Boolean);
+      const mapped = (data.results || []).map(mapMovie).filter(Boolean)
+        .map((m) => ({ ...m, inBacklog: backlogIds.has(String(m.id)) }));
       setResults(searchMovies(mapped, '', genre));
       setSearched(true);
     } catch (searchError) {
@@ -113,11 +116,13 @@ export default function Search() {
 
   async function handleAddToBacklog(id) {
     setResults((prev) => prev.map((r) => (r.id === id ? { ...r, inBacklog: true } : r)));
+    setBacklogIds((prev) => new Set([...prev, String(id)]));
     try {
       const res = await authFetch(`/api/movies/${id}`, { method: 'POST' });
       if (!res.ok) throw new Error('Failed to add to backlog');
     } catch (err) {
       setResults((prev) => prev.map((r) => (r.id === id ? { ...r, inBacklog: false } : r)));
+      setBacklogIds((prev) => { const next = new Set(prev); next.delete(String(id)); return next; });
       alert(err.message || 'Failed to add to backlog');
     }
   }
@@ -183,6 +188,7 @@ export default function Search() {
                   <PosterCard
                     key={item.id}
                     movie={item.raw}
+                    inBacklog={!!item.inBacklog}
                     actions={[
                       {
                         text: item.inBacklog ? 'Added' : '+ Backlog',
