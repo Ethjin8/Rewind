@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './Home.css';
 import '../pages/Auth.css';
 import MovieCarousel from '../components/MovieCarousel';
@@ -12,8 +12,22 @@ function getPosterSrc(path) {
   return path.startsWith('http') ? path : `https://image.tmdb.org/t/p/w500${path}`;
 }
 
+function formatDate(dateValue) {
+  if (!dateValue) return 'Unknown';
+
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return 'Unknown';
+
+  return date.toLocaleDateString();
+}
+
+function getStatusActionText(status) {
+  return status === 'completed' ? 'Not Watched' : 'Watched';
+}
+
 export default function Home() {
   const location = useLocation();
+  const navigate = useNavigate();
   const loginMsg = location.state?.message;
   const [backlogItems, setBacklogItems] = useState(() =>
     INITIAL_BACKLOG.map((m) => ({ ...m, status: m.status || 'not_started', removed: false }))
@@ -50,12 +64,18 @@ export default function Home() {
     return () => { mounted = false; };
   }, []);
 
+  useEffect(() => {
+    if (loginMsg) {
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.pathname, loginMsg, navigate]);
+
   const availableBacklog = availableItems.length > 0
     ? availableItems
     : backlogItems.filter((movie) => !movie.removed && Object.keys(movie['watch/providers']?.results ?? {}).length > 0);
 
-  const recommended = availableBacklog
-    .sort((a, b) => new Date(a.addedAt) - new Date(b.addedAt))[0];
+  const recommended = [...availableBacklog]
+    .sort((a, b) => new Date(a.date_added || a.addedAt) - new Date(b.date_added || b.addedAt))[0];
 
   function endpointFor(item) {
     const kind = item?.type === 'show' ? 'shows' : 'movies';
@@ -113,17 +133,42 @@ export default function Home() {
       {loginMsg && <p className="toast-message success-message">{loginMsg}</p>}
       {loading && <p className="toast-message">Loading backlog…</p>}
       {error && <p className="toast-message error-message">{error}</p>}
+      {!loading && !error && !recommended && (
+        <section className="recommended-hero empty-hero">
+          <div className="recommended-hero-inner empty-hero-inner">
+            <div className="recommended-text">
+              <p className="hero-label">YOUR BACKLOG IS EMPTY</p>
+              <h1>Start building your queue</h1>
+              <p className="recommended-synopsis">
+                Add a few titles from Explore and Rewind will surface a backlog recommendation here.
+              </p>
+              <Link to="/search" className="hero-link-button">
+                Explore titles
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {recommended && (
         <section className="recommended-hero">
-          <div className="recommended-text">
-            <p className="hero-description">
-              TODAY'S BACKLOG RECOMMENDATION
-            </p>
-            <h1>{recommended.title}</h1>
-              <p className="recommended-info">
-                {recommended.genres?.[0]?.name} · {recommended.release_date || recommended.releaseDate || ''} · Saved since{' '}
-                {new Date(recommended.date_added || recommended.addedAt).toLocaleDateString()}
+          <div className="recommended-hero-inner">
+            <div className="recommended-text">
+              <p className="hero-label">
+                TODAY'S BACKLOG RECOMMENDATION
               </p>
+              <h1>{recommended.title}</h1>
+
+              <div className="recommended-meta">
+                <span>
+                  <strong>Release date</strong>
+                  {formatDate(recommended.release_date || recommended.releaseDate)}
+                </span>
+                <span>
+                  <strong>Saved since</strong>
+                  {formatDate(recommended.date_added || recommended.addedAt)}
+                </span>
+              </div>
 
               <p className="recommended-synopsis">
                 {recommended.overview ? recommended.overview : 'No synopsis available.'}
@@ -131,18 +176,28 @@ export default function Home() {
 
               <div className="hero-buttons">
                 <button type="button" onClick={() => handleWatched(recommended.id)}>
-                  {recommended.status === 'completed' ? 'UNDO' : 'DONE'}
+                  {getStatusActionText(recommended.status)}
                 </button>
                 <button type="button" onClick={() => handleRemove(recommended.id)}>REMOVE</button>
+                <Link to={`/movie/${recommended.id}`} className="hero-details-button">
+                  VIEW DETAILS
+                </Link>
               </div>
-          </div>
+            </div>
 
-          <div className="recommended-card">
-            <img
-              src={getPosterSrc(recommended.poster_path)}
-              alt={recommended.title}
-              className="recommended-hero-image"
-            />
+            <div className="recommended-card">
+              {getPosterSrc(recommended.poster_path) ? (
+                <img
+                  src={getPosterSrc(recommended.poster_path)}
+                  alt={recommended.title}
+                  className="recommended-hero-image"
+                />
+              ) : (
+                <div className="recommended-poster-placeholder">
+                  {recommended.title}
+                </div>
+              )}
+            </div>
           </div>
         </section>
       )}
@@ -151,16 +206,18 @@ export default function Home() {
         <MovieCarousel
           title="MY BACKLOG"
           movies={backlogItems.filter((m) => !m.removed)}
+          emptyMessage="Your backlog is empty. Use Explore to add movies or shows."
           getActions={(movie) => [
-            { text: movie.status === 'completed' ? 'Undo Watched' : 'Watched', onClick: () => handleWatched(movie.id) },
+            { text: getStatusActionText(movie.status), onClick: () => handleWatched(movie.id) },
             { text: movie.removed ? 'Restore' : 'Remove',  onClick: () => handleRemove(movie.id)  },
           ]}
         />
         <MovieCarousel
           title="Available on my streaming services"
           movies={availableBacklog}
+          emptyMessage="No streaming matches yet. Add backlog items and streaming services to see available titles here."
           getActions={(movie) => [
-            { text: movie.status === 'completed' ? 'Undo Watched' : 'Watched', onClick: () => handleWatched(movie.id) },
+            { text: getStatusActionText(movie.status), onClick: () => handleWatched(movie.id) },
             { text: movie.removed ? 'Restore' : 'Remove',  onClick: () => handleRemove(movie.id)  },
           ]}
         />

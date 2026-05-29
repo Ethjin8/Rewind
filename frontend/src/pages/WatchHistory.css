@@ -127,3 +127,15 @@
     grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
   }
 }
+.watch-history h1{
+    font-family: 'Saira', sans-serif;
+    font-weight: 900;
+    color: #EDE4C5;
+}
+
+.watch-history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 170px);
+  gap: 50px;
+  justify-content: start;   
+}
