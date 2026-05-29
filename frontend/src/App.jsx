@@ -10,12 +10,22 @@ import MovieDetailsPage from './pages/MovieDetailsPage';
 import Profile     from './pages/Profile';
 
 function ProtectedRoute({ children }) {
+  const DEV_SKIP_LOGIN = import.meta.env.DEV; // true only during npm run dev
   const token = localStorage.getItem('accessToken');
-  if (!token) {
+
+  if (!token && !DEV_SKIP_LOGIN) {
     return <Navigate to="/" />;
   }
+
   return children;
 }
+// function ProtectedRoute({ children }) {
+//   const token = localStorage.getItem('accessToken');
+//   if (!token) {
+//     return <Navigate to="/" />;
+//   }
+//   return children;
+// }
 
 function AppContent() {
   const { pathname } = useLocation();

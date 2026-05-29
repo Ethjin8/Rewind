@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PosterCard from '../components/PosterCard';
+import './WatchHistory.css';
 
 // Placeholder data — replace with real API responses from the backend.
 // Shape mirrors a TMDB movie object. watchedAt is app-specific (Unix ms timestamp).
@@ -63,9 +64,9 @@ export default function WatchHistory() {
   }
 
   return (
-    <div className="p-6">
+    <div className="watch-history p-6">
       <div className="w-2/3 mx-auto flex justify-between items-center mb-6">
-        <h1 className="text-2xl">WATCH HISTORY</h1>
+        <h1>Watch History</h1>
         <div className="flex flex-col gap-2">
           <select
             value={sortOrder}
@@ -96,7 +97,7 @@ export default function WatchHistory() {
             </div>
 
             {/* Cards for this month */}
-            <div className="grid grid-cols-5 gap-6 p-4">
+            <div className="watch-history-grid">
               {groupItems.map((item) => (
                 <PosterCard
                   key={item.id}
