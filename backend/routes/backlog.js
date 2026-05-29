@@ -34,20 +34,21 @@ router.get('/backlog/full', authenticateToken, async (req, res) => {
 
     const detailed = await Promise.all(rows.map(async (r) => {
       try {
-        const details = await tmdbService.getMovieDetails(r.movie_show_id);
+        const details = r.type === 'show'
+          ? await tmdbService.getShowDetails(r.movie_show_id)
+          : await tmdbService.getMovieDetails(r.movie_show_id);
         return {
           id: r.movie_show_id,
           type: r.type,
           status: r.status,
           date_added: r.date_added,
-          title: details.title || null,
+          title: details.title || details.name || null,
           poster_path: details.poster_path || null,
           overview: details.overview || null,
-          release_date: details.release_date || null,
+          release_date: details.release_date || details.first_air_date || null,
           'watch/providers': details['watch/providers'] || { results: {} },
         };
       } catch (e) {
-        // If TMDB lookup fails for an item, include the DB row minimally
         return {
           id: r.movie_show_id,
           type: r.type,
@@ -84,30 +85,34 @@ router.get('/backlog/available', authenticateToken, async (req, res) => {
     const popular = await tmdbService.getPopularMovies(1);
     const results = popular.results || [];
 
-    const available = [];
-    for (const m of results) {
+    const detailed = await Promise.all(results.map(async (m) => {
       try {
         const details = await tmdbService.getMovieDetails(m.id);
-        const prov = details['watch/providers']?.results?.US || {};
-        // gather provider names from flatrate/buy/rent
-        const providerNames = [];
-        ['flatrate', 'buy', 'rent'].forEach((k) => {
-          if (Array.isArray(prov[k])) {
-            prov[k].forEach((p) => providerNames.push((p.provider_name || '').toLowerCase()));
-          }
-        });
-
-        const match = providerNames.some((pn) => userServices.includes(pn));
-        if (match) {
-          available.push({
-            id: m.id,
-            title: m.title,
-            poster_path: m.poster_path,
-            'watch/providers': details['watch/providers'] || { results: {} },
-          });
-        }
+        return { movie: m, details };
       } catch (e) {
-        // ignore TMDB lookup failure for this movie
+        return null;
+      }
+    }));
+
+    const available = [];
+    for (const entry of detailed) {
+      if (!entry) continue;
+      const { movie: m, details } = entry;
+      const prov = details['watch/providers']?.results?.US || {};
+      const providerNames = [];
+      ['flatrate', 'buy', 'rent'].forEach((k) => {
+        if (Array.isArray(prov[k])) {
+          prov[k].forEach((p) => providerNames.push((p.provider_name || '').toLowerCase()));
+        }
+      });
+
+      if (providerNames.some((pn) => userServices.includes(pn))) {
+        available.push({
+          id: m.id,
+          title: m.title,
+          poster_path: m.poster_path,
+          'watch/providers': details['watch/providers'] || { results: {} },
+        });
       }
       if (available.length >= 20) break;
     }
