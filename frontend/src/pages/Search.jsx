@@ -36,7 +36,7 @@ export default function Search() {
     }
 
     try {
-      const response = await fetch(`/api/movies/search?query=${encodeURIComponent(title.trim())}`);
+      const response = await authFetch(`/api/movies/search?query=${encodeURIComponent(title.trim())}`);
       if (!response.ok) {
         throw new Error(`Search failed (${response.status})`);
       }
@@ -115,21 +115,21 @@ export default function Search() {
               <p className="text-[#ede4c5] text-sm font-bold mb-4 text-left">
                 {results.length} result{results.length !== 1 ? 's' : ''}
               </p>
-                      <div className="grid grid-cols-5 gap-6">
-                        {results.map((item) => (
-                          <PosterCard
-                            key={item.id}
-                            movie={item.raw}
-                            actions={[
-                              {
-                                text: item.inBacklog ? 'Added' : '+ Backlog',
-                                added: !!item.inBacklog,
-                                onClick: () => !item.inBacklog && handleAddToBacklog(item.id),
-                              },
-                            ]}
-                          />
-                        ))}
-                      </div>
+              <div className="grid grid-cols-5 gap-6">
+                {results.map((item) => (
+                  <PosterCard
+                    key={item.id}
+                    movie={item.raw}
+                    actions={[
+                      {
+                        text: item.inBacklog ? 'Added' : '+ Backlog',
+                        added: !!item.inBacklog,
+                        onClick: () => !item.inBacklog && handleAddToBacklog(item.id),
+                      },
+                    ]}
+                  />
+                ))}
+              </div>
             </div>
           ) : (
             <p className="text-gray-400 text-sm text-left">No results found.</p>
@@ -139,18 +139,4 @@ export default function Search() {
       </div>
     </div>
   );
-}
-
-async function handleAddToBacklog(id) {
-  try {
-    const res = await authFetch(`/api/movies/${id}`, { method: 'POST' });
-    if (!res.ok) throw new Error('Failed to add to backlog');
-    // Optimistically update search results in-memory so the button state reflects backlog membership
-    // Find the global results state by querying the DOM via window.__searchResults (not ideal) — instead,
-    // trigger a small event so callers can update if needed. For now, display a small confirmation.
-    // TODO: wire this to component state for visual feedback.
-    alert('Added to backlog');
-  } catch (err) {
-    alert(err.message || 'Failed to add to backlog');
-  }
 }
