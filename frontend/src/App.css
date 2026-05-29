@@ -37,11 +37,13 @@
   font-size: 0.875rem;
   color: #e5e5e5;
   text-decoration: none;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s, color 0.3s, transform 120ms ease, box-shadow 120ms ease;
 }
 
 .nav-link:hover {
+  background-color: #B15f21;
   color: #ffffff;
+  transform: translateY(-2px);
 }
 
 .nav-link.active {
@@ -62,14 +64,63 @@
   font-weight: 600;
   font-size: 18px;
   border: 3px solid #000000;
-  width: 180px;
-  padding: 0.5rem 1rem;
-  text-align: center;
+  width: 72px;
+  min-height: 45px;
+  padding: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  cursor: pointer;
 }
 
 .account-btn:hover {
   background-color: #B15f21;
   color: #ffffff;
+}
+
+.account-btn.menu-open,
+.account-btn.profile-active {
+  background-color: #2D4675;
+  color: #ffffff;
+  box-shadow: inset 0 -5px 0 #B15f21;
+  transform: translateY(-2px);
+}
+
+.account-btn.menu-open:hover,
+.account-btn.profile-active:hover {
+  background-color: #B15f21;
+  box-shadow: none;
+}
+
+.profile-icon {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  display: inline-block;
+}
+
+.profile-icon-head {
+  position: absolute;
+  top: 1px;
+  left: 50%;
+  width: 11px;
+  height: 11px;
+  border: 3px solid currentColor;
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+
+.profile-icon-shoulders {
+  position: absolute;
+  left: 50%;
+  bottom: 1px;
+  width: 25px;
+  height: 13px;
+  border: 3px solid currentColor;
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  transform: translateX(-50%);
 }
 
 .dropdown-menu {
@@ -80,7 +131,6 @@
   min-width: 180px;
   background-color: #0a1628;
   border: 3px solid #000000;
-  box-shadow: 4px 4px 0 #000000;
   z-index: 1001;
   display: flex;
   flex-direction: column;
@@ -103,7 +153,7 @@
 }
 
 .dropdown-item:hover {
-  background-color: #2D4675;
+  background-color: #B15f21;
   color: #ffffff;
 }
 
@@ -118,31 +168,6 @@
 }
 
 .dropdown-item.logout-btn:hover {
-  background-color: #2D4675;
+  background-color: #B15f21;
   color: #ffffff;
-}
-
-.account-avatar-btn {
-  width: 48px;
-  height: 48px;
-  padding: 0;
-  background-color: #FFFDF5;
-  border: 3px solid #000000;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.account-avatar-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: none;
-}
-
-.account-avatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
 }

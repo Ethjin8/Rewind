@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 const pages = [
@@ -10,7 +10,31 @@ const pages = [
 export default function Nav() {
   const { pathname } = useLocation();
   const [accountOpen, setAccountOpen] = useState(false);
+  const accountRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!accountOpen) return;
+
+    function handlePointerDown(event) {
+      if (!accountRef.current?.contains(event.target)) {
+        setAccountOpen(false);
+      }
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') {
+        setAccountOpen(false);
+      }
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [accountOpen]);
 
   async function handleLogout() {
     const refreshToken = localStorage.getItem('refreshToken');
@@ -42,18 +66,19 @@ export default function Nav() {
         </Link>
       ))}
 
-      <div className="account-dropdown">
+      <div className="account-dropdown" ref={accountRef}>
         <button
-        className="account-avatar-btn"
-        onClick={() => setAccountOpen(!accountOpen)}
-        aria-label="Open account menu"
-      >
-        <img
-          src="/profile-blank.png"
-          alt=""
-          className="account-avatar"
-        />
-      </button>
+          type="button"
+          className={`nav-link account-btn ${pathname === '/profile' ? 'profile-active' : ''} ${accountOpen ? 'menu-open' : ''}`}
+          onClick={() => setAccountOpen(!accountOpen)}
+          aria-label="Account menu"
+          aria-expanded={accountOpen}
+        >
+          <span className="profile-icon" aria-hidden="true">
+            <span className="profile-icon-head" />
+            <span className="profile-icon-shoulders" />
+          </span>
+        </button>
 
         {accountOpen && (
           <div className="dropdown-menu">
