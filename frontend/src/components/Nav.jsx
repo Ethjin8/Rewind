@@ -44,11 +44,16 @@ export default function Nav() {
 
       <div className="account-dropdown">
         <button
-          className="nav-link account-btn"
-          onClick={() => setAccountOpen(!accountOpen)}
-        >
-          Account
-        </button>
+        className="account-avatar-btn"
+        onClick={() => setAccountOpen(!accountOpen)}
+        aria-label="Open account menu"
+      >
+        <img
+          src="/profile-blank.png"
+          alt=""
+          className="account-avatar"
+        />
+      </button>
 
         {accountOpen && (
           <div className="dropdown-menu">

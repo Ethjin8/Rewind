@@ -65,7 +65,7 @@ export default function WatchHistory() {
   return (
     <div className="p-6">
       <div className="w-2/3 mx-auto flex justify-between items-center mb-6">
-        <h1 className="text-2xl">Watch History</h1>
+        <h1 className="text-2xl">WATCH HISTORY</h1>
         <div className="flex flex-col gap-2">
           <select
             value={sortOrder}
