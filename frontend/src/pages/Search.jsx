@@ -2,6 +2,78 @@ import { useState } from 'react';
 import PosterCard from '../components/PosterCard';
 import mapMovie from '../lib/movieMapper';
 import { authFetch } from '../lib/authFetch';
+import './Search.css';
+
+const MOVIE_GENRES_BY_ID = {
+  28: 'Action',
+  12: 'Adventure',
+  16: 'Animation',
+  35: 'Comedy',
+  80: 'Crime',
+  99: 'Documentary',
+  18: 'Drama',
+  14: 'Fantasy',
+  27: 'Horror',
+  878: 'Science Fiction',
+  53: 'Thriller',
+};
+
+const trendingMovies = createTrendingItems([
+  ['Dune: Part Two', ['Science Fiction', 'Adventure']],
+  ['Furiosa', ['Action', 'Adventure']],
+  ['Challengers', ['Drama']],
+  ['Civil War', ['Action', 'Drama']],
+  ['The Fall Guy', ['Action', 'Comedy']],
+  ['Inside Out 2', ['Animation', 'Comedy']],
+  ['Kingdom of the Planet of the Apes', ['Science Fiction', 'Adventure']],
+  ['Godzilla x Kong', ['Action', 'Science Fiction']],
+  ['Twisters', ['Action', 'Thriller']],
+  ['A Quiet Place: Day One', ['Horror', 'Science Fiction']],
+  ['Deadpool & Wolverine', ['Action', 'Comedy']],
+  ['Alien: Romulus', ['Horror', 'Science Fiction']],
+  ['The Substance', ['Horror', 'Drama']],
+  ['Longlegs', ['Horror', 'Crime']],
+  ['Anora', ['Drama', 'Comedy']],
+  ['Nosferatu', ['Horror', 'Fantasy']],
+  ['Wicked', ['Fantasy']],
+  ['Conclave', ['Drama', 'Thriller']],
+  ['The Wild Robot', ['Animation', 'Adventure']],
+  ['Gladiator II', ['Action', 'Drama']],
+], 'movie');
+
+const trendingShows = createTrendingItems([
+  ['Shogun', ['Drama', 'Adventure']],
+  ['Fallout', ['Science Fiction', 'Action']],
+  ['The Bear', ['Drama', 'Comedy']],
+  ['House of the Dragon', ['Fantasy', 'Drama']],
+  ['The Boys', ['Action', 'Comedy']],
+  ['Presumed Innocent', ['Crime', 'Drama']],
+  ['Ripley', ['Crime', 'Drama']],
+  ['Baby Reindeer', ['Drama']],
+  ['True Detective', ['Crime', 'Drama']],
+  ['The Penguin', ['Crime', 'Drama']],
+  ['Slow Horses', ['Thriller', 'Comedy']],
+  ['Only Murders in the Building', ['Comedy', 'Crime']],
+  ['Mr. & Mrs. Smith', ['Action', 'Comedy']],
+  ['Abbott Elementary', ['Comedy']],
+  ['The Regime', ['Comedy', 'Drama']],
+  ['Masters of the Air', ['Drama', 'Action']],
+  ['X-Men 97', ['Animation', 'Action']],
+  ['Industry', ['Drama']],
+  ['Silo', ['Science Fiction', 'Drama']],
+  ['Hacks', ['Comedy', 'Drama']],
+], 'show');
+
+function createTrendingItems(items, type) {
+  return items.map(([title, genres], index) => ({
+    id: `${type}-${index + 1}`,
+    title,
+    genres,
+    type,
+    rank: index + 1,
+    year: index < 10 ? '2024' : '2025',
+  }));
+}
 
 function searchMovies(movies, titleQuery, genreQuery) {
   let results = movies;
@@ -11,11 +83,24 @@ function searchMovies(movies, titleQuery, genreQuery) {
   }
   if (genreQuery.trim()) {
     const q = genreQuery.trim().toLowerCase();
-    results = results.filter((m) =>
-      m.genres?.some((g) => g.name.toLowerCase().includes(q))
-    );
+    results = results.filter((movie) => movieMatchesGenre(movie, q));
   }
   return results;
+}
+
+function movieMatchesGenre(movie, genreQuery) {
+  if (movie.genre?.toLowerCase().includes(genreQuery)) return true;
+  return movie.raw?.genre_ids?.some((id) =>
+    MOVIE_GENRES_BY_ID[id]?.toLowerCase().includes(genreQuery)
+  );
+}
+
+function filterTrendingItems(items, genreQuery) {
+  if (!genreQuery.trim()) return items;
+  const q = genreQuery.trim().toLowerCase();
+  return items.filter((item) =>
+    item.genres.some((genreName) => genreName.toLowerCase().includes(q))
+  );
 }
 
 export default function Search() {
@@ -31,7 +116,7 @@ export default function Search() {
 
     if (!title.trim()) {
       setResults([]);
-      setSearched(true);
+      setSearched(false);
       return;
     }
 
@@ -52,6 +137,10 @@ export default function Search() {
     }
   }
 
+  const filteredTrendingMovies = filterTrendingItems(trendingMovies, genre);
+  const filteredTrendingShows = filterTrendingItems(trendingShows, genre);
+  const isTitleSearch = Boolean(searched && title.trim());
+
   async function handleAddToBacklog(id) {
     // optimistic UI: mark as added immediately
     setResults((prev) => prev.map((r) => (r.id === id ? { ...r, inBacklog: true } : r)));
@@ -66,56 +155,49 @@ export default function Search() {
   }
 
   return (
-    <div className="min-h-screen bg-[#273445] font-['Saira'] px-6 py-10">
-      <div className="max-w-4xl mx-auto">
+    <main className="search-page">
+      <section className="search-hero">
+        <div className="search-hero-copy">
+          <span className="search-icon" aria-hidden="true" />
+          <h1>Explore</h1>
+        </div>
 
-        <h1 className="text-5xl font-black uppercase text-white mb-8 text-left">Search</h1>
-
-        <form onSubmit={handleSearch} className="flex flex-col gap-4 mb-10">
-
-          <div className="flex gap-0">
-            <label className="w-28 bg-[#ede4c5] text-black font-bold px-4 flex items-center justify-center border-2 border-r-0 border-[#ede4c5] text-sm shrink-0">
-              Title
-            </label>
+        <form onSubmit={handleSearch} className="search-form">
+          <div className="search-field">
+            <label>Title</label>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Search by title..."
-              className="flex-1 px-4 py-3 bg-[#1e2a38] text-white border-2 border-[#ede4c5] placeholder:text-gray-500 outline-none"
             />
           </div>
 
-          <div className="flex gap-0">
-            <label className="w-28 bg-[#ede4c5] text-black font-bold px-4 flex items-center justify-center border-2 border-r-0 border-[#ede4c5] text-sm shrink-0">
-              Genre
-            </label>
+          <div className="search-field">
+            <label>Genre</label>
             <input
               value={genre}
               onChange={(e) => setGenre(e.target.value)}
               placeholder="action, horror..."
-              className="flex-1 px-4 py-3 bg-[#1e2a38] text-white border-2 border-[#ede4c5] placeholder:text-gray-500 outline-none"
             />
           </div>
 
-          <button
-            type="submit"
-            className="self-start px-8 py-3 bg-[#ede4c5] text-black font-bold border-2 border-[#ede4c5] shadow-[4px_4px_0_black] hover:shadow-[6px_6px_0_black] hover:-translate-x-0.5 hover:-translate-y-0.5 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
-          >
+          <button type="submit">
             Search
           </button>
-
         </form>
+      </section>
 
-        {/* Results */}
-        {searched && (
+      <section className="search-results-section">
+        {isTitleSearch && (
           error ? (
-            <p className="text-red-300 text-sm text-left">{error}</p>
+            <p className="search-error">{error}</p>
           ) : results.length > 0 ? (
-            <div>
-              <p className="text-[#ede4c5] text-sm font-bold mb-4 text-left">
-                {results.length} result{results.length !== 1 ? 's' : ''}
-              </p>
-              <div className="grid grid-cols-5 gap-6">
+            <>
+              <div className="search-section-header">
+                <h2>Search results</h2>
+                <span>{results.length} result{results.length !== 1 ? 's' : ''}</span>
+              </div>
+              <div className="search-results-grid">
                 {results.map((item) => (
                   <PosterCard
                     key={item.id}
@@ -130,13 +212,48 @@ export default function Search() {
                   />
                 ))}
               </div>
-            </div>
+            </>
           ) : (
-            <p className="text-gray-400 text-sm text-left">No results found.</p>
+            <div className="search-empty-state">
+              <h2>No results found</h2>
+              <p>Try a different title or clear the genre filter.</p>
+            </div>
           )
         )}
+      </section>
 
+      {!isTitleSearch && (
+        <section className="trending-section">
+          <TrendingRail title="Top 20 trending movies" items={filteredTrendingMovies} />
+          <TrendingRail title="Top 20 trending shows" items={filteredTrendingShows} />
+        </section>
+      )}
+    </main>
+  );
+}
+
+function TrendingRail({ title, items }) {
+  return (
+    <section className="trending-rail">
+      <div className="search-section-header">
+        <h2>{title}</h2>
+        <span>Placeholder UI</span>
       </div>
-    </div>
+      <div className="trending-grid">
+        {items.length > 0 ? (
+          items.map((item) => (
+            <article key={item.id} className="trending-card">
+              <span className="trending-rank">{String(item.rank).padStart(2, '0')}</span>
+              <div>
+                <h3>{item.title}</h3>
+                <p>{item.type} · {item.year} · {item.genres.join(', ')}</p>
+              </div>
+            </article>
+          ))
+        ) : (
+          <div className="trending-empty">No placeholder titles match that genre.</div>
+        )}
+      </div>
+    </section>
   );
 }
