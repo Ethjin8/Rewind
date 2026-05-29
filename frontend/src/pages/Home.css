@@ -8,6 +8,16 @@
   font-family: 'Saira', sans-serif;
 }
 
+.home-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ede4c5;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
 .recommended-hero {
   width: min(calc(100% - clamp(2rem, 6vw, 6rem)), 1560px);
   margin: clamp(1rem, 2vw, 1.5rem) auto 0;
@@ -23,7 +33,7 @@
   width: min(100%, 1480px);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 700px) minmax(190px, 270px);
+  grid-template-columns: minmax(190px, 270px) minmax(0, 700px);
   align-items: center;
   justify-content: center;
   gap: clamp(1.5rem, 4vw, 3.5rem);
@@ -147,7 +157,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  justify-self: end;
+  justify-self: start;
 }
 
 .recommended-hero-image {
@@ -237,7 +247,7 @@
 
 @media (max-width: 900px) {
   .recommended-hero-inner {
-    grid-template-columns: minmax(0, 1fr) minmax(160px, 220px);
+    grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
     gap: 1.5rem;
   }
 
@@ -257,7 +267,7 @@
   }
 
   .recommended-hero-inner {
-    grid-template-columns: minmax(0, 660px) minmax(180px, 230px);
+    grid-template-columns: minmax(180px, 230px) minmax(0, 660px);
   }
 
   .empty-hero-inner {

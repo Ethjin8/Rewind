@@ -6,6 +6,11 @@ function getPosterSrc(path) {
   return path.startsWith('http') ? path : `https://image.tmdb.org/t/p/w500${path}`;
 }
 
+function detailPath(movie) {
+  const isShow = movie.type === 'show' || movie.media_type === 'tv';
+  return isShow ? `/show/${movie.id}` : `/movie/${movie.id}`;
+}
+
 export default function MovieDetail({ movie, onClose, actions = [] }) {
   if (!movie) return null;
 
@@ -38,7 +43,7 @@ export default function MovieDetail({ movie, onClose, actions = [] }) {
         </div>
 
         <div className="modal-info">
-          <p className="modal-eyebrow">MOVIE DETAILS</p>
+          <p className="modal-eyebrow">{movie.type === 'show' || movie.media_type === 'tv' ? 'SHOW DETAILS' : 'MOVIE DETAILS'}</p>
 
           <h2 className="movie-title">{movie.title}</h2>
 
@@ -60,7 +65,7 @@ export default function MovieDetail({ movie, onClose, actions = [] }) {
               </button>
             ))}
             {movie.id && (
-              <Link to={`/movie/${movie.id}`} className="modal-details-link">
+              <Link to={detailPath(movie)} className="modal-details-link">
                 View Full Details →
               </Link>
             )}
