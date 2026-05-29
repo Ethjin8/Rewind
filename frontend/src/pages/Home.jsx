@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Home.css';
 import '../pages/Auth.css';
 import MovieCarousel from '../components/MovieCarousel';
@@ -27,6 +27,7 @@ function getStatusActionText(status) {
 
 export default function Home() {
   const location = useLocation();
+  const navigate = useNavigate();
   const loginMsg = location.state?.message;
   const [backlogItems, setBacklogItems] = useState(() =>
     INITIAL_BACKLOG.map((m) => ({ ...m, status: m.status || 'not_started', removed: false }))
@@ -62,6 +63,12 @@ export default function Home() {
     load();
     return () => { mounted = false; };
   }, []);
+
+  useEffect(() => {
+    if (loginMsg) {
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.pathname, loginMsg, navigate]);
 
   const availableBacklog = availableItems.length > 0
     ? availableItems
