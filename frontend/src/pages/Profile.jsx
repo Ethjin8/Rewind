@@ -44,15 +44,15 @@ export default function Profile() {
           </div>
         </div>
 
-        <div className="profile-section">
+        <div className="service-section">
           <div className="section-title-row">
-            <h2 className="profile-section-title">STREAMING SERVICES</h2>
+            <h2 className="service-section-title">STREAMING SERVICES</h2>
             <span className="service-count">
               {selectedServices.length} selected
             </span>
           </div>
 
-          <p className="profile-section-copy">
+          <p className="service-pick">
             Pick the platforms you actually use.
           </p>
 
