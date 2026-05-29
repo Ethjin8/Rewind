@@ -64,6 +64,13 @@ export default function WatchHistory() {
   }
 
   return (
+    <main className="watch-history-page">
+      <section className="watch-history-header">
+        <div>
+          <p>Completed queue</p>
+          <h1>Watch History</h1>
+        </div>
+        <div className="history-controls">
     <div className="watch-history p-6">
       <div className="w-2/3 mx-auto flex justify-between items-center mb-6">
         <h1>Watch History</h1>
@@ -71,7 +78,6 @@ export default function WatchHistory() {
           <select
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value)}
-            className="bg-[#1e2a38] text-[#ede4c5] font-bold border-2 border-[#ede4c5] px-3 py-1 text-sm cursor-pointer"
           >
             <option value="latest">Latest Watched</option>
             <option value="oldest">First Watched</option>
@@ -79,23 +85,22 @@ export default function WatchHistory() {
           <select
             value={groupBy}
             onChange={(e) => setGroupBy(e.target.value)}
-            className="bg-[#1e2a38] text-[#ede4c5] font-bold border-2 border-[#ede4c5] px-3 py-1 text-sm cursor-pointer"
           >
             <option value="month">Group by Month</option>
             <option value="year">Group by Year</option>
           </select>
         </div>
-      </div>
+      </section>
 
-      <div className="w-2/3 mx-auto flex flex-col gap-8">
+      <section className="history-groups">
         {groups.map(({ label, items: groupItems }) => (
-          <div key={label}>
-            {/* Month divider */}
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-sm font-bold text-[#ede4c5] whitespace-nowrap">{label}</span>
-              <div className="flex-1 border-t-2 border-[#ede4c5]" />
+          <div key={label} className="history-group">
+            <div className="history-group-header">
+              <span>{label}</span>
+              <strong>{groupItems.length} watched</strong>
             </div>
 
+            <div className="history-grid">
             {/* Cards for this month */}
             <div className="watch-history-grid">
               {groupItems.map((item) => (
@@ -112,7 +117,7 @@ export default function WatchHistory() {
             </div>
           </div>
         ))}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
