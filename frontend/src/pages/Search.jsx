@@ -44,6 +44,7 @@ export default function Search() {
   const [results, setResults]   = useState([]);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState('');
+  const [searchLoading, setSearchLoading] = useState(false);
   const [trendingMovies, setTrendingMovies] = useState([]);
   const [trendingShows, setTrendingShows] = useState([]);
   const [trendingLoading, setTrendingLoading] = useState(true);
@@ -87,6 +88,7 @@ export default function Search() {
       return;
     }
 
+    setSearchLoading(true);
     try {
       const response = await authFetch(`/api/movies/search?query=${encodeURIComponent(title.trim())}`);
       if (!response.ok) {
@@ -102,6 +104,8 @@ export default function Search() {
       setResults([]);
       setSearched(true);
       setError(searchError.message);
+    } finally {
+      setSearchLoading(false);
     }
   }
 
@@ -174,7 +178,8 @@ export default function Search() {
       </section>
 
       <section className="search-results-section">
-        {isTitleSearch && (
+        {searchLoading && <p className="trending-loading">Searching…</p>}
+        {!searchLoading && isTitleSearch && (
           error ? (
             <p className="search-error">{error}</p>
           ) : results.length > 0 ? (
