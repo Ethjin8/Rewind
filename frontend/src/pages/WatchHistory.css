@@ -1,0 +1,129 @@
+.watch-history-page {
+  min-height: 100vh;
+  background: #273445;
+  color: #ede4c5;
+  font-family: 'Saira', sans-serif;
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+.watch-history-header,
+.history-groups {
+  width: min(100%, 1320px);
+  margin: 0 auto;
+}
+
+.watch-history-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.watch-history-header p {
+  margin: 0 0 0.35rem;
+  color: rgba(237, 228, 197, 0.78);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.watch-history-header h1 {
+  margin: 0;
+  color: #ede4c5;
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  font-weight: 900;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.history-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: flex-end;
+}
+
+.history-controls select {
+  min-width: 180px;
+  background: #1e2a38;
+  color: #ede4c5;
+  border: 3px solid black;
+  box-shadow: 4px 4px 0 black;
+  padding: 0.65rem 0.75rem;
+  font-family: 'Saira', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 900;
+  cursor: pointer;
+  outline: none;
+}
+
+.history-controls select:focus {
+  background: #0a1628;
+}
+
+.history-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.history-group {
+  background: #1e2a38;
+  border: 4px solid black;
+  box-shadow: 8px 8px 0 black;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.history-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 3px solid #ede4c5;
+  padding-bottom: 0.7rem;
+  text-transform: uppercase;
+}
+
+.history-group-header span {
+  color: #fffdf5;
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.history-group-header strong {
+  color: rgba(237, 228, 197, 0.75);
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 170px));
+  gap: 1.5rem;
+}
+
+@media (max-width: 760px) {
+  .watch-history-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .history-controls {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .history-controls select {
+    flex: 1 1 180px;
+  }
+
+  .history-grid {
+    grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+  }
+}
