@@ -1,10 +1,9 @@
 .profile-page {
   min-height: 100vh;
-  background: #1c1c1c;
   padding: 40px 24px;
   box-sizing: border-box;
   color: #ede4c5;
-  font-family: 'Satoshi', sans-serif;
+  font-family: 'Saira', sans-serif;
 }
 
 .profile-card {
@@ -17,9 +16,17 @@
   color: #0a1628;
 }
 
+.profile-description {
+    margin: 16px 0 0;
+    font-size: 50.95rem;
+    line-height: 1.5;
+    font-family: 'Saira', sans-serif;
+    color:#fffdf5
+}
+
 .profile-header {
-  background: #8b5e3c;
-  border: 3px solid #000000;
+  background: #2D4675;
+  border: 5px solid #000000;
   box-shadow: 4px 4px 0 #000000;
   padding: 32px 24px;
   text-align: center;
@@ -42,8 +49,6 @@
 }
 
 .profile-kicker {
-  margin: 0 0 8px;
-  font-family: 'JetBrains Mono', monospace;
   font-size: 0.8rem;
   letter-spacing: 0.08em;
 }
@@ -53,11 +58,11 @@
   font-size: 2.3rem;
   font-weight: 900;
   letter-spacing: 0.04em;
+  color: #ffffff;
 }
 
 .profile-subtitle {
-  margin: 10px 0 0;
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: #fffdf5;
 }
 
@@ -120,7 +125,7 @@
 }
 
 .service-tile.selected {
-  background: #0a1628;
+  background: #B15F21;
   color: #fffdf5;
 }
 

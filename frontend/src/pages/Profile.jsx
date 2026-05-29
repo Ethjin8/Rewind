@@ -1,6 +1,7 @@
 import "./Profile.css";
 
 import { useState } from 'react';
+import { getLoggedInUser } from '../lib/getLoggedInUser';
 
 const STREAMING_SERVICES = [
   'Netflix',
@@ -12,12 +13,10 @@ const STREAMING_SERVICES = [
   'Peacock',
   'Paramount+',
 ];
-import { getLoggedInUser } from '../lib/getLoggedInUser';
 
 export default function Profile() {
   const [selectedServices, setSelectedServices] = useState([]);
-
-  const username = {user?.username || 'Not logged in'}
+  const user = getLoggedInUser();
 
   function toggleService(service) {
     setSelectedServices((prev) =>
@@ -35,13 +34,14 @@ export default function Profile() {
             <img
               className="profile-avatar"
               src="/blank-profile.png"
-              alt={`${username} profile`}
+              alt={`${user?.username || 'User'}'s profile`}
             />
           </div>
-
-          <p className="profile-kicker">ACCOUNT</p>
-          <h1 className="profile-username">@{username}</h1>
-          <p className="profile-subtitle">Your watch identity.</p>
+          <div className="profile-description">
+            <p className="profile-kicker">ACCOUNT</p>
+            <h1 className="profile-username">@{user?.username || 'Error'}</h1>
+            <p className="profile-subtitle">Your watch identity.</p>
+          </div>
         </div>
 
         <div className="profile-section">
@@ -80,10 +80,6 @@ export default function Profile() {
         <div className="profile-actions">
           <button type="button" className="profile-btn profile-btn-primary">
             SAVE CHANGES
-          </button>
-
-          <button type="button" className="profile-btn profile-btn-secondary">
-            SIGN OUT
           </button>
         </div>
       </section>
