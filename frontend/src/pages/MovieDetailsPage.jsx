@@ -29,7 +29,7 @@ function useFetchMovie(id) {
         setLoading(true);
         setError('');
 
-        const response = await fetch(`/api/movies/${id}`);
+        const response = await authFetch(`/api/movies/${id}`);
         if (!response.ok) {
           throw new Error(`Failed to load movie (${response.status})`);
         }
@@ -63,13 +63,7 @@ function useFetchMovie(id) {
   return { loading, movie, error };
 }
 
-function handleAddToBacklog(id) {
-  console.log('Add to backlog:', id);
-}
 
-function handleAddToWatched(id) {
-  console.log('Add to watched:', id);
-}
 
 const TABS = ['Details', 'Cast', 'IMDB'];
 
@@ -215,7 +209,6 @@ export default function MovieDetailsPage() {
             {/* Action buttons */}
             <div className="flex gap-3 mt-auto">
               <button
-                onClick={() => handleAddToBacklog(movie.id)}
                 type="button"
                 onClick={handleToggleBacklog}
                 aria-pressed={inBacklog}
