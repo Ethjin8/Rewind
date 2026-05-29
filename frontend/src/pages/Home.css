@@ -100,7 +100,8 @@
   text-align: left;
 }
 
-.hero-link-button {
+.hero-link-button,
+.hero-details-button {
   display: inline-block;
   margin-top: 1rem;
   background: #ede4c5;
@@ -116,12 +117,20 @@
   transition: transform 120ms ease, box-shadow 120ms ease;
 }
 
-.hero-link-button:hover {
+.hero-details-button {
+  margin-top: 0;
+  background: #0a1628;
+  color: #ede4c5;
+}
+
+.hero-link-button:hover,
+.hero-details-button:hover {
   transform: translate(-2px, -2px);
   box-shadow: 6px 6px 0 black;
 }
 
-.hero-link-button:active {
+.hero-link-button:active,
+.hero-details-button:active {
   transform: translate(4px, 4px);
   box-shadow: none;
 }
