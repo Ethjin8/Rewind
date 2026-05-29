@@ -1,6 +1,11 @@
 import { Link } from 'react-router-dom';
 import './MovieDetail.css';
 
+function getPosterSrc(path) {
+  if (!path) return null;
+  return path.startsWith('http') ? path : `https://image.tmdb.org/t/p/w500${path}`;
+}
+
 export default function MovieDetail({ movie, onClose, actions = [] }) {
   if (!movie) return null;
 
@@ -19,10 +24,10 @@ export default function MovieDetail({ movie, onClose, actions = [] }) {
         </button>
 
         <div className="modal-poster-wrap">
-          {movie.poster_path ? (
+          {getPosterSrc(movie.poster_path) ? (
             <img
               className="movie-poster"
-              src={movie.poster_path}
+              src={getPosterSrc(movie.poster_path)}
               alt={movie.title}
             />
           ) : (
@@ -49,19 +54,11 @@ export default function MovieDetail({ movie, onClose, actions = [] }) {
           </p>
 
           <div className="modal-actions">
-            {actions.length > 0
-              ? actions.map(({ text, onClick }) => (
-                  <button key={text} type="button" onClick={() => { onClick(); onClose(); }}>
-                    {text}
-                  </button>
-                ))
-              : (
-                <>
-                  <button type="button">+ BACKLOG</button>
-                  <button type="button">✓ WATCHED</button>
-                </>
-              )
-            }
+            {actions.map(({ text, onClick }) => (
+              <button key={text} type="button" onClick={onClick}>
+                {text}
+              </button>
+            ))}
             {movie.id && (
               <Link to={`/movie/${movie.id}`} className="modal-details-link">
                 View Full Details →
