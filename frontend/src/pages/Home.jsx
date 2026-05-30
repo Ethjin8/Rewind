@@ -32,9 +32,11 @@ export default function Home() {
   const [backlogItems, setBacklogItems] = useState(() =>
     INITIAL_BACKLOG.map((m) => ({ ...m, status: m.status || 'not_started', removed: false }))
   );
-  const [availableItems, setAvailableItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  //Gets the streaming service selected by the user from profile,
+  // returns null if no streaming service is selected.
+  const selectedServices = JSON.parse(localStorage.getItem("selectedServices")) || [];
 
   useEffect(() => {
     let mounted = true;
@@ -47,12 +49,12 @@ export default function Home() {
         if (!mounted) return;
         setBacklogItems(data.map((m) => ({ ...m, status: m.status || 'not_started', removed: false })));
 
-        const aRes = await authFetch('/api/backlog/available');
-        if (aRes.ok) {
-          const aData = await aRes.json();
-          if (!mounted) return;
-          setAvailableItems(aData || []);
-        }
+        // const aRes = await authFetch('/api/backlog/available');
+        // if (aRes.ok) {
+        //   const aData = await aRes.json();
+        //   if (!mounted) return;
+        //   setAvailableItems(aData || []);
+        //}
         setError(null);
       } catch (err) {
         setError(err.message || 'Failed to load data');
@@ -70,9 +72,21 @@ export default function Home() {
     }
   }, [location.pathname, loginMsg, navigate]);
 
-  const availableBacklog = availableItems.length > 0
-    ? availableItems
-    : backlogItems.filter((movie) => !movie.removed && Object.keys(movie['watch/providers']?.results ?? {}).length > 0);
+  // Returns a bool indicating whether the given movie has a streaming provider that
+  //  matches the user's selected streaming services.
+  function hasSelectedStreamingService(movie) {
+    const providers =
+      movie["watch/providers"]?.results?.US?.flatrate || [];
+  // .some iterates through the providers and returns true if 
+  // *any provider's name is included in the user's selected services.
+    return providers.some((provider) =>
+      selectedServices.includes(provider.provider_name)
+    );
+  }
+
+  const availableBacklog = backlogItems.filter((movie) => 
+      !movie.removed && hasSelectedStreamingService(movie));
+
 
   const recommended = [...availableBacklog]
     .sort((a, b) => new Date(a.date_added || a.addedAt) - new Date(b.date_added || b.addedAt))[0];

@@ -15,16 +15,31 @@ const STREAMING_SERVICES = [
 ];
 
 export default function Profile() {
-  const [selectedServices, setSelectedServices] = useState([]);
-  const user = getLoggedInUser();
+  // const [selectedServices, setSelectedServices] = useState([]);
+  // const user = getLoggedInUser();
 
-  function toggleService(service) {
-    setSelectedServices((prev) =>
-      prev.includes(service)
-        ? prev.filter((item) => item !== service)
-        : [...prev, service]
-    );
-  }
+  // function toggleService(service) {
+  //   setSelectedServices((prev) =>
+  //     prev.includes(service)
+  //       ? prev.filter((item) => item !== service)
+  //       : [...prev, service]
+  //   );
+  // }
+    const [selectedServices, setSelectedServices] = useState(() => {
+      return JSON.parse(localStorage.getItem("selectedServices")) || [];
+    });
+    const user = getLoggedInUser();
+
+    function toggleService(service) {
+      setSelectedServices((prev) => {
+        // if the service is already selected, remove it.
+        // otherwise, add it to the list of selected services.
+        const next = prev.includes(service)
+          ? prev.filter((selected) => selected !== service)
+          : [...prev, service];
+        return next;
+      });
+    }
 
   return (
     <main className="profile-page">
@@ -58,6 +73,9 @@ export default function Profile() {
 
           <div className="service-grid">
             {STREAMING_SERVICES.map((service) => {
+              //variable to check if the current service is included in the
+              // selectedServices array, which is used to determine the
+              // button's appearance and label.
               const isSelected = selectedServices.includes(service);
 
               return (
