@@ -261,6 +261,14 @@ export default function MovieDetailsPage() {
                     <dt>Rating</dt>
                     <dd>{movie.certification || (movie.vote_average ? `${movie.vote_average} / 10` : 'N/A')}</dd>
                   </div>
+                  <div>
+                    <dt>Available on</dt>
+                    <dd>  {movie["watch/providers"]?.results?.US?.flatrate?.length > 0
+      ? movie["watch/providers"].results.US.flatrate
+          .map((provider) => provider.provider_name)
+          .join(', ')
+      : 'Not available'}</dd>
+                  </div>
                 </dl>
                 <p className="details-synopsis">{movie.synopsis || 'No synopsis available.'}</p>
               </div>
