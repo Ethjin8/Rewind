@@ -263,11 +263,21 @@ export default function MovieDetailsPage() {
                   </div>
                   <div>
                     <dt>Available on</dt>
-                    <dd>  {movie["watch/providers"]?.results?.US?.flatrate?.length > 0
-      ? movie["watch/providers"].results.US.flatrate
-          .map((provider) => provider.provider_name)
+                    <dd>{movie["watch/providers"]?.results?.US?.flatrate?.length > 0
+      ? 'Available on: ' + movie["watch/providers"]?.results?.US?.flatrate
+          .map((p) => p.provider_name)
           .join(', ')
-      : 'Not available'}</dd>
+      : 'Not available'}
+                    </dd>
+                  </div>
+                                    <div>
+                    <dt>Available on</dt>
+                    <dd>{movie.watchProviders?.results?.US?.flatrate?.length > 0
+      ? 'Available on: ' + movie.watchProviders?.results?.US?.flatrate
+          .map((p) => p.provider_name)
+          .join(', ')
+      : 'Not available'}
+                    </dd>
                   </div>
                 </dl>
                 <p className="details-synopsis">{movie.synopsis || 'No synopsis available.'}</p>

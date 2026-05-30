@@ -6,10 +6,10 @@ import { getLoggedInUser } from '../lib/getLoggedInUser';
 const STREAMING_SERVICES = [
   'Netflix',
   'Hulu',
-  'Disney+',
-  'Max',
+  'Disney Plus',
+  'HBO Max',
   'Prime Video',
-  'Apple TV+',
+  'Apple TV Plus',
   'Peacock',
   'Paramount+',
 ];
