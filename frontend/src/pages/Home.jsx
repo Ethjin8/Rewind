@@ -26,7 +26,6 @@ export default function Home() {
   const navigate = useNavigate();
   const loginMsg = location.state?.message;
   const [backlogItems, setBacklogItems] = useState([]);
-  const [availableItems, setAvailableItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   //Gets the streaming service selected by the user from profile,
@@ -68,7 +67,7 @@ export default function Home() {
 
 
   const availableBacklog = backlogItems.filter((movie) => 
-      !movie.removed && hasSelectedStreamingService(movie));
+      !movie.removed && movie.status !== 'completed' && hasSelectedStreamingService(movie));
 
 
   const recommended = [...availableBacklog]
