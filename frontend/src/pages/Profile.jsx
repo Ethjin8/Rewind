@@ -7,24 +7,41 @@ const STREAMING_SERVICES = [
   'Netflix',
   'Hulu',
   'Disney+',
-  'Max',
+  'Crunchyroll',
   'Prime Video',
-  'Apple TV+',
+  'Apple TV',
   'Peacock',
   'Paramount+',
 ];
 
 export default function Profile() {
-  const [selectedServices, setSelectedServices] = useState([]);
-  const user = getLoggedInUser();
+  // const [selectedServices, setSelectedServices] = useState([]);
+  // const user = getLoggedInUser();
 
-  function toggleService(service) {
-    setSelectedServices((prev) =>
-      prev.includes(service)
-        ? prev.filter((item) => item !== service)
-        : [...prev, service]
-    );
-  }
+  // function toggleService(service) {
+  //   setSelectedServices((prev) =>
+  //     prev.includes(service)
+  //       ? prev.filter((item) => item !== service)
+  //       : [...prev, service]
+  //   );
+  // }
+    const [selectedServices, setSelectedServices] = useState(() => {
+      return JSON.parse(localStorage.getItem("selectedServices")) || [];
+    });
+    const user = getLoggedInUser();
+
+    function toggleService(service) {
+      setSelectedServices((prev) => {
+        // if the service is already selected, remove it.
+        // otherwise, add it to the list of selected services.
+        const next = prev.includes(service)
+          ? prev.filter((selected) => selected !== service)
+          : [...prev, service];
+        
+         localStorage.setItem("selectedServices", JSON.stringify(next));
+        return next;
+      });
+    }
 
   return (
     <main className="profile-page">
@@ -58,6 +75,9 @@ export default function Profile() {
 
           <div className="service-grid">
             {STREAMING_SERVICES.map((service) => {
+              //variable to check if the current service is included in the
+              // selectedServices array, which is used to determine the
+              // button's appearance and label.
               const isSelected = selectedServices.includes(service);
 
               return (
@@ -75,12 +95,6 @@ export default function Profile() {
               );
             })}
           </div>
-        </div>
-
-        <div className="profile-actions">
-          <button type="button" className="profile-btn profile-btn-primary">
-            SAVE CHANGES
-          </button>
         </div>
       </section>
     </main>
