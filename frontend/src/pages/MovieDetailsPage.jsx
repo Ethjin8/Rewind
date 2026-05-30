@@ -144,10 +144,8 @@ export default function MovieDetailsPage() {
 
   async function handleToggleBacklog() {
     if (!movie) return;
-    const next = !inBacklog;
-    const confirmed = next
-      ? window.confirm('Add to backlog?')
-      : window.confirm('Remove from backlog?');
+    const next = !inBacklog;    
+      window.confirm('Remove from backlog?');
     if (!confirmed) return;
     setInBacklog(next); // optimistic
     try {
