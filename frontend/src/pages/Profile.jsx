@@ -96,12 +96,6 @@ export default function Profile() {
             })}
           </div>
         </div>
-
-        <div className="profile-actions">
-          <button type="button" className="profile-btn profile-btn-primary">
-            SAVE CHANGES
-          </button>
-        </div>
       </section>
     </main>
   );
