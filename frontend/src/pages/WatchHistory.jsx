@@ -1,22 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PosterCard from '../components/PosterCard';
+import { authFetch } from '../lib/authFetch';
 import './WatchHistory.css';
 
-// Placeholder data — replace with real API responses from the backend.
-// Shape mirrors a TMDB movie object. watchedAt is app-specific (Unix ms timestamp).
-const initialItems = [
-  { id: 1, title: 'placeholder 1', genres: [{ id: 878, name: 'Science Fiction' }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1704844800000 },
-  { id: 2, title: 'placeholder 2', genres: [{ id: 18,  name: 'Drama'           }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1706918400000 },
-  { id: 3, title: 'placeholder 3', genres: [{ id: 12,  name: 'Adventure'       }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1710460800000 },
-  { id: 4, title: 'placeholder 4', genres: [{ id: 878, name: 'Science Fiction' }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1713744000000 },
-  { id: 5, title: 'placeholder 5', genres: [{ id: 27,  name: 'Horror'          }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1716326400000 },
-  { id: 6, title: 'placeholder 6', genres: [{ id: 35,  name: 'Comedy'          }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1719004800000 },
-  { id: 7, title: 'placeholder 7', genres: [{ id: 28,  name: 'Action'          }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1721683200000 },
-  { id: 8, title: 'placeholder 8', genres: [{ id: 14,  name: 'Fantasy'         }], release_date: null, overview: null, poster_path: null, vote_average: null, runtime: null, 'watch/providers': { results: {} }, watchedAt: 1724352000000 },
-];
-
-// Groups an already-sorted array into [{ label, items }] by month or year.
-// Order of groups follows the order of the input array.
 function groupItems(sortedItems, groupBy) {
   const groups = [];
   const seen = new Map();
@@ -41,27 +27,76 @@ function groupItems(sortedItems, groupBy) {
 }
 
 export default function WatchHistory() {
-  const [items, setItems] = useState(initialItems);
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState('latest');
   const [groupBy, setGroupBy] = useState('month');
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await authFetch('/api/backlog/full');
+        if (!res.ok) throw new Error('Failed to load watch history');
+        const data = await res.json();
+        setItems(
+          data
+            .filter((item) => item.status === 'completed')
+            .map((item) => ({ ...item, watchedAt: new Date(item.date_added).getTime() }))
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  function endpointFor(item) {
+    return `/api/${item.type === 'show' ? 'shows' : 'movies'}/${item.id}`;
+  }
+
+  async function handleMoveToBacklog(id) {
+    if (!window.confirm('Move this to your backlog?')) return;
+    const item = items.find((i) => i.id === id);
+    setItems((prev) => prev.filter((i) => i.id !== id));
+    try {
+      const res = await authFetch(`/api/backlog/status/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'not_started' }),
+      });
+      if (!res.ok) throw new Error('Failed to move to backlog');
+    } catch (err) {
+      setItems((prev) => [...prev, item]);
+      alert(err.message || 'Failed to move to backlog');
+    }
+  }
+
+  async function handleRemove(id) {
+    if (!window.confirm('Remove this from your watch history?')) return;
+    const item = items.find((i) => i.id === id);
+    setItems((prev) => prev.filter((i) => i.id !== id));
+    try {
+      const res = await authFetch(endpointFor(item), { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to remove');
+    } catch (err) {
+      setItems((prev) => [...prev, item]);
+      alert(err.message || 'Failed to remove');
+    }
+  }
+
+  if (loading) {
+    return (
+      <main className="watch-history-page">
+        <p className="watch-history-loading">Loading…</p>
+      </main>
+    );
+  }
 
   const sortedItems = [...items].sort((a, b) =>
     sortOrder === 'latest' ? b.watchedAt - a.watchedAt : a.watchedAt - b.watchedAt
   );
 
   const groups = groupItems(sortedItems, groupBy);
-
-  // Placeholder — will eventually call the backend
-  function handleMoveToBacklog(id) {
-    if (!window.confirm('Move this to your backlog?')) return;
-    setItems(items.filter((item) => item.id !== id));
-  }
-
-  // Placeholder — will eventually call the backend
-  function handleRemove(id) {
-    if (!window.confirm('Remove this from your watch history?')) return;
-    setItems(items.filter((item) => item.id !== id));
-  }
 
   return (
     <main className="watch-history-page">
@@ -71,17 +106,11 @@ export default function WatchHistory() {
           <h1>Watch History</h1>
         </div>
         <div className="history-controls">
-          <select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-          >
+          <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
             <option value="latest">Latest Watched</option>
             <option value="oldest">First Watched</option>
           </select>
-          <select
-            value={groupBy}
-            onChange={(e) => setGroupBy(e.target.value)}
-          >
+          <select value={groupBy} onChange={(e) => setGroupBy(e.target.value)}>
             <option value="month">Group by Month</option>
             <option value="year">Group by Year</option>
           </select>
@@ -89,31 +118,33 @@ export default function WatchHistory() {
       </section>
 
       <section className="history-groups">
-        {groups.map(({ label, items: groupItems }) => (
-          <div key={label} className="history-group">
-            <div className="history-group-header">
-              <span>{label}</span>
-              <strong>{groupItems.length} watched</strong>
+        {groups.length === 0 ? (
+          <p className="history-empty">No watched titles yet. Mark something as watched from your backlog.</p>
+        ) : (
+          groups.map(({ label, items: groupItems }) => (
+            <div key={label} className="history-group">
+              <div className="history-group-header">
+                <span>{label}</span>
+                <strong>{groupItems.length} watched</strong>
+              </div>
+              <div className="history-grid">
+                <div className="watch-history-grid">
+                  {groupItems.map((item) => (
+                    <PosterCard
+                      key={item.id}
+                      movie={item}
+                      dateAdded={item.watchedAt}
+                      actions={[
+                        { text: 'Move to Backlog', onClick: () => handleMoveToBacklog(item.id) },
+                        { text: 'Remove',          onClick: () => handleRemove(item.id) },
+                      ]}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
-
-            <div className="history-grid">
-            {/* Cards for this month */}
-            <div className="watch-history-grid">
-              {groupItems.map((item) => (
-                <PosterCard
-                  key={item.id}
-                  movie={item}
-                  dateAdded={item.watchedAt}
-                  actions={[
-                    { text: 'Move to Backlog', onClick: () => handleMoveToBacklog(item.id) },
-                    { text: 'Remove',          onClick: () => handleRemove(item.id) },
-                  ]}
-                />
-              ))}
-            </div>
-          </div>
-          </div>
-        ))}
+          ))
+        )}
       </section>
     </main>
   );

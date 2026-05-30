@@ -21,17 +21,12 @@ function formatDate(dateValue) {
   return date.toLocaleDateString();
 }
 
-function getStatusActionText(status) {
-  return status === 'completed' ? 'Not Watched' : 'Watched';
-}
-
 export default function Home() {
   const location = useLocation();
   const navigate = useNavigate();
   const loginMsg = location.state?.message;
-  const [backlogItems, setBacklogItems] = useState(() =>
-    INITIAL_BACKLOG.map((m) => ({ ...m, status: m.status || 'not_started', removed: false }))
-  );
+  const [backlogItems, setBacklogItems] = useState([]);
+  const [availableItems, setAvailableItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   //Gets the streaming service selected by the user from profile,
@@ -71,27 +66,6 @@ export default function Home() {
     }
   }, [location.pathname, loginMsg, navigate]);
 
-  // function normalizeProviderName(name) {
-  //   if (name.includes('Max')) return 'HBO Max';
-  //   if (name.includes('Amazon')) return 'Prime Video';
-  //   if (name.includes('Crunchyroll')) return 'Crunchyroll';
-  //   if (name.includes('Peacock')) return 'Peacock';
-  //   if (name.includes('Paramount')) return 'Paramount+';
-  //   if (name.includes('Disney')) return 'Disney+';
-  //   if (name.includes('Netflix')) return 'Netflix';
-  //   if (name.includes('Apple')) return 'Apple TV';
-  //}
-  // // Returns a bool indicating whether the given movie has a streaming provider that
-  // //  matches the user's selected streaming services.
-  // function hasSelectedStreamingService(movie) {
-  //   const providers =
-  //     movie["watch/providers"]?.results?.US?.flatrate || [];
-  // // .some iterates through the providers and returns true if 
-  // // *any provider's name is included in the user's selected services.
-  //   return providers.some((provider) =>
-  //     selectedServices.includes( normalizeProviderName(provider.provider_name) )
-  //   );
-  // }
 
   const availableBacklog = backlogItems.filter((movie) => 
       !movie.removed && hasSelectedStreamingService(movie));
@@ -105,16 +79,15 @@ export default function Home() {
     return `/api/${kind}/${item?.id}`;
   }
 
-  // Toggle watched state and persist
   async function handleWatched(id) {
-    setBacklogItems((prev) => prev.map((m) => (m.id === id ? { ...m, status: m.status === 'completed' ? 'not_started' : 'completed' } : m)));
+    if (!window.confirm('Mark as watched? This will move it to your watch history.')) return;
     const movie = backlogItems.find((m) => m.id === id);
-    const nextStatus = movie?.status === 'completed' ? 'not_started' : 'completed';
+    setBacklogItems((prev) => prev.map((m) => (m.id === id ? { ...m, status: 'completed' } : m)));
     try {
       let res = await authFetch(`/api/backlog/status/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: nextStatus }),
+        body: JSON.stringify({ status: 'completed' }),
       });
       if (res.status === 404) {
         const addRes = await authFetch(endpointFor(movie), { method: 'POST' });
@@ -122,18 +95,18 @@ export default function Home() {
         res = await authFetch(`/api/backlog/status/${id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: nextStatus }),
+          body: JSON.stringify({ status: 'completed' }),
         });
       }
       if (!res.ok) throw new Error('Failed to update watched status');
     } catch (err) {
-      setBacklogItems((prev) => prev.map((m) => (m.id === id ? { ...m, status: m.status === 'completed' ? 'not_started' : 'completed' } : m)));
+      setBacklogItems((prev) => prev.map((m) => (m.id === id ? { ...m, status: 'not_started' } : m)));
       alert(err.message || 'Failed to update watched status');
     }
   }
 
-  // Toggle removed state and persist
   async function handleRemove(id) {
+    if (!window.confirm('Remove this from your backlog?')) return;
     setBacklogItems((prev) => prev.map((m) => (m.id === id ? { ...m, removed: !m.removed } : m)));
     const movie = backlogItems.find((m) => m.id === id);
     const willRemove = !(movie?.removed);
@@ -151,12 +124,19 @@ export default function Home() {
     }
   }
 
+  if (loading) {
+    return (
+      <main className="home-page">
+        <p className="home-loading">Loading…</p>
+      </main>
+    );
+  }
+
   return (
     <main className="home-page">
       {loginMsg && <p className="toast-message success-message">{loginMsg}</p>}
-      {loading && <p className="toast-message">Loading backlog…</p>}
       {error && <p className="toast-message error-message">{error}</p>}
-      {!loading && !error && !recommended && (
+      {!error && !recommended && (
         <section className="recommended-hero empty-hero">
           <div className="recommended-hero-inner empty-hero-inner">
             <div className="recommended-text">
@@ -176,6 +156,20 @@ export default function Home() {
       {recommended && (
         <section className="recommended-hero">
           <div className="recommended-hero-inner">
+            <div className="recommended-card">
+              {getPosterSrc(recommended.poster_path) ? (
+                <img
+                  src={getPosterSrc(recommended.poster_path)}
+                  alt={recommended.title}
+                  className="recommended-hero-image"
+                />
+              ) : (
+                <div className="recommended-poster-placeholder">
+                  {recommended.title}
+                </div>
+              )}
+            </div>
+
             <div className="recommended-text">
               <p className="hero-label">
                 TODAY'S BACKLOG RECOMMENDATION
@@ -199,27 +193,13 @@ export default function Home() {
 
               <div className="hero-buttons">
                 <button type="button" onClick={() => handleWatched(recommended.id)}>
-                  {getStatusActionText(recommended.status)}
+                  Mark as Watched
                 </button>
                 <button type="button" onClick={() => handleRemove(recommended.id)}>REMOVE</button>
-                <Link to={`/movie/${recommended.id}`} className="hero-details-button">
+                <Link to={`/${recommended.type === 'show' ? 'show' : 'movie'}/${recommended.id}`} className="hero-details-button">
                   VIEW DETAILS
                 </Link>
               </div>
-            </div>
-
-            <div className="recommended-card">
-              {getPosterSrc(recommended.poster_path) ? (
-                <img
-                  src={getPosterSrc(recommended.poster_path)}
-                  alt={recommended.title}
-                  className="recommended-hero-image"
-                />
-              ) : (
-                <div className="recommended-poster-placeholder">
-                  {recommended.title}
-                </div>
-              )}
             </div>
           </div>
         </section>
@@ -228,11 +208,11 @@ export default function Home() {
       <section className="home-section">
         <MovieCarousel
           title="MY BACKLOG"
-          movies={backlogItems.filter((m) => !m.removed)}
+          movies={backlogItems.filter((m) => !m.removed && m.status !== 'completed')}
           emptyMessage="Your backlog is empty. Use Explore to add movies or shows."
           getActions={(movie) => [
-            { text: getStatusActionText(movie.status), onClick: () => handleWatched(movie.id) },
-            { text: movie.removed ? 'Restore' : 'Remove',  onClick: () => handleRemove(movie.id)  },
+            { text: 'Mark as Watched', onClick: () => handleWatched(movie.id) },
+            { text: 'Remove', onClick: () => handleRemove(movie.id) },
           ]}
         />
         <MovieCarousel
@@ -240,8 +220,8 @@ export default function Home() {
           movies={availableBacklog}
           emptyMessage="No streaming matches yet. Add backlog items and streaming services to see available titles here."
           getActions={(movie) => [
-            { text: getStatusActionText(movie.status), onClick: () => handleWatched(movie.id) },
-            { text: movie.removed ? 'Restore' : 'Remove',  onClick: () => handleRemove(movie.id)  },
+            { text: 'Mark as Watched', onClick: () => handleWatched(movie.id) },
+            { text: 'Remove', onClick: () => handleRemove(movie.id) },
           ]}
         />
       </section>

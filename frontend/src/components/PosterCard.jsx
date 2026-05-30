@@ -11,7 +11,7 @@ import { hasSelectedStreamingService } from '../lib/checkAvailability';
  *   actions   {{ text: string, onClick: fn }[]}  - buttons shown in the hover panel
  *   showCircle {boolean}                         - whether to display the corner circle
  */
-export default function PosterCard({ movie, dateAdded, actions = [], showCircle}) {
+export default function PosterCard({ movie, dateAdded, actions = [], inBacklog = false, showCircle = false }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -23,6 +23,11 @@ export default function PosterCard({ movie, dateAdded, actions = [], showCircle}
       >
         {showCircle && (
           <div className="poster-corner-circle" aria-hidden="true"></div>
+        )}
+        {inBacklog && (
+          <div className="absolute top-2 right-2 z-10 w-8 h-8 bg-green-500 border-[3px] border-black shadow-[4px_4px_0_black] flex items-center justify-center pointer-events-none">
+            <span className="text-white font-black text-lg leading-none">✔</span>
+          </div>
         )}
 
         {movie.poster_path ? (

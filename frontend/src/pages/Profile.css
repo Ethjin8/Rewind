@@ -9,11 +9,11 @@
 .profile-card {
   max-width: 860px;
   margin: 0 auto;
-  background: #fffdf5;
+  background: #0a1628;
   border: 3px solid #000000;
   box-shadow: 6px 6px 0 #000000;
   padding: 32px;
-  color: #0a1628;
+  color: #ffffff;
 }
 
 .profile-description {
@@ -82,12 +82,13 @@
   margin: 0;
   font-size: 1.5rem;
   font-weight: 900;
+  color: #ffffff;
 }
 
 .service-count {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.85rem;
-  color: #334155;
+  color: #ede4c5;
 }
 
 .service-pick {
@@ -95,7 +96,7 @@
   font-family: 'Saira', sans-serif;
   font-weight: 500;
   font-size: 1.25rem;
-  color: #334155;
+  color: #ede4c5;
   align-self: flex-start;
 }
 
@@ -106,7 +107,7 @@
 }
 
 .service-tile {
-  background: #fffdf5;
+  background: #ede4c5;
   color: #0a1628;
   border: 3px solid #000000;
   box-shadow: 4px 4px 0 #000000;
@@ -128,7 +129,7 @@
 
 .service-tile.selected {
   background: #B15F21;
-  color: #fffdf5;
+  color: #ffffff;
 }
 
 .service-label-top {
@@ -173,12 +174,12 @@
 }
 
 .profile-btn-primary {
-  background: #0a1628;
-  color: #fffdf5;
+  background: #B15F21;
+  color: #ffffff;
 }
 
 .profile-btn-secondary {
-  background: #fffdf5;
+  background: #ede4c5;
   color: #0a1628;
 }
 

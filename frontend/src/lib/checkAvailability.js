@@ -16,6 +16,8 @@ function normalizeProviderName(name) {
       return JSON.parse(localStorage.getItem("selectedServices")) || [];
     }
 
+  // Returns a bool indicating whether the given movie has a streaming provider that
+  //  matches the user's selected streaming services.
 export function hasSelectedStreamingService(movie) {
     const providers =
       movie["watch/providers"]?.results?.US?.flatrate ?? [];

@@ -137,5 +137,23 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, 170px);
   gap: 50px;
-  justify-content: start;   
+  justify-content: start;
+}
+
+.watch-history-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ede4c5;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.history-empty {
+  color: rgba(237, 228, 197, 0.6);
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 3rem 0;
 }
