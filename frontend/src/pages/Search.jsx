@@ -126,7 +126,23 @@ export default function Search() {
   })
 );
 
-      const mapped = moviesWithDetails.map(mapMovie).filter(Boolean);
+      const backlogResponse = await authFetch('/api/backlog/sorted');
+      const backlogData = backlogResponse.ok ? await backlogResponse.json() : [];
+
+      const backlogIds = new Set(
+        backlogData
+          .filter((item) => item.type === 'movie')
+          .map((item) => String(item.movie_show_id))
+      );
+
+      const mapped = moviesWithDetails
+        .map(mapMovie)
+        .filter(Boolean)
+        .map((movie) => ({
+          ...movie,
+          inBacklog: backlogIds.has(String(movie.id)),
+        }));
+
       setResults(searchMovies(mapped, '', genre));
       setSearched(true);
       
@@ -223,7 +239,7 @@ export default function Search() {
                   <PosterCard
                     key={item.id}
                     movie={item.raw}
-                    showCircle={hasSelectedStreamingService(item.raw)}
+                    showAvail={hasSelectedStreamingService(item.raw)}
                     inBacklog={!!item.inBacklog}
                     actions={[
                       {

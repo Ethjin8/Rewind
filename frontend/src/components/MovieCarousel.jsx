@@ -111,7 +111,7 @@ export default function MovieCarousel({ title, movies, getActions, emptyMessage 
                   movie={movie}
                   dateAdded={movie.addedAt ? new Date(movie.addedAt).getTime() : undefined}
                   actions={getActions ? getActions(movie) : []}
-                  showCircle={false}
+                  showAvail={false}
                 />
               </div>
             ))
