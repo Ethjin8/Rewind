@@ -1,5 +1,5 @@
 import "./Profile.css";
-
+import profilePic from "../assets/profile-pic.svg";
 import { useState } from 'react';
 import { getLoggedInUser } from '../lib/getLoggedInUser';
 
@@ -33,7 +33,7 @@ export default function Profile() {
           <div className="profile-avatar-wrap">
             <img
               className="profile-avatar"
-              src="/blank-profile.png"
+              src={profilePic}
               alt={`${user?.username || 'User'}'s profile`}
             />
           </div>
@@ -53,7 +53,7 @@ export default function Profile() {
           </div>
 
           <p className="service-pick">
-            Pick the platforms you actually use.
+            Pick the platforms you use.
           </p>
 
           <div className="service-grid">
@@ -78,9 +78,6 @@ export default function Profile() {
         </div>
 
         <div className="profile-actions">
-          <button type="button" className="profile-btn profile-btn-primary">
-            SAVE CHANGES
-          </button>
         </div>
       </section>
     </main>
