@@ -4,6 +4,7 @@ const tmdbService = require('../services/tmdbService.js');
 const pool = require('../database.js');
 
 const { authenticateToken } = require('../middleware/tokens.js');
+const { getUserBacklog, updateWatchStatus } = require('../models/backlog.js');
 
 // Get user's backlog sorted by date_added (default is desc, but you can switch to asc)
 router.get('/backlog/sorted', authenticateToken, async (req, res) => {
@@ -27,10 +28,7 @@ router.get('/backlog/sorted', authenticateToken, async (req, res) => {
 router.get('/backlog/full', authenticateToken, async (req, res) => {
   try {
     const uid = req.user.id;
-    const [rows] = await pool.query(
-      `SELECT * FROM movies_shows WHERE user_id = ? ORDER BY date_added DESC`,
-      [uid]
-    );
+    const rows = await getUserBacklog(uid);
 
     const detailed = await Promise.all(rows.map(async (r) => {
       try {
@@ -125,16 +123,14 @@ router.get('/backlog/available', authenticateToken, async (req, res) => {
 
 router.patch('/backlog/status/:id', authenticateToken, async (req, res) => {
   try {
-    const movie_show_id = req.params.id;
+    const movieShowID = req.params.id;
     const uid = req.user.id;
     const newStatus = req.body.status;
 
-    const [result] = await pool.query(
-      `UPDATE movies_shows SET status = ? WHERE movie_show_id = ? AND user_id = ?`,
-      [newStatus, movie_show_id, uid]);
+    const result = await updateWatchStatus(newStatus, uid, movieShowID);
     
     if (result.affectedRows === 0) {
-      res.status(404).json({ error: "Movie not found in backlog" });
+      res.status(404).json({ error: "Item not found in backlog" });
       return;
     }
     

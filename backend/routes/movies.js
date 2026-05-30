@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const tmdbService = require('../services/tmdbService.js');
-const pool = require('../database.js');
 
 const { authenticateToken } = require('../middleware/tokens.js');
+const { addToBacklog, removeFromBacklog, getWatchStatus } = require('../models/backlog.js');
 
 // Search movies
 router.get('/movies/search', authenticateToken, async (req, res) => {
@@ -84,12 +84,9 @@ router.get('/movies/:id', authenticateToken, async (req, res) => {
 router.post('/movies/:id', authenticateToken, async (req, res) => {
   try {
     const uid = req.user.id;
-    const movie_show_id = req.params.id;
+    const movieShowID = req.params.id;
 
-    const [result] = await pool.query(`
-      INSERT INTO movies_shows (user_id, movie_show_id, type)
-      VALUES(?, ?, 'movie')
-    `, [uid, movie_show_id]);
+    const result = await addToBacklog(uid, movieShowID, 'movie');
 
     res.json(result);
   } catch (err) {
@@ -101,11 +98,9 @@ router.post('/movies/:id', authenticateToken, async (req, res) => {
 router.delete('/movies/:id', authenticateToken, async (req, res) => {
   try {
     const uid = req.user.id;
-    const movie_show_id = req.params.id;
+    const movieShowID = req.params.id;
 
-    const [result] = await pool.query(`
-      DELETE FROM movies_shows WHERE user_id = ? AND movie_show_id = ? AND type = 'movie'
-    `, [uid, movie_show_id]);
+    const result = await removeFromBacklog(uid, movieShowID, 'movie')
 
     res.json(result);
   } catch (err) {
@@ -117,11 +112,9 @@ router.delete('/movies/:id', authenticateToken, async (req, res) => {
 router.get('/movies/:id/status', authenticateToken, async (req, res) => {
   try {
     const uid = req.user.id;
-    const movie_show_id = req.params.id;
+    const movieShowID = req.params.id;
 
-    const [result] = await pool.query(`
-      SELECT status FROM movies_shows WHERE user_id = ? AND movie_show_id = ? AND type = 'movie'
-    `, [uid, movie_show_id]);
+    const result = await getWatchStatus(uid, movieShowID, 'movie');
 
     res.json(result);
   } catch (err) {
