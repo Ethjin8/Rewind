@@ -18,7 +18,7 @@ function normalizeProviderName(name) {
 
 export function hasSelectedStreamingService(movie) {
     const providers =
-      movie["watch/providers"]?.results?.US?.flatrate || [];
+      movie["watch/providers"]?.results?.US?.flatrate ?? [];
   // .some iterates through the providers and returns true if 
   // *any provider's name is included in the user's selected services.
     return providers.some((provider) =>

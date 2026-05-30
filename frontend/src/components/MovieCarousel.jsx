@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import PosterCard from './PosterCard';
 import './MovieCarousel.css';
+import { hasSelectedStreamingService } from '../lib/checkAvailability';
 
 function sortMovies(movies, order) {
   const sorted = [...movies];
@@ -110,6 +111,7 @@ export default function MovieCarousel({ title, movies, getActions, emptyMessage 
                   movie={movie}
                   dateAdded={movie.addedAt ? new Date(movie.addedAt).getTime() : undefined}
                   actions={getActions ? getActions(movie) : []}
+                  showCircle={false}
                 />
               </div>
             ))

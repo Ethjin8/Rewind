@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PosterCard from '../components/PosterCard';
 import mapMovie from '../lib/movieMapper';
 import { authFetch } from '../lib/authFetch';
+import { hasSelectedStreamingService } from '../lib/checkAvailability';
 import './Search.css';
 
 const MOVIE_GENRES_BY_ID = {
@@ -95,6 +96,8 @@ function movieMatchesGenre(movie, genreQuery) {
   );
 }
 
+
+
 function filterTrendingItems(items, genreQuery) {
   if (!genreQuery.trim()) return items;
   const q = genreQuery.trim().toLowerCase();
@@ -109,6 +112,16 @@ export default function Search() {
   const [results, setResults]   = useState([]);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState('');
+
+  async function fetchMovieDetails(movieId) {
+  const response = await authFetch(`/api/movies/${movieId}`);
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch movie details");
+  }
+
+  return response.json();
+}
 
   async function handleSearch(e) {
     e.preventDefault();
@@ -126,16 +139,36 @@ export default function Search() {
         throw new Error(`Search failed (${response.status})`);
       }
 
+      
       const data = await response.json();
-      const mapped = (data.results || []).map(mapMovie).filter(Boolean);
+
+      const moviesWithDetails = await Promise.all(
+  (data.results || []).map(async (movie) => {
+    const detailsResponse = await authFetch(`/api/movies/${movie.id}`);
+
+    if (!detailsResponse.ok) {
+      return movie;
+    }
+
+    const details = await detailsResponse.json();
+
+    return {
+      ...movie,
+      ...details,
+    };
+  })
+);
+
+      const mapped = moviesWithDetails.map(mapMovie).filter(Boolean);
       setResults(searchMovies(mapped, '', genre));
       setSearched(true);
-    } catch (searchError) {
-      setResults([]);
-      setSearched(true);
-      setError(searchError.message);
-    }
-  }
+      
+        } catch (searchError) {
+          setResults([]);
+          setSearched(true);
+          setError(searchError.message);
+        }
+      }
 
   const filteredTrendingMovies = filterTrendingItems(trendingMovies, genre);
   const filteredTrendingShows = filterTrendingItems(trendingShows, genre);
@@ -202,6 +235,7 @@ export default function Search() {
                   <PosterCard
                     key={item.id}
                     movie={item.raw}
+                    showCircle={hasSelectedStreamingService(item.raw)}
                     actions={[
                       {
                         text: item.inBacklog ? 'Added' : '+ Backlog',
