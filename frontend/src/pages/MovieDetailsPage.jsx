@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import mapMovie from '../lib/movieMapper';
 import { authFetch } from '../lib/authFetch';
 import './MovieDetailsPage.css';
@@ -17,7 +17,7 @@ function getStatusLabel(status) {
   return STATUS_LABELS[normalizeStatus(status)];
 }
 
-function useFetchMovie(id) {
+function useFetchMovie(id, type) {
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -30,7 +30,7 @@ function useFetchMovie(id) {
         setLoading(true);
         setError('');
 
-        const response = await authFetch(`/api/movies/${id}`);
+        const response = await authFetch(`/api/${type === 'show' ? 'shows' : 'movies'}/${id}`);
         if (!response.ok) {
           throw new Error(`Failed to load movie (${response.status})`);
         }
@@ -59,7 +59,7 @@ function useFetchMovie(id) {
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, type]);
 
   return { loading, movie, error };
 }
@@ -71,7 +71,10 @@ const TABS = ['Details', 'Cast', 'Links'];
 export default function MovieDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { loading, movie, error } = useFetchMovie(id);
+  const { pathname } = useLocation();
+  const type = pathname.startsWith('/show/') ? 'show' : 'movie';
+  const apiBase = type === 'show' ? 'shows' : 'movies';
+  const { loading, movie, error } = useFetchMovie(id, type);
   const [activeTab, setActiveTab] = useState('Details');
   const [watchStatus, setWatchStatus] = useState('not_started');
 
@@ -82,7 +85,7 @@ export default function MovieDetailsPage() {
     let cancelled = false;
     async function loadUserStatus() {
       try {
-        const res = await authFetch(`/api/movies/${id}/status`);
+        const res = await authFetch(`/api/${apiBase}/${id}/status`);
         if (!res.ok) return;
         const rows = await res.json();
         if (cancelled) return;
@@ -99,13 +102,17 @@ export default function MovieDetailsPage() {
 
     if (id) loadUserStatus();
     return () => { cancelled = true; };
-  }, [id]);
+  }, [id, apiBase]);
 
   const isFinished = watchStatus === 'completed';
 
   async function handleToggleStatus() {
     if (!movie) return;
     const next = watchStatus === 'completed' ? 'not_started' : 'completed';
+    const confirmed = next === 'completed'
+      ? window.confirm('Mark as watched?')
+      : window.confirm('Mark as not watched?');
+    if (!confirmed) return;
     const previousStatus = watchStatus;
     const wasInBacklog = inBacklog;
     setWatchStatus(next);
@@ -118,7 +125,7 @@ export default function MovieDetailsPage() {
       });
 
       if (res.status === 404) {
-        const addRes = await authFetch(`/api/movies/${movie.id}`, { method: 'POST' });
+        const addRes = await authFetch(`/api/${apiBase}/${movie.id}`, { method: 'POST' });
         if (!addRes.ok) throw new Error('Failed to add to backlog');
         res = await authFetch(`/api/backlog/status/${movie.id}`, {
           method: 'PATCH',
@@ -137,14 +144,16 @@ export default function MovieDetailsPage() {
 
   async function handleToggleBacklog() {
     if (!movie) return;
-    const next = !inBacklog;
+    const next = !inBacklog;    
+      window.confirm('Remove from backlog?');
+    if (!confirmed) return;
     setInBacklog(next); // optimistic
     try {
       if (next) {
-        const res = await authFetch(`/api/movies/${movie.id}`, { method: 'POST' });
+        const res = await authFetch(`/api/${apiBase}/${movie.id}`, { method: 'POST' });
         if (!res.ok) throw new Error('Failed to add to backlog');
       } else {
-        const res = await authFetch(`/api/movies/${movie.id}`, { method: 'DELETE' });
+        const res = await authFetch(`/api/${apiBase}/${movie.id}`, { method: 'DELETE' });
         if (!res.ok) throw new Error('Failed to remove from backlog');
       }
     } catch (err) {
@@ -184,7 +193,7 @@ export default function MovieDetailsPage() {
             </div>
 
             <div className="details-hero-copy">
-              <p className="details-eyebrow">Movie Overview</p>
+              <p className="details-eyebrow">{type === 'show' ? 'Show Overview' : 'Movie Overview'}</p>
               <h1>{movie.title}</h1>
 
               <div className="details-chip-row">
@@ -214,7 +223,7 @@ export default function MovieDetailsPage() {
                   data-testid="add-to-backlog"
                   className={inBacklog ? 'details-action active' : 'details-action'}
                 >
-                  {inBacklog ? '- In Backlog' : '+ Backlog'}
+                  {inBacklog ? 'Remove from Backlog' : 'Add to Backlog'}
                 </button>
                 <button
                   type="button"
@@ -223,7 +232,7 @@ export default function MovieDetailsPage() {
                   aria-pressed={isFinished}
                   className={isFinished ? 'details-action active' : 'details-action'}
                 >
-                  {isFinished ? 'Not Watched' : 'Watched'}
+                  {isFinished ? 'Mark as Not Watched' : 'Mark as Watched'}
                 </button>
               </div>
             </div>

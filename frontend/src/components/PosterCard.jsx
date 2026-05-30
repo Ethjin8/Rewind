@@ -9,7 +9,7 @@ import MovieDetail from './MovieDetail';
  *   dateAdded {number}                           - Unix timestamp (ms), app-specific, shown in hover panel
  *   actions   {{ text: string, onClick: fn }[]}  - buttons shown in the hover panel
  */
-export default function PosterCard({ movie, dateAdded, actions = [] }) {
+export default function PosterCard({ movie, dateAdded, actions = [], inBacklog = false }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -19,6 +19,12 @@ export default function PosterCard({ movie, dateAdded, actions = [] }) {
         onClick={() => setOpen(true)}
         className="group relative aspect-[2/3] overflow-hidden border border-white outline outline-[3px] outline-black shadow-[6px_6px_0_black] bg-[#2d4675] cursor-pointer transition-transform duration-200 hover:scale-105"
       >
+        {inBacklog && (
+          <div className="absolute top-2 right-2 z-10 w-8 h-8 bg-green-500 border-[3px] border-black shadow-[4px_4px_0_black] flex items-center justify-center pointer-events-none">
+            <span className="text-white font-black text-lg leading-none">✔</span>
+          </div>
+        )}
+
         {movie.poster_path ? (
           <img
             src={movie.poster_path.startsWith('http') ? movie.poster_path : `https://image.tmdb.org/t/p/w500${movie.poster_path}`}

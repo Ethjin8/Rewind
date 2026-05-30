@@ -39,6 +39,7 @@ function AppContent() {
         <Route path="/search"     element={<ProtectedRoute><Search /></ProtectedRoute>} />
         <Route path="/history"    element={<ProtectedRoute><WatchHistory /></ProtectedRoute>} />
         <Route path="/movie/:id"  element={<ProtectedRoute><MovieDetailsPage /></ProtectedRoute>} />
+        <Route path="/show/:id"   element={<ProtectedRoute><MovieDetailsPage /></ProtectedRoute>} />
         <Route path="/profile"    element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       </Routes>
     </>
