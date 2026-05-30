@@ -6,10 +6,10 @@ import { getLoggedInUser } from '../lib/getLoggedInUser';
 const STREAMING_SERVICES = [
   'Netflix',
   'Hulu',
-  'Disney Plus',
-  'HBO Max',
+  'Disney+',
+  'Crunchyroll',
   'Prime Video',
-  'Apple TV Plus',
+  'Apple TV',
   'Peacock',
   'Paramount+',
 ];
@@ -37,6 +37,8 @@ export default function Profile() {
         const next = prev.includes(service)
           ? prev.filter((selected) => selected !== service)
           : [...prev, service];
+        
+         localStorage.setItem("selectedServices", JSON.stringify(next));
         return next;
       });
     }
