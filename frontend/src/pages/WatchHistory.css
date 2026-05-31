@@ -103,9 +103,7 @@
 }
 
 .history-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 170px));
-  gap: 1.5rem;
+  width: 100%;
 }
 
 @media (max-width: 760px) {
@@ -135,9 +133,26 @@
 
 .watch-history-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 170px);
-  gap: 50px;
-  justify-content: start;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 1100px) {
+  .watch-history-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .watch-history-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .watch-history-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .watch-history-loading {
