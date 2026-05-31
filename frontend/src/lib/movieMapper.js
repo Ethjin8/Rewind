@@ -22,6 +22,7 @@ export function mapMovie(raw) {
     imdbUrl,
     credits: raw.credits || null,
     watchProviders: raw['watch/providers'] || null,
+    "watch/providers": raw["watch/providers"] || null,
     vote_average: raw.vote_average || null,
     status: raw.status || null,
     homepage: raw.homepage || null,

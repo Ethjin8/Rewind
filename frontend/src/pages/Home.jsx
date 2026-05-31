@@ -23,10 +23,14 @@ export default function Home() {
   const location = useLocation();
   const navigate = useNavigate();
   const loginMsg = location.state?.message;
-  const [backlogItems, setBacklogItems] = useState([]);
-  const [availableItems, setAvailableItems] = useState([]);
+  const [backlogItems, setBacklogItems] = useState(() =>
+    INITIAL_BACKLOG.map((m) => ({ ...m, status: m.status || 'not_started', removed: false }))
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  //Gets the streaming service selected by the user from profile,
+  // returns null if no streaming service is selected.
+  const selectedServices = JSON.parse(localStorage.getItem("selectedServices")) || [];
 
   useEffect(() => {
     let mounted = true;
@@ -39,12 +43,12 @@ export default function Home() {
         if (!mounted) return;
         setBacklogItems(data.map((m) => ({ ...m, status: m.status || 'not_started', removed: false })));
 
-        const aRes = await authFetch('/api/backlog/available');
-        if (aRes.ok) {
-          const aData = await aRes.json();
-          if (!mounted) return;
-          setAvailableItems(aData || []);
-        }
+        // const aRes = await authFetch('/api/backlog/available');
+        // if (aRes.ok) {
+        //   const aData = await aRes.json();
+        //   if (!mounted) return;
+        //   setAvailableItems(aData || []);
+        //}
         setError(null);
       } catch (err) {
         setError(err.message || 'Failed to load data');

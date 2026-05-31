@@ -52,6 +52,11 @@ export default function MovieDetail({ movie, onClose, actions = [] }) {
             {movie.genres?.length > 0 && <span>{movie.genres.map(g => g.name).join(', ')}</span>}
             {movie.vote_average  != null && <span>{movie.vote_average}</span>}
             {movie.runtime       != null && <span>{movie.runtime}</span>}
+            {movie["watch/providers"] && (
+              <span>
+                {movie["watch/providers"].results?.US?.flatrate?.length > 0 ? 'Available on: ' + movie["watch/providers"].results?.US?.flatrate.map(p => p.provider_name).join(', ') : 'Not available'}
+              </span>
+            )}
           </div>
 
           <p className="movie-synopsis">
