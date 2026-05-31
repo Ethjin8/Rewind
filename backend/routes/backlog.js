@@ -44,6 +44,10 @@ router.get('/backlog/full', authenticateToken, async (req, res) => {
           poster_path: details.poster_path || null,
           overview: details.overview || null,
           release_date: details.release_date || details.first_air_date || null,
+          certification: details.certification || '',
+          genres: details.genres || [],
+          runtime: details.runtime || null,
+          vote_average: details.vote_average || null,
           'watch/providers': details['watch/providers'] || { results: {} },
         };
       } catch (e) {
