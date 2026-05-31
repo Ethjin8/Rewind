@@ -185,14 +185,28 @@
   transition: transform 120ms ease, box-shadow 120ms ease;
 }
 
-.modal-actions button:first-child {
+.modal-actions button:not(.action-added):first-child {
   background: #ede4c5;
   color: black;
 }
 
-.modal-actions button:last-child {
+.modal-actions button:not(.action-added):last-child {
   background: transparent;
   color: #ede4c5;
+}
+
+.modal-actions button.action-added {
+  background: white;
+  color: black;
+  border-color: white;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+  cursor: default;
+  pointer-events: none;
+}
+
+.modal-actions button.action-added:hover {
+  transform: none;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
 }
 
 .modal-actions button:hover {

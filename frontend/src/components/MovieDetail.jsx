@@ -59,9 +59,14 @@ export default function MovieDetail({ movie, onClose, actions = [] }) {
           </p>
 
           <div className="modal-actions">
-            {actions.map(({ text, onClick }) => (
-              <button key={text} type="button" onClick={onClick}>
-                {text}
+            {actions.map(({ text, onClick, added }) => (
+              <button
+                key={text}
+                type="button"
+                className={added ? 'action-added' : undefined}
+                onClick={added ? undefined : onClick}
+              >
+                {added ? 'Added' : text}
               </button>
             ))}
             {movie.id && (
