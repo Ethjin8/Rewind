@@ -197,6 +197,11 @@
   box-shadow: 6px 6px 0 black;
 }
 
+.details-tabs button:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
 .details-tabs button.active {
   background: #ede4c5;
   color: black;
