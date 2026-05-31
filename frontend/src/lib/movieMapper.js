@@ -27,6 +27,7 @@ export function mapMovie(raw) {
     status: raw.status || null,
     homepage: raw.homepage || null,
     certification,
+    release_date: raw.release_date || null,
     adult: !!raw.adult,
     raw,
   };
