@@ -1,0 +1,17 @@
+.poster-card {
+  position: relative;
+}
+
+.poster-streaming-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #00ffdd;
+  color: #0A1628;
+  border: 2px solid black;
+  padding: 1px 7px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  z-index: 5;
+  box-shadow: 2px 2px 0 black;
+}

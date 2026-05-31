@@ -4,6 +4,8 @@ import './Home.css';
 import '../pages/Auth.css';
 import MovieCarousel from '../components/MovieCarousel';
 import { authFetch } from '../lib/authFetch';
+import { hasSelectedStreamingService } from '../lib/checkAvailability';
+const INITIAL_BACKLOG = [];
 
 function getPosterSrc(path) {
   if (!path) return null;
@@ -24,12 +26,10 @@ export default function Home() {
   const navigate = useNavigate();
   const loginMsg = location.state?.message;
   const [backlogItems, setBacklogItems] = useState([]);
-  const [availableItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   //Gets the streaming service selected by the user from profile,
   // returns null if no streaming service is selected.
-  const selectedServices = JSON.parse(localStorage.getItem("selectedServices")) || [];
 
   useEffect(() => {
     let mounted = true;
@@ -65,9 +65,10 @@ export default function Home() {
     }
   }, [location.pathname, loginMsg, navigate]);
 
-  const availableBacklog = availableItems.length > 0
-    ? availableItems
-    : backlogItems.filter((movie) => !movie.removed && movie.status !== 'completed' && Object.keys(movie['watch/providers']?.results ?? {}).length > 0);
+
+  const availableBacklog = backlogItems.filter((movie) => 
+      !movie.removed && movie.status !== 'completed' && hasSelectedStreamingService(movie));
+
 
   const recommended = [...availableBacklog]
     .sort((a, b) => new Date(a.date_added || a.addedAt) - new Date(b.date_added || b.addedAt))[0];
