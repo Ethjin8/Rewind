@@ -6,8 +6,8 @@ import { hasSelectedStreamingService } from '../lib/checkAvailability';
 function sortMovies(movies, order) {
   const sorted = [...movies];
   return order === 'oldest'
-    ? sorted.sort((a, b) => new Date(a.addedAt) - new Date(b.addedAt))
-    : sorted.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
+    ? sorted.sort((a, b) => new Date(a.date_added || a.addedAt) - new Date(b.date_added || b.addedAt))
+    : sorted.sort((a, b) => new Date(b.date_added || b.addedAt) - new Date(a.date_added || a.addedAt));
 }
 
 function filterMovies(movies, nameQuery, genreQuery) {
@@ -28,7 +28,7 @@ function filterMovies(movies, nameQuery, genreQuery) {
 export default function MovieCarousel({ title, movies, getActions, emptyMessage }) {
   const rowRef = useRef(null);
   const [expanded, setExpanded]     = useState(false);
-  const [sortOrder, setSortOrder]   = useState('latest');
+  const [sortOrder, setSortOrder]   = useState('oldest');
   const [nameQuery, setNameQuery]   = useState('');
   const [genreQuery, setGenreQuery] = useState('');
 
@@ -109,7 +109,7 @@ export default function MovieCarousel({ title, movies, getActions, emptyMessage 
               <div key={movie.id} className={expanded ? '' : 'flex-none w-[170px]'}>
                 <PosterCard
                   movie={movie}
-                  dateAdded={movie.addedAt ? new Date(movie.addedAt).getTime() : undefined}
+                  dateAdded={(movie.date_added || movie.addedAt) ? new Date(movie.date_added || movie.addedAt).getTime() : undefined}
                   actions={getActions ? getActions(movie) : []}
                   showAvail={false}
                 />
