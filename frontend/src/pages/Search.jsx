@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PosterCard from '../components/PosterCard';
 import mapMovie from '../lib/movieMapper';
 import { authFetch } from '../lib/authFetch';
+import { hasSelectedStreamingService } from '../lib/checkAvailability';
 import './Search.css';
 
 const MOVIE_GENRES_BY_ID = {
@@ -110,6 +111,16 @@ export default function Search() {
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState('');
 
+  async function fetchMovieDetails(movieId) {
+  const response = await authFetch(`/api/movies/${movieId}`);
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch movie details");
+  }
+
+  return response.json();
+}
+
   async function handleSearch(e) {
     e.preventDefault();
     setError('');
@@ -126,16 +137,54 @@ export default function Search() {
         throw new Error(`Search failed (${response.status})`);
       }
 
+      
       const data = await response.json();
-      const mapped = (data.results || []).map(mapMovie).filter(Boolean);
+
+      const moviesWithDetails = await Promise.all(
+  (data.results || []).map(async (movie) => {
+    const detailsResponse = await authFetch(`/api/movies/${movie.id}`);
+
+    if (!detailsResponse.ok) {
+      return movie;
+    }
+
+    const details = await detailsResponse.json();
+
+    return {
+      ...movie,
+      ...details,
+    };
+  })
+);
+
+      const backlogResponse = await authFetch('/api/backlog/sorted');
+      const backlogData = backlogResponse.ok ? await backlogResponse.json() : [];
+
+      const backlogIds = new Set(
+        backlogData
+          .filter((item) => item.type === 'movie')
+          .map((item) => String(item.movie_show_id))
+      );
+
+      const mapped = moviesWithDetails
+        .map(mapMovie)
+        .filter(Boolean)
+        .map((movie) => ({
+          ...movie,
+          inBacklog: backlogIds.has(String(movie.id)),
+        }));
+
       setResults(searchMovies(mapped, '', genre));
       setSearched(true);
-    } catch (searchError) {
-      setResults([]);
-      setSearched(true);
-      setError(searchError.message);
-    }
-  }
+      
+        } catch (searchError) {
+          setResults([]);
+          setSearched(true);
+          setError(searchError.message);
+        } finally {
+          setSearchLoading(false);
+        }
+      }
 
   const filteredTrendingMovies = filterTrendingItems(trendingMovies, genre);
   const filteredTrendingShows = filterTrendingItems(trendingShows, genre);
@@ -202,6 +251,8 @@ export default function Search() {
                   <PosterCard
                     key={item.id}
                     movie={item.raw}
+                    showAvail={hasSelectedStreamingService(item.raw)}
+                    inBacklog={!!item.inBacklog}
                     actions={[
                       {
                         text: item.inBacklog ? 'Added' : '+ Backlog',

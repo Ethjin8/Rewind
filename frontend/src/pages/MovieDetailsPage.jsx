@@ -144,8 +144,8 @@ export default function MovieDetailsPage() {
 
   async function handleToggleBacklog() {
     if (!movie) return;
-    const next = !inBacklog;    
-      window.confirm('Remove from backlog?');
+    const next = !inBacklog;
+    const confirmed = window.confirm(next ? 'Add to backlog?' : 'Remove from backlog?');
     if (!confirmed) return;
     setInBacklog(next); // optimistic
     try {
@@ -269,6 +269,14 @@ export default function MovieDetailsPage() {
                   <div>
                     <dt>Rating</dt>
                     <dd>{movie.certification || (movie.vote_average ? `${movie.vote_average} / 10` : 'N/A')}</dd>
+                  </div>
+                  <div>
+                    <dt>Available on</dt>
+                    <dd>{movie.watchProviders?.results?.US?.flatrate?.length > 0
+      ? movie.watchProviders?.results?.US?.flatrate
+          .map((p) => p.provider_name).join(', ')
+      : 'Not available'}
+                    </dd>
                   </div>
                 </dl>
                 <p className="details-synopsis">{movie.synopsis || 'No synopsis available.'}</p>
