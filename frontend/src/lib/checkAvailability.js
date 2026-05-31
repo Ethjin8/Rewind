@@ -18,12 +18,12 @@ function normalizeProviderName(name) {
 
   // Returns a bool indicating whether the given movie has a streaming provider that
   //  matches the user's selected streaming services.
-export function hasSelectedStreamingService(movie) {
+export function hasSelectedStreamingService(movie, selectedServices = getSelectedServices()) {
     const providers =
       movie["watch/providers"]?.results?.US?.flatrate ?? [];
   // .some iterates through the providers and returns true if 
   // *any provider's name is included in the user's selected services.
     return providers.some((provider) =>
-      getSelectedServices().includes( normalizeProviderName(provider.provider_name) )
+      selectedServices.includes( normalizeProviderName(provider.provider_name) )
     )
   }
