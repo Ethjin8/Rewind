@@ -66,7 +66,7 @@ function useFetchMovie(id, type) {
 
 
 
-const TABS = ['Details', 'Cast', 'Links'];
+const TABS = ['Details', 'Cast', 'Available On', 'Links'];
 
 export default function MovieDetailsPage() {
   const { id } = useParams();
@@ -198,8 +198,8 @@ export default function MovieDetailsPage() {
 
               <div className="details-chip-row">
                 {[
-                  { label: 'year', value: movie.year },
-                  { label: 'cert', value: movie.certification || movie.rating || (movie.adult ? '18+' : '') },
+                  { label: 'date', value: movie.release_date },
+                  { label: 'cert', value: movie.certification || (movie.adult ? '18+' : '') },
                   { label: 'length', value: movie.length },
                   { label: 'genre', value: movie.genre },
                 ].map((item, idx) => (
@@ -270,14 +270,6 @@ export default function MovieDetailsPage() {
                     <dt>Rating</dt>
                     <dd>{movie.certification || (movie.vote_average ? `${movie.vote_average} / 10` : 'N/A')}</dd>
                   </div>
-                  <div>
-                    <dt>Available on</dt>
-                    <dd>{movie.watchProviders?.results?.US?.flatrate?.length > 0
-      ? movie.watchProviders?.results?.US?.flatrate
-          .map((p) => p.provider_name).join(', ')
-      : 'Not available'}
-                    </dd>
-                  </div>
                 </dl>
                 <p className="details-synopsis">{movie.synopsis || 'No synopsis available.'}</p>
               </div>
@@ -296,6 +288,23 @@ export default function MovieDetailsPage() {
                 ) : (
                   <p>No cast information available.</p>
                 )}
+              </div>
+            )}
+
+            {activeTab === 'Available On' && (
+              <div className="details-availability-wrap">
+                <div className="details-availability-section">
+                  <div className="details-availability-providers">
+                    {movie.watchProviders?.results?.US?.flatrate?.length > 0
+                      ? movie.watchProviders.results.US.flatrate.map(p => (
+                          <span key={p.provider_id} className="details-provider-chip">
+                            {p.provider_name}
+                          </span>
+                        ))
+                      : <span className="details-provider-none">Not available on streaming</span>
+                    }
+                  </div>
+                </div>
               </div>
             )}
 

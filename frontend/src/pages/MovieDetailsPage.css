@@ -293,6 +293,52 @@
   font-weight: 900;
 }
 
+.details-availability-wrap {
+  display: flex;
+  align-items: center;
+  min-height: 120px;
+}
+
+.details-availability-section {
+  background: #1e2a38;
+  border: 2px solid black;
+  box-shadow: 4px 4px 0 black;
+  padding: 0.75rem 1rem;
+  width: 100%;
+}
+
+.details-availability-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(237, 228, 197, 0.72);
+}
+
+.details-availability-providers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.details-provider-chip {
+  background: #273445;
+  color: #ede4c5;
+  border: 2px solid #ede4c5;
+  box-shadow: 3px 3px 0 black;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.details-provider-none {
+  color: #8a8a8a;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-style: italic;
+}
+
 @media (max-width: 780px) {
   .movie-details-page {
     padding: 1rem;
