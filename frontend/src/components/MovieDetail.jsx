@@ -48,16 +48,25 @@ export default function MovieDetail({ movie, onClose, actions = [] }) {
           <h2 className="movie-title">{movie.title}</h2>
 
           <div className="movie-chip-row">
-            {movie.release_date  && <span>{movie.release_date}</span>}
-            {movie.genres?.length > 0 && <span>{movie.genres.map(g => g.name).join(', ')}</span>}
-            {movie.vote_average  != null && <span>{movie.vote_average}</span>}
-            {movie.runtime       != null && <span>{movie.runtime}</span>}
-            {movie["watch/providers"] && (
-              <span>
-                {movie["watch/providers"].results?.US?.flatrate?.length > 0 ? 'Available on: ' + movie["watch/providers"].results?.US?.flatrate.map(p => p.provider_name).join(', ') : 'Not available'}
-              </span>
-            )}
+            {movie.release_date && <span>{movie.release_date.slice(0, 4)}</span>}
+            {movie.certification && <span>{movie.certification}</span>}
           </div>
+
+          {movie["watch/providers"] && (
+            <div className="modal-availability">
+              <span className="modal-availability-label">AVAILABLE ON</span>
+              <div className="modal-availability-providers">
+                {movie["watch/providers"].results?.US?.flatrate?.length > 0
+                  ? movie["watch/providers"].results.US.flatrate.map(p => (
+                      <span key={p.provider_id} className="modal-provider-chip">
+                        {p.provider_name}
+                      </span>
+                    ))
+                  : <span className="modal-provider-none">Not available on streaming</span>
+                }
+              </div>
+            </div>
+          )}
 
           <p className="movie-synopsis">
             {movie.overview || 'No synopsis available.'}

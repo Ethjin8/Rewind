@@ -151,20 +151,44 @@
   margin: 0 0 1.25rem;
 }
 
-.movie-availability {
-  display: inline-block;
-
+.modal-availability {
   border: 2px solid #ede4c5;
   background: #1e2a38;
-  color: #ede4c5;
-
   box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.45);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+}
 
-  padding: 0.55rem 0.8rem;
-  margin: 0 0 1.5rem;
-
-  font-size: 0.85rem;
+.modal-availability-label {
+  display: block;
+  font-size: 0.7rem;
   font-weight: 900;
+  letter-spacing: 0.14em;
+  color: #ede4c5;
+  margin-bottom: 0.5rem;
+}
+
+.modal-availability-providers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.modal-provider-chip {
+  border: 2px solid #ede4c5;
+  background: #273445;
+  color: #ede4c5;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.4);
+}
+
+.modal-provider-none {
+  color: #8a8a8a;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-style: italic;
 }
 
 .modal-actions {
