@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PosterCard from '../components/PosterCard';
 import mapMovie from '../lib/movieMapper';
 import { authFetch } from '../lib/authFetch';
@@ -18,63 +18,6 @@ const MOVIE_GENRES_BY_ID = {
   878: 'Science Fiction',
   53: 'Thriller',
 };
-
-const trendingMovies = createTrendingItems([
-  ['Dune: Part Two', ['Science Fiction', 'Adventure']],
-  ['Furiosa', ['Action', 'Adventure']],
-  ['Challengers', ['Drama']],
-  ['Civil War', ['Action', 'Drama']],
-  ['The Fall Guy', ['Action', 'Comedy']],
-  ['Inside Out 2', ['Animation', 'Comedy']],
-  ['Kingdom of the Planet of the Apes', ['Science Fiction', 'Adventure']],
-  ['Godzilla x Kong', ['Action', 'Science Fiction']],
-  ['Twisters', ['Action', 'Thriller']],
-  ['A Quiet Place: Day One', ['Horror', 'Science Fiction']],
-  ['Deadpool & Wolverine', ['Action', 'Comedy']],
-  ['Alien: Romulus', ['Horror', 'Science Fiction']],
-  ['The Substance', ['Horror', 'Drama']],
-  ['Longlegs', ['Horror', 'Crime']],
-  ['Anora', ['Drama', 'Comedy']],
-  ['Nosferatu', ['Horror', 'Fantasy']],
-  ['Wicked', ['Fantasy']],
-  ['Conclave', ['Drama', 'Thriller']],
-  ['The Wild Robot', ['Animation', 'Adventure']],
-  ['Gladiator II', ['Action', 'Drama']],
-], 'movie');
-
-const trendingShows = createTrendingItems([
-  ['Shogun', ['Drama', 'Adventure']],
-  ['Fallout', ['Science Fiction', 'Action']],
-  ['The Bear', ['Drama', 'Comedy']],
-  ['House of the Dragon', ['Fantasy', 'Drama']],
-  ['The Boys', ['Action', 'Comedy']],
-  ['Presumed Innocent', ['Crime', 'Drama']],
-  ['Ripley', ['Crime', 'Drama']],
-  ['Baby Reindeer', ['Drama']],
-  ['True Detective', ['Crime', 'Drama']],
-  ['The Penguin', ['Crime', 'Drama']],
-  ['Slow Horses', ['Thriller', 'Comedy']],
-  ['Only Murders in the Building', ['Comedy', 'Crime']],
-  ['Mr. & Mrs. Smith', ['Action', 'Comedy']],
-  ['Abbott Elementary', ['Comedy']],
-  ['The Regime', ['Comedy', 'Drama']],
-  ['Masters of the Air', ['Drama', 'Action']],
-  ['X-Men 97', ['Animation', 'Action']],
-  ['Industry', ['Drama']],
-  ['Silo', ['Science Fiction', 'Drama']],
-  ['Hacks', ['Comedy', 'Drama']],
-], 'show');
-
-function createTrendingItems(items, type) {
-  return items.map(([title, genres], index) => ({
-    id: `${type}-${index + 1}`,
-    title,
-    genres,
-    type,
-    rank: index + 1,
-    year: index < 10 ? '2024' : '2025',
-  }));
-}
 
 function searchMovies(movies, titleQuery, genreQuery) {
   let results = movies;
@@ -96,20 +39,45 @@ function movieMatchesGenre(movie, genreQuery) {
   );
 }
 
-function filterTrendingItems(items, genreQuery) {
-  if (!genreQuery.trim()) return items;
-  const q = genreQuery.trim().toLowerCase();
-  return items.filter((item) =>
-    item.genres.some((genreName) => genreName.toLowerCase().includes(q))
-  );
-}
-
 export default function Search() {
   const [title, setTitle]       = useState('');
   const [genre, setGenre]         = useState('');
   const [results, setResults]   = useState([]);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState('');
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [trendingMovies, setTrendingMovies] = useState([]);
+  const [trendingShows, setTrendingShows] = useState([]);
+  const [trendingLoading, setTrendingLoading] = useState(true);
+  const [trendingError, setTrendingError] = useState('');
+  const [backlogIds, setBacklogIds] = useState(new Set());
+
+  useEffect(() => {
+    async function fetchTrending() {
+      try {
+        const [moviesRes, showsRes, backlogRes] = await Promise.all([
+          authFetch('/api/movies/trending'),
+          authFetch('/api/shows/trending'),
+          authFetch('/api/backlog/sorted'),
+        ]);
+        if (!moviesRes.ok || !showsRes.ok) throw new Error('Failed to load trending');
+        const [moviesData, showsData] = await Promise.all([moviesRes.json(), showsRes.json()]);
+        const ids = new Set(
+          (backlogRes.ok ? await backlogRes.json() : []).map((b) => String(b.movie_show_id))
+        );
+        setBacklogIds(ids);
+        const withBacklog = (items) =>
+          (items || []).map(mapMovie).filter(Boolean).map((m) => ({ ...m, inBacklog: ids.has(String(m.id)) }));
+        setTrendingMovies(withBacklog(moviesData.results));
+        setTrendingShows(withBacklog(showsData.results));
+      } catch (err) {
+        setTrendingError(err.message);
+      } finally {
+        setTrendingLoading(false);
+      }
+    }
+    fetchTrending();
+  }, []);
 
   async function fetchMovieDetails(movieId) {
   const response = await authFetch(`/api/movies/${movieId}`);
@@ -131,6 +99,7 @@ export default function Search() {
       return;
     }
 
+    setSearchLoading(true);
     try {
       const response = await authFetch(`/api/movies/search?query=${encodeURIComponent(title.trim())}`);
       if (!response.ok) {
@@ -186,19 +155,37 @@ export default function Search() {
         }
       }
 
-  const filteredTrendingMovies = filterTrendingItems(trendingMovies, genre);
-  const filteredTrendingShows = filterTrendingItems(trendingShows, genre);
+  const genreQ = genre.trim().toLowerCase();
+  const filteredTrendingMovies = genreQ
+    ? trendingMovies.filter((m) => movieMatchesGenre(m, genreQ))
+    : trendingMovies;
+  const filteredTrendingShows = genreQ
+    ? trendingShows.filter((m) => movieMatchesGenre(m, genreQ))
+    : trendingShows;
   const isTitleSearch = Boolean(searched && title.trim());
 
   async function handleAddToBacklog(id) {
-    // optimistic UI: mark as added immediately
     setResults((prev) => prev.map((r) => (r.id === id ? { ...r, inBacklog: true } : r)));
+    setBacklogIds((prev) => new Set([...prev, String(id)]));
     try {
       const res = await authFetch(`/api/movies/${id}`, { method: 'POST' });
       if (!res.ok) throw new Error('Failed to add to backlog');
     } catch (err) {
-      // rollback
       setResults((prev) => prev.map((r) => (r.id === id ? { ...r, inBacklog: false } : r)));
+      setBacklogIds((prev) => { const next = new Set(prev); next.delete(String(id)); return next; });
+      alert(err.message || 'Failed to add to backlog');
+    }
+  }
+
+  async function handleAddTrending(id, type) {
+    const setter = type === 'show' ? setTrendingShows : setTrendingMovies;
+    setter((prev) => prev.map((r) => (r.id === id ? { ...r, inBacklog: true } : r)));
+    try {
+      const endpoint = type === 'show' ? `/api/shows/${id}` : `/api/movies/${id}`;
+      const res = await authFetch(endpoint, { method: 'POST' });
+      if (!res.ok) throw new Error('Failed to add to backlog');
+    } catch (err) {
+      setter((prev) => prev.map((r) => (r.id === id ? { ...r, inBacklog: false } : r)));
       alert(err.message || 'Failed to add to backlog');
     }
   }
@@ -237,7 +224,8 @@ export default function Search() {
       </section>
 
       <section className="search-results-section">
-        {isTitleSearch && (
+        {searchLoading && <p className="trending-loading">Searching…</p>}
+        {!searchLoading && isTitleSearch && (
           error ? (
             <p className="search-error">{error}</p>
           ) : results.length > 0 ? (
@@ -275,36 +263,56 @@ export default function Search() {
 
       {!isTitleSearch && (
         <section className="trending-section">
-          <TrendingRail title="Top 20 trending movies" items={filteredTrendingMovies} />
-          <TrendingRail title="Top 20 trending shows" items={filteredTrendingShows} />
+          {trendingLoading ? (
+            <p className="trending-loading">Loading trending...</p>
+          ) : trendingError ? (
+            <p className="search-error">{trendingError}</p>
+          ) : (
+            <>
+              <TrendingRail
+                title="Trending movies"
+                items={filteredTrendingMovies}
+                onAddToBacklog={(id) => handleAddTrending(id, 'movie')}
+              />
+              <TrendingRail
+                title="Trending shows"
+                items={filteredTrendingShows}
+                onAddToBacklog={(id) => handleAddTrending(id, 'show')}
+              />
+            </>
+          )}
         </section>
       )}
     </main>
   );
 }
 
-function TrendingRail({ title, items }) {
+function TrendingRail({ title, items, onAddToBacklog }) {
   return (
     <section className="trending-rail">
       <div className="search-section-header">
         <h2>{title}</h2>
-        <span>Placeholder UI</span>
       </div>
-      <div className="trending-grid">
-        {items.length > 0 ? (
-          items.map((item) => (
-            <article key={item.id} className="trending-card">
-              <span className="trending-rank">{String(item.rank).padStart(2, '0')}</span>
-              <div>
-                <h3>{item.title}</h3>
-                <p>{item.type} · {item.year} · {item.genres.join(', ')}</p>
-              </div>
-            </article>
-          ))
-        ) : (
-          <div className="trending-empty">No placeholder titles match that genre.</div>
-        )}
-      </div>
+      {items.length > 0 ? (
+        <div className="search-results-grid">
+          {items.map((item) => (
+            <PosterCard
+              key={item.id}
+              movie={{ ...item.raw, title: item.title }}
+              inBacklog={!!item.inBacklog}
+              actions={[
+                {
+                  text: '+ Backlog',
+                  added: !!item.inBacklog,
+                  onClick: () => !item.inBacklog && onAddToBacklog(item.id),
+                },
+              ]}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="trending-empty">No trending titles match that genre.</div>
+      )}
     </section>
   );
 }
