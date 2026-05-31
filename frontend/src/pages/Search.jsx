@@ -68,8 +68,8 @@ export default function Search() {
         setBacklogIds(ids);
         const withBacklog = (items) =>
           (items || []).map(mapMovie).filter(Boolean).map((m) => ({ ...m, inBacklog: ids.has(String(m.id)) }));
-        setTrendingMovies(withBacklog(moviesData.results));
-        setTrendingShows(withBacklog(showsData.results));
+        setTrendingMovies(withBacklog(moviesData.results).slice(0, 24));
+        setTrendingShows(withBacklog(showsData.results).slice(0, 24));
       } catch (err) {
         setTrendingError(err.message);
       } finally {

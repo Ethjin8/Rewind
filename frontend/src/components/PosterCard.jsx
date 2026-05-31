@@ -49,7 +49,7 @@ export default function PosterCard({ movie, dateAdded, actions = [], inBacklog =
           className="absolute inset-x-0 bottom-0 bg-black translate-y-[calc(100%-2.5rem)] group-hover:translate-y-0 transition-transform duration-300"
         >
           {/* Always-visible title bar */}
-          <p className="min-h-10 flex items-center px-2 py-1 text-white text-xs font-black uppercase leading-tight">
+          <p className="min-h-10 flex items-center px-2 py-1 text-white text-xs font-black uppercase leading-tight line-clamp-2">
             {movie.title}
           </p>
 
