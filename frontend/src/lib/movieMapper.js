@@ -5,7 +5,9 @@ export function mapMovie(raw) {
   const posterUrl = raw.poster_path ? `https://image.tmdb.org/t/p/w500${raw.poster_path}` : null;
   const backdropUrl = raw.backdrop_path ? `https://image.tmdb.org/t/p/w1280${raw.backdrop_path}` : null;
   const year = raw.release_date ? raw.release_date.slice(0, 4) : null;
-  const length = raw.runtime ? `${Math.floor(raw.runtime / 60)}h ${raw.runtime % 60}m` : null;
+  const length = raw.runtime
+    ? (raw.runtime < 60 ? `${raw.runtime}m` : `${Math.floor(raw.runtime / 60)}h ${raw.runtime % 60}m`)
+    : null;
   const genre = raw.genres ? raw.genres.map((g) => g.name).join(', ') : null;
   const imdbUrl = raw.imdb_id ? `https://www.imdb.com/title/${raw.imdb_id}` : null;
   const certification = raw.certification || '';

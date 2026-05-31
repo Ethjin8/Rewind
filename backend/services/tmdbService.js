@@ -94,6 +94,10 @@ async function getShowDetails(showId) {
   const ratings = data.content_ratings?.results || [];
   const usRating = ratings.find((r) => r.iso_3166_1 === 'US');
   data.certification = usRating?.rating || '';
+  
+  data.runtime = data.episode_run_time?.[0]
+    || data.last_episode_to_air?.runtime
+    || null;
 
   return data;
 }

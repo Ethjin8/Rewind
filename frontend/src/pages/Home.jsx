@@ -5,7 +5,6 @@ import '../pages/Auth.css';
 import MovieCarousel from '../components/MovieCarousel';
 import { authFetch } from '../lib/authFetch';
 import { hasSelectedStreamingService } from '../lib/checkAvailability';
-const INITIAL_BACKLOG = [];
 
 function getPosterSrc(path) {
   if (!path) return null;
