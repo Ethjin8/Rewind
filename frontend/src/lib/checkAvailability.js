@@ -2,7 +2,7 @@
   //  matches the user's selected streaming services.
 function normalizeProviderName(name) {
     if (name.includes('Max')) return 'HBO Max';
-    if (name.includes('Amazon')) return 'Prime Video';
+    if (name.includes('Prime Video')) return 'Prime Video';
     if (name.includes('Crunchyroll')) return 'Crunchyroll';
     if (name.includes('Peacock')) return 'Peacock';
     if (name.includes('Paramount')) return 'Paramount+';
