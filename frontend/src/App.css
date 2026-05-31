@@ -47,8 +47,9 @@
 }
 
 .nav-link.active {
-  background-color: #B15f21;
+  background-color: #2D4675;
   color: #ffffff;
+  box-shadow: inset 0 -5px 0 #B15f21;
   transform: translateY(-2px);
 }
 
