@@ -81,7 +81,21 @@ async function getTrendingShows(timeWindow = 'week') {
 }
 
 async function getShowDetails(showId) {
-  return fetchTMDB(`/tv/${showId}`, { append_to_response: 'watch/providers' });
+  const data = await fetchTMDB(`/tv/${showId}`, {
+    append_to_response: 'watch/providers,content_ratings,credits'
+  });
+
+  if (data['watch/providers']?.results) {
+    data['watch/providers'].results = {
+      US: data['watch/providers'].results.US
+    };
+  }
+
+  const ratings = data.content_ratings?.results || [];
+  const usRating = ratings.find((r) => r.iso_3166_1 === 'US');
+  data.certification = usRating?.rating || '';
+
+  return data;
 }
 
 async function discoverShowsByGenre(genreId, page = 1) {
