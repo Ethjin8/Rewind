@@ -23,9 +23,8 @@ export default function Home() {
   const location = useLocation();
   const navigate = useNavigate();
   const loginMsg = location.state?.message;
-  const [backlogItems, setBacklogItems] = useState(() =>
-    INITIAL_BACKLOG.map((m) => ({ ...m, status: m.status || 'not_started', removed: false }))
-  );
+  const [backlogItems, setBacklogItems] = useState([]);
+  const [availableItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   //Gets the streaming service selected by the user from profile,
