@@ -50,7 +50,6 @@ export default function Search() {
   const [trendingShows, setTrendingShows] = useState([]);
   const [trendingLoading, setTrendingLoading] = useState(true);
   const [trendingError, setTrendingError] = useState('');
-  const [backlogIds, setBacklogIds] = useState(new Set());
   const [selectedServices, setSelectedServices] = useState([]);
 
   //Gets the streaming service selected by the user from profile, through backend.
