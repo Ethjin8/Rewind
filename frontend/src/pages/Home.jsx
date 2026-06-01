@@ -58,14 +58,15 @@ export default function Home() {
     }
   }, [location.pathname, loginMsg, navigate]);
 
-
-  const availableBacklog = backlogItems.filter((movie) => 
-      !movie.removed && movie.status !== 'completed' && hasSelectedStreamingService(movie));
+  const currentBacklog = backlogItems.filter((movie) => 
+    !movie.removed && movie.status !== 'completed');
+  const availableBacklog = currentBacklog.filter((movie) => 
+    hasSelectedStreamingService(movie));
 
   // Generate random # once on rendering
   const [randomNum] = useState(() => Math.random());
-  // Produce random recommendation
-  const recommended = backlogItems[Math.floor(randomNum * backlogItems.length)];
+  // Produce random recommendation from movies still in the backlog
+  const recommended = currentBacklog[Math.floor(randomNum * currentBacklog.length)];
 
   function endpointFor(item) {
     const kind = item?.type === 'show' ? 'shows' : 'movies';
@@ -201,7 +202,7 @@ export default function Home() {
       <section className="home-section">
         <MovieCarousel
           title="MY BACKLOG"
-          movies={backlogItems.filter((m) => !m.removed && m.status !== 'completed')}
+          movies={currentBacklog}
           emptyMessage="Your backlog is empty. Use Explore to add movies or shows."
           getActions={(movie) => [
             { text: 'Mark as Watched', onClick: () => handleWatched(movie.id) },
