@@ -1,6 +1,6 @@
 ## JWT Token Secret Keys
 In terminal, run the following two commands:
-- `nod`
+- `node`
 - `require('crypto').randomBytes(64).toString('hex')`
 
 This gives you a random 64-byte integer, which you can use to sign your JWT tokens. Run the pair of commands twice to get ACCESS_TOKEN_SECRET and REFRESH_TOKEN_SECRET, then paste those values into your .env file.

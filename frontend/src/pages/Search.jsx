@@ -53,6 +53,7 @@ export default function Search() {
   const [backlogIds, setBacklogIds] = useState(new Set());
   const [selectedServices, setSelectedServices] = useState([]);
 
+  //Gets the streaming service selected by the user from profile, through backend.
   useEffect(() => {
     async function loadSelectedServices() {
       try {
