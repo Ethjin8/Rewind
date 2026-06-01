@@ -51,6 +51,36 @@ export default function Search() {
   const [trendingLoading, setTrendingLoading] = useState(true);
   const [trendingError, setTrendingError] = useState('');
   const [backlogIds, setBacklogIds] = useState(new Set());
+  const [selectedServices, setSelectedServices] = useState([]);
+
+  //Gets the streaming service selected by the user from profile, through backend.
+  useEffect(() => {
+    async function loadSelectedServices() {
+      try {
+        const res = await authFetch("/api/streaming");
+
+        if (!res.ok) {
+          console.log("Failed to fetch streaming services:", res.status);
+          console.log(await res.text());
+          return;
+        }
+
+        const data = await res.json();
+
+        const services = data.map((row) => row.streaming_service);
+
+        setSelectedServices(services);
+        localStorage.setItem("selectedServices", JSON.stringify(services));
+
+        console.log("selected services from backend:", services);
+      } catch (err) {
+        console.log("Error loading streaming services:", err);
+        setSelectedServices([]);
+      }
+    }
+
+    loadSelectedServices();
+  }, []);
 
   useEffect(() => {
     async function fetchTrending() {
@@ -65,7 +95,6 @@ export default function Search() {
         const ids = new Set(
           (backlogRes.ok ? await backlogRes.json() : []).map((b) => String(b.movie_show_id))
         );
-        setBacklogIds(ids);
         const withBacklog = (items) =>
           (items || []).map(mapMovie).filter(Boolean).map((m) => ({ ...m, inBacklog: ids.has(String(m.id)) }));
         setTrendingMovies(withBacklog(moviesData.results).slice(0, 24));
@@ -79,16 +108,6 @@ export default function Search() {
     fetchTrending();
   }, []);
 
-  async function fetchMovieDetails(movieId) {
-  const response = await authFetch(`/api/movies/${movieId}`);
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch movie details");
-  }
-
-  return response.json();
-}
-
   async function handleSearch(e) {
     e.preventDefault();
     setError('');
@@ -101,46 +120,44 @@ export default function Search() {
 
     setSearchLoading(true);
     try {
-      const response = await authFetch(`/api/movies/search?query=${encodeURIComponent(title.trim())}`);
-      if (!response.ok) {
-        throw new Error(`Search failed (${response.status})`);
-      }
+      const [movieRes, showRes] = await Promise.all([
+        authFetch(`/api/movies/search?query=${encodeURIComponent(title.trim())}`),
+        authFetch(`/api/shows/search?query=${encodeURIComponent(title.trim())}`)
+      ]);
 
-      
-      const data = await response.json();
+      if (!movieRes.ok) throw new Error(`Movie search failed (${movieRes.status})`);
+      if (!showRes.ok) throw new Error(`Show search failed (${showRes.status})`);
 
-      const moviesWithDetails = await Promise.all(
-  (data.results || []).map(async (movie) => {
-    const detailsResponse = await authFetch(`/api/movies/${movie.id}`);
+      const [movieData, showData] = await Promise.all([movieRes.json(), showRes.json()]);
 
-    if (!detailsResponse.ok) {
-      return movie;
-    }
-
-    const details = await detailsResponse.json();
-
-    return {
-      ...movie,
-      ...details,
-    };
-  })
-);
+      const movieResults = (movieData.results || []).map(m => ({ ...m, media_type: 'movie' }));
+      const showResults = (showData.results || []).map(s => ({ ...s, media_type: 'tv' }));
+      const combined = [...movieResults, ...showResults];
+      const withDetails = await Promise.all(
+        combined.map(async (item) => {
+          const endpoint = item.media_type === 'tv'
+            ? `/api/shows/${item.id}`
+            : `/api/movies/${item.id}`;
+          const detailRes = await authFetch(endpoint);
+          if (!detailRes.ok) return item;
+          const details = await detailRes.json();
+          return { ...item, ...details, media_type: item.media_type };
+        })
+      );
 
       const backlogResponse = await authFetch('/api/backlog/sorted');
       const backlogData = backlogResponse.ok ? await backlogResponse.json() : [];
 
       const backlogIds = new Set(
-        backlogData
-          .filter((item) => item.type === 'movie')
-          .map((item) => String(item.movie_show_id))
+        backlogData.map((item) => String(item.movie_show_id))
       );
 
-      const mapped = moviesWithDetails
+      const mapped = withDetails
         .map(mapMovie)
         .filter(Boolean)
-        .map((movie) => ({
-          ...movie,
-          inBacklog: backlogIds.has(String(movie.id)),
+        .map((item) => ({
+          ...item,
+          inBacklog: backlogIds.has(String(item.id)),
         }));
 
       setResults(searchMovies(mapped, '', genre));
@@ -164,15 +181,14 @@ export default function Search() {
     : trendingShows;
   const isTitleSearch = Boolean(searched && title.trim());
 
-  async function handleAddToBacklog(id) {
+  async function handleAddToBacklog(id, mediaType) {
     setResults((prev) => prev.map((r) => (r.id === id ? { ...r, inBacklog: true } : r)));
-    setBacklogIds((prev) => new Set([...prev, String(id)]));
     try {
-      const res = await authFetch(`/api/movies/${id}`, { method: 'POST' });
+      const endpoint = mediaType === 'tv' ? `/api/shows/${id}` : `/api/movies/${id}`;
+      const res = await authFetch(endpoint, { method: 'POST' });
       if (!res.ok) throw new Error('Failed to add to backlog');
     } catch (err) {
       setResults((prev) => prev.map((r) => (r.id === id ? { ...r, inBacklog: false } : r)));
-      setBacklogIds((prev) => { const next = new Set(prev); next.delete(String(id)); return next; });
       alert(err.message || 'Failed to add to backlog');
     }
   }
@@ -203,7 +219,7 @@ export default function Search() {
             <label>Title</label>
             <input
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => { setTitle(e.target.value); setSearched(false); }}
               placeholder="Search by title..."
             />
           </div>
@@ -237,15 +253,15 @@ export default function Search() {
               <div className="search-results-grid">
                 {results.map((item) => (
                   <PosterCard
-                    key={item.id}
+                    key={`${item.raw.media_type}-${item.id}`}
                     movie={item.raw}
-                    showAvail={hasSelectedStreamingService(item.raw)}
+                    showAvail={hasSelectedStreamingService(item.raw, selectedServices)}
                     inBacklog={!!item.inBacklog}
                     actions={[
                       {
                         text: item.inBacklog ? 'Added' : '+ Backlog',
                         added: !!item.inBacklog,
-                        onClick: () => !item.inBacklog && handleAddToBacklog(item.id),
+                        onClick: () => !item.inBacklog && handleAddToBacklog(item.id, item.raw.media_type),
                       },
                     ]}
                   />

@@ -33,11 +33,11 @@ export default function MovieDetail({ movie, onClose, actions = [] }) {
             <img
               className="movie-poster"
               src={getPosterSrc(movie.poster_path)}
-              alt={movie.title}
+              alt={movie.title || movie.name}
             />
           ) : (
             <div className="modal-poster-placeholder">
-              {movie.title}
+              {movie.title || movie.name}
             </div>
           )}
         </div>
@@ -45,10 +45,10 @@ export default function MovieDetail({ movie, onClose, actions = [] }) {
         <div className="modal-info">
           <p className="modal-eyebrow">{movie.type === 'show' || movie.media_type === 'tv' ? 'SHOW DETAILS' : 'MOVIE DETAILS'}</p>
 
-          <h2 className="movie-title">{movie.title}</h2>
+          <h2 className="movie-title">{movie.title || movie.name}</h2>
 
           <div className="movie-chip-row">
-            {movie.release_date && <span>{movie.release_date.slice(0, 4)}</span>}
+            {(movie.release_date || movie.first_air_date) && <span>{(movie.release_date || movie.first_air_date).slice(0, 4)}</span>}
             {movie.certification && <span>{movie.certification}</span>}
           </div>
 

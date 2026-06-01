@@ -4,7 +4,8 @@ export function mapMovie(raw) {
 
   const posterUrl = raw.poster_path ? `https://image.tmdb.org/t/p/w500${raw.poster_path}` : null;
   const backdropUrl = raw.backdrop_path ? `https://image.tmdb.org/t/p/w1280${raw.backdrop_path}` : null;
-  const year = raw.release_date ? raw.release_date.slice(0, 4) : null;
+  const dateStr = raw.release_date || raw.first_air_date;
+  const year = dateStr ? dateStr.slice(0, 4) : null;
   const length = raw.runtime
     ? (raw.runtime < 60 ? `${raw.runtime}m` : `${Math.floor(raw.runtime / 60)}h ${raw.runtime % 60}m`)
     : null;
