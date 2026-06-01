@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import PosterCard from './PosterCard';
 import './MovieCarousel.css';
-import { hasSelectedStreamingService } from '../lib/checkAvailability';
 
 function sortMovies(movies, order) {
   const sorted = [...movies];
