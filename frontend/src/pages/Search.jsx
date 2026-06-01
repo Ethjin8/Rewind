@@ -50,7 +50,37 @@ export default function Search() {
   const [trendingShows, setTrendingShows] = useState([]);
   const [trendingLoading, setTrendingLoading] = useState(true);
   const [trendingError, setTrendingError] = useState('');
+  const [backlogIds, setBacklogIds] = useState(new Set());
+  const [selectedServices, setSelectedServices] = useState([]);
 
+  //Gets the streaming service selected by the user from profile, through backend.
+  useEffect(() => {
+    async function loadSelectedServices() {
+      try {
+        const res = await authFetch("/api/streaming");
+
+        if (!res.ok) {
+          console.log("Failed to fetch streaming services:", res.status);
+          console.log(await res.text());
+          return;
+        }
+
+        const data = await res.json();
+
+        const services = data.map((row) => row.streaming_service);
+
+        setSelectedServices(services);
+        localStorage.setItem("selectedServices", JSON.stringify(services));
+
+        console.log("selected services from backend:", services);
+      } catch (err) {
+        console.log("Error loading streaming services:", err);
+        setSelectedServices([]);
+      }
+    }
+
+    loadSelectedServices();
+  }, []);
 
   useEffect(() => {
     async function fetchTrending() {
@@ -225,7 +255,7 @@ export default function Search() {
                   <PosterCard
                     key={`${item.raw.media_type}-${item.id}`}
                     movie={item.raw}
-                    showAvail={hasSelectedStreamingService(item.raw)}
+                    showAvail={hasSelectedStreamingService(item.raw, selectedServices)}
                     inBacklog={!!item.inBacklog}
                     actions={[
                       {
