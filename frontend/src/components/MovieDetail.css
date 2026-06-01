@@ -18,6 +18,7 @@
   position: relative;
 
   width: min(950px, 94vw);
+  max-height: 90vh;
   min-height: 460px;
 
   background-color: #273445;
@@ -27,6 +28,7 @@
   box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.55);
 
   padding: 2rem;
+  overflow-y: auto;
 
   display: grid;
   grid-template-columns: 240px 1fr;
@@ -34,6 +36,12 @@
   align-items: start;
 
   animation: modalBlockPop 220ms cubic-bezier(0.2, 0.9, 0.2, 1.15);
+
+  scrollbar-width: none;
+}
+
+.movie-detail-modal::-webkit-scrollbar {
+  display: none;
 }
 
 .modal-close-button {
@@ -116,7 +124,7 @@
 
   color: white;
 
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-size: clamp(1.6rem, 4vw, 2.8rem);
   font-weight: 900;
   line-height: 0.9;
   text-transform: uppercase;
