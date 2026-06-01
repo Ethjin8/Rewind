@@ -1,5 +1,4 @@
-# Rewind Setup Guide
-
+# Rewind
 Rewind is a media backlog app for movies and TV show fans to keep track of their watchlist and see when a movie
 becomes available on their streaming service, as well as keep track of their watch history.
 with a React/Vite frontend, an Express backend, a MySQL database, and TMDB for movie data.
