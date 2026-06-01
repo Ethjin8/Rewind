@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import MovieDetail from './MovieDetail';
 import './PosterCard.css';
-import { hasSelectedStreamingService } from '../lib/checkAvailability';
 /**
  * PosterCard
  *
@@ -35,12 +34,12 @@ export default function PosterCard({ movie, dateAdded, actions = [], inBacklog =
         {movie.poster_path ? (
           <img
             src={movie.poster_path.startsWith('http') ? movie.poster_path : `https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-            alt={movie.title}
+            alt={movie.title || movie.name}
             className="absolute inset-0 w-full h-full object-cover"
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center p-3 text-center text-[#ede4c5] font-bold text-sm">
-            {movie.title}
+            {movie.title || movie.name}
           </div>
         )}
 
@@ -50,7 +49,7 @@ export default function PosterCard({ movie, dateAdded, actions = [], inBacklog =
         >
           {/* Always-visible title bar */}
           <p className="min-h-10 flex items-center px-2 py-1 text-white text-xs font-black uppercase leading-tight line-clamp-2">
-            {movie.title}
+            {movie.title || movie.name}
           </p>
 
           {dateAdded && (
