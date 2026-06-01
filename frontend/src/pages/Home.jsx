@@ -41,12 +41,6 @@ export default function Home() {
         if (!mounted) return;
         setBacklogItems(data.map((m) => ({ ...m, status: m.status || 'not_started', removed: false })));
 
-        // const aRes = await authFetch('/api/backlog/available');
-        // if (aRes.ok) {
-        //   const aData = await aRes.json();
-        //   if (!mounted) return;
-        //   setAvailableItems(aData || []);
-        //}
         setError(null);
       } catch (err) {
         setError(err.message || 'Failed to load data');
@@ -68,9 +62,10 @@ export default function Home() {
   const availableBacklog = backlogItems.filter((movie) => 
       !movie.removed && movie.status !== 'completed' && hasSelectedStreamingService(movie));
 
-
-  const recommended = [...availableBacklog]
-    .sort((a, b) => new Date(a.date_added || a.addedAt) - new Date(b.date_added || b.addedAt))[0];
+  // Generate random # once on rendering
+  const [randomNum] = useState(() => Math.random());
+  // Produce random recommendation
+  const recommended = backlogItems[Math.floor(randomNum * backlogItems.length)];
 
   function endpointFor(item) {
     const kind = item?.type === 'show' ? 'shows' : 'movies';
